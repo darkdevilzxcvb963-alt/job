@@ -1,0 +1,51 @@
+Directory: C:\Users\ADMIN\new-project\backend\uploads
+Found 9 files
+Checking: .gitkeep, is_file: True, suffix: 
+SKIP: .gitkeep
+Checking: 123 udhya.pdf, is_file: True, suffix: .pdf
+MATCH: 123 udhya.pdf
+SUCCESS: Created user recovered_123_udhya_3374@example.com
+Checking: aws.pdf, is_file: True, suffix: .pdf
+MATCH: aws.pdf
+SUCCESS: Created user recovered_aws_3792@example.com
+Checking: dummy_resume.docx, is_file: True, suffix: .docx
+MATCH: dummy_resume.docx
+ERROR: dummy_resume.docx - Package not found at 'C:\Users\ADMIN\new-project\backend\uploads\dummy_resume.docx'
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\new-project\recover_data.py", line 51, in recover_users
+    parsed_data = parser.parse(str(file_path))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\backend\app\services\resume_parser.py", line 33, in parse
+    return self._parse_docx(file_path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\backend\app\services\resume_parser.py", line 60, in _parse_docx
+    doc = Document(file_path)
+          ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\.venv\Lib\site-packages\docx\api.py", line 23, in Document
+    document_part = Package.open(docx).main_document_part
+                    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\.venv\Lib\site-packages\docx\opc\package.py", line 116, in open
+    pkg_reader = PackageReader.from_file(pkg_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\.venv\Lib\site-packages\docx\opc\pkgreader.py", line 22, in from_file
+    phys_reader = PhysPkgReader(pkg_file)
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\new-project\.venv\Lib\site-packages\docx\opc\phys_pkg.py", line 21, in __new__
+    raise PackageNotFoundError("Package not found at '%s'" % pkg_file)
+docx.opc.exceptions.PackageNotFoundError: Package not found at 'C:\Users\ADMIN\new-project\backend\uploads\dummy_resume.docx'
+
+Checking: HARIHARAN IT RESUME.pdf, is_file: True, suffix: .pdf
+MATCH: HARIHARAN IT RESUME.pdf
+SUCCESS: Created user recovered_hariharan_it_resume_c04c@example.com
+Checking: Hariharan-v-FlowCV-Resume-20251021.pdf, is_file: True, suffix: .pdf
+MATCH: Hariharan-v-FlowCV-Resume-20251021.pdf
+SUCCESS: Created user recovered_hariharan-v-flowcv-resume-20251021_1520@example.com
+Checking: HARIHARAN_IT_RESUME.pdf, is_file: True, suffix: .pdf
+MATCH: HARIHARAN_IT_RESUME.pdf
+SUCCESS: Created user recovered_hariharan_it_resume_2d59@example.com
+Checking: Sujith Resume(6).pdf, is_file: True, suffix: .pdf
+MATCH: Sujith Resume(6).pdf
+SUCCESS: Created user recovered_sujith_resume(6)_accd@example.com
+Checking: udhaya.pdf, is_file: True, suffix: .pdf
+MATCH: udhaya.pdf
+SUCCESS: Created user recovered_udhaya_7916@example.com

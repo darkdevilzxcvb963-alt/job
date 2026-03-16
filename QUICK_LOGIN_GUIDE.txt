@@ -1,0 +1,64 @@
+# 🚀 QUICK START - Login & Run Project
+
+## Start Everything in One Command
+```powershell
+.\start-all-continuous.ps1
+```
+This opens 2 windows with auto-restart enabled.
+
+---
+
+## Login Credentials
+
+| Role | Email | Password | Where to Go |
+|------|-------|----------|------------|
+| 👤 Job Seeker | jobseeker@example.com | Jobseeker@1234 | http://localhost:3000/login |
+| 💼 Recruiter | recruiter@example.com | Recruiter@1234 | http://localhost:3000/login |
+| 🛡️ Admin | admin@example.com | Admin@1234 | http://localhost:3000/login |
+
+---
+
+## URLs
+
+| What | URL |
+|------|-----|
+| **App** | http://localhost:3000 |
+| **Login** | http://localhost:3000/login |
+| **API** | http://localhost:8000 |
+| **API Docs** | http://localhost:8000/docs |
+
+---
+
+## If Login Not Working
+
+**Test Backend (shows all accounts work):**
+```powershell
+C:\Users\ADMIN\new-project\backend\venv\Scripts\python.exe C:\Users\ADMIN\new-project\backend\scripts\test_all_logins.py
+```
+
+**Clear Browser Cache:**
+```javascript
+// Press F12, then in Console:
+localStorage.clear(); location.reload();
+```
+
+---
+
+## Already Running?
+
+**To Stop:** Press Ctrl+C in any terminal
+
+**To Restart:** Run `.\start-all-continuous.ps1` again
+
+---
+
+## What's Fixed ✅
+
+- Backend no longer crashes
+- Auto-restart when services fail
+- All login roles working (jobseeker, recruiter, admin)
+- Frontend redirects to correct dashboard per role
+- Test accounts created
+- Database auto-initializes
+
+**Everything is ready to use!**

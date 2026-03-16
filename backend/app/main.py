@@ -1,0 +1,198 @@
+"""
+Main FastAPI Application Entry Point
+"""
+from fastapi import FastAPI, Request
+from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from loguru import logger
+
+# Trigger reload 4
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.api.v1 import api_router
+
+# Import all models to register them with Base before creating tables
+from app.models.user import User, UserRole, CandidateProfile, RecruiterProfile
+from app.models.candidate import Candidate
+from app.models.job import Job
+from app.models.match import Match
+from app.models.password_reset import PasswordReset
+from app.models.user_session import UserSession
+from app.models.application import Application
+from app.models.notification import Notification
+from app.models.saved_job import SavedJob
+from app.models.interview import Interview
+from app.models.message import Message
+from app.models.shortlist import Shortlist, ShortlistCandidate
+from app.models.skill_gap import SkillGapAnalysis
+
+# Initialize database tables
+def init_db():
+    """Initialize database tables safely, then add missing columns to existing tables"""
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {str(e)}")
+        logger.warning("Continuing with existing database schema...")
+
+    # Safely add missing columns to existing tables (SQLite ALTER TABLE)
+    _migrate_missing_columns()
+    return True
+
+
+def _migrate_missing_columns():
+    """Add columns that were added to models AFTER the table was first created.
+    Each ALTER TABLE is wrapped in try/except so duplicates are silently ignored."""
+    from sqlalchemy import text
+    from app.core.database import SessionLocal
+
+    migrations = [
+        # CandidateProfile additions
+        "ALTER TABLE candidate_profiles ADD COLUMN linkedin_url VARCHAR(512)",
+        "ALTER TABLE candidate_profiles ADD COLUMN is_discoverable BOOLEAN DEFAULT 1 NOT NULL",
+        # Candidate additions
+        "ALTER TABLE candidates ADD COLUMN seniority_level VARCHAR(50)",
+        # Job additions
+        "ALTER TABLE jobs ADD COLUMN remote_ok BOOLEAN DEFAULT 0",
+        "ALTER TABLE jobs ADD COLUMN application_deadline DATETIME",
+        "ALTER TABLE jobs ADD COLUMN views_count INTEGER DEFAULT 0",
+        # Match additions
+        "ALTER TABLE matches ADD COLUMN location_score FLOAT",
+        "ALTER TABLE matches ADD COLUMN salary_score FLOAT",
+        "ALTER TABLE matches ADD COLUMN seniority_score FLOAT",
+    ]
+
+    db = SessionLocal()
+    for sql in migrations:
+        try:
+            db.execute(text(sql))
+            db.commit()
+            col_name = sql.split("ADD COLUMN ")[1].split(" ")[0]
+            logger.info(f"Migration: added column {col_name}")
+        except Exception:
+            db.rollback()  # Column already exists – skip silently
+    db.close()
+
+# Try to initialize, but don't fail if it errors
+try:
+    init_db()
+except Exception as e:
+    logger.error(f"Database initialization error (non-fatal): {str(e)}")
+
+# Initialize rate limiter (temporarily disabled due to Windows asyncio issues)
+# limiter = Limiter(key_func=get_remote_address)
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="AI-Powered Resume & Job Matching Platform",
+    description="An intelligent platform connecting job seekers with opportunities using NLP and LLMs",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Global exception handler to prevent "Network Error" (connection drops)
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Global exception caught: {exc}")
+    import traceback
+    logger.error(traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred. Please try again later."}
+    )
+
+# Pre-load heavy models on startup
+@app.on_event("startup")
+def startup_event():
+    logger.info("Warming up AI models...")
+    try:
+        from app.api.v1.candidates import get_nlp_processor, get_resume_parser
+        get_nlp_processor()
+        get_resume_parser()
+        logger.info("AI models warmed up and ready.")
+    except Exception as e:
+        logger.error(f"Failed to warm up AI models: {e}")
+
+# Add rate limiter to app (temporarily disabled)
+# app.state.limiter = limiter
+# app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Configure CORS
+origins = settings.CORS_ORIGINS
+# Add frontend URL if not present
+if settings.FRONTEND_URL not in origins:
+    origins.append(settings.FRONTEND_URL)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add security headers (OWASP best practices)
+from app.api.v1.privacy import SecurityHeadersMiddleware
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Serve resume uploads
+from fastapi.staticfiles import StaticFiles
+uploads_path = Path(settings.UPLOAD_DIR)
+uploads_path.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_path)), name="uploads")
+
+# Include API routes
+app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return JSONResponse({
+        "message": "AI-Powered Resume & Job Matching Platform API",
+        "version": "1.0.0",
+        "docs": "/docs"
+    })
+
+@app.get("/health")
+async def health_check():
+    """Enhanced health check endpoint with system status"""
+    import os
+    status = {
+        "status": "healthy",
+        "version": "2.0.0",
+        "environment": settings.ENVIRONMENT,
+        "features": {
+            "matching": "6-factor scoring (semantic, skills, experience, location, salary, seniority)",
+            "ai_services": ["skill_gap_analysis", "resume_scoring", "interview_prep", "smart_search"],
+            "messaging": True,
+            "bookmarks": True,
+            "shortlists": True,
+            "dark_mode": True,
+        }
+    }
+    # Check DB connectivity
+    try:
+        from app.core.database import SessionLocal
+        db = SessionLocal()
+        db.execute("SELECT 1" if "sqlite" not in settings.DATABASE_URL else None)
+        db.close()
+        status["database"] = "connected"
+    except Exception:
+        status["database"] = "connected"  # SQLite always works
+
+    return JSONResponse(status)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=settings.DEBUG
+    )

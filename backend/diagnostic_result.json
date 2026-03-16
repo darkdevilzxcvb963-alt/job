@@ -1,0 +1,74 @@
+{
+  "total_users": 15,
+  "job_seekers": 12,
+  "recruiters": 2,
+  "total_jobs": 4,
+  "active_jobs": 4,
+  "jobs_with_embeddings": 4,
+  "total_candidates": 8,
+  "candidates_with_embeddings": 8,
+  "total_matches": 37,
+  "sample_jobs": [
+    {
+      "id": "fa07733a-9c41-49f7-8808-69cea0e9015f",
+      "title": "Senior Full Stack Developer",
+      "company": "Tech Innovations Inc.",
+      "active": true,
+      "has_embedding": true
+    },
+    {
+      "id": "4ed0cac1-da43-4f24-94cc-f3f2050ee549",
+      "title": "Backend Engineer",
+      "company": "Tech Innovations Inc.",
+      "active": true,
+      "has_embedding": true
+    },
+    {
+      "id": "32cf1514-af2e-4d81-a405-b6bde3887f09",
+      "title": "Frontend Developer",
+      "company": "Tech Innovations Inc.",
+      "active": true,
+      "has_embedding": true
+    }
+  ],
+  "sample_candidates": [
+    {
+      "id": "b1af6dd1-5234-4252-bde9-75b1ed7688e4",
+      "name": "Hariharan It Resume",
+      "email": "recovered_hariharan_it_resume_c04c@example.com",
+      "has_embedding": true
+    },
+    {
+      "id": "aba57af4-be70-4df4-88e9-27f65cdc66e9",
+      "name": "Hariharan-V-Flowcv-Resume-20251021",
+      "email": "recovered_hariharan-v-flowcv-resume-20251021_1520@example.com",
+      "has_embedding": true
+    },
+    {
+      "id": "21fdf3b0-8324-44f8-85c1-882a9d0d0a1b",
+      "name": "Hariharan It Resume",
+      "email": "recovered_hariharan_it_resume_2d59@example.com",
+      "has_embedding": true
+    }
+  ],
+  "sample_matches": [
+    {
+      "id": "6af825ae-9ac4-434f-b0c2-2979c60a3e3e",
+      "candidate_id": "dc738f5d-e7ad-4edf-aa1f-3b189e185ae1",
+      "job_id": "fa07733a-9c41-49f7-8808-69cea0e9015f",
+      "score": 0.88
+    },
+    {
+      "id": "dc7752f3-fe52-4fb9-9ead-44b46131a9f8",
+      "candidate_id": "0a805767-9f20-4859-98ae-c8e1a98cb267",
+      "job_id": "4ed0cac1-da43-4f24-94cc-f3f2050ee549",
+      "score": 0.92
+    },
+    {
+      "id": "d7607add-5590-4314-b708-7a1b9c1edc29",
+      "candidate_id": "dc738f5d-e7ad-4edf-aa1f-3b189e185ae1",
+      "job_id": "4ed0cac1-da43-4f24-94cc-f3f2050ee549",
+      "score": 0.84
+    }
+  ]
+}

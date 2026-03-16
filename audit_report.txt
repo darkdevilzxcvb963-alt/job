@@ -1,0 +1,29 @@
+--- USERS ---
+ID: 4962e20c-3cb0-435e-8509-db912c6e7b3b, Email: admin@example.com, Role: admin, Name: Admin User
+ID: fe680e7e-9620-4caa-9072-66da48f90c83, Email: candidate@example.com, Role: job_seeker, Name: John Doe
+ID: ba3715fe-7540-4599-8277-681cd0d95cbb, Email: recruiter@example.com, Role: recruiter, Name: Jane Smith
+ID: 046b4be8-e982-4243-89c1-ab30d046d38b, Email: recovered_hariharan-v-flowcv-resume-20251021_1520@example.com, Role: job_seeker, Name: Hariharan-V-Flowcv-Resume-20251021
+ID: aa1cdc0f-b99b-43c4-a69b-9fd4996c1036, Email: recovered_hariharan_it_resume_2d59@example.com, Role: job_seeker, Name: Hariharan It Resume
+ID: e4333dee-3b1d-46c8-a81d-261227ede3be, Email: recovered_sujith_resume(6)_accd@example.com, Role: job_seeker, Name: Sujith Resume(6)
+ID: e091d036-7fbc-4baa-957f-41d66001fc34, Email: recovered_udhaya_7916@example.com, Role: job_seeker, Name: Udhaya
+ID: 2830d568-2ef8-413f-83da-7a842c30e4dc, Email: zekeaot9876@gmail.com, Role: job_seeker, Name: peter parker
+ID: 17b77094-40df-4343-8a83-d57ed706d915, Email: hsavies9876@gmail.com, Role: recruiter, Name: savier
+ID: 23b6025d-7517-423a-9771-be575d94bef1, Email: emp26@example.com, Role: job_seeker, Name: Employee
+ID: b224bc0b-35a7-41c3-803f-7188537647d5, Email: unique_user_99@example.com, Role: job_seeker, Name: Test User Unique
+ID: 4363dc01-b176-46a1-90c5-065e49215e63, Email: srihariharan26ias@gmail.com, Role: job_seeker, Name: HARIHARAN V
+ID: 9ebfe63e-fcae-4ae4-a251-2fa9691ee9bb, Email: recruiterhiring56@gmail.com, Role: recruiter, Name: recruiterhiring
+
+--- CANDIDATES ---
+ID: b1af6dd1-5234-4252-bde9-75b1ed7688e4, Email: recovered_hariharan_it_resume_c04c@example.com, Name: Hariharan It Resume
+ID: aba57af4-be70-4df4-88e9-27f65cdc66e9, Email: recovered_hariharan-v-flowcv-resume-20251021_1520@example.com, Name: Hariharan-V-Flowcv-Resume-20251021
+ID: 21fdf3b0-8324-44f8-85c1-882a9d0d0a1b, Email: recovered_hariharan_it_resume_2d59@example.com, Name: Hariharan It Resume
+ID: a1d0d75f-f29c-40ea-bdf9-157e8334fa83, Email: recovered_sujith_resume(6)_accd@example.com, Name: Sujith Resume(6)
+ID: af60ec84-329e-4ce1-b526-4906cafa8537, Email: recovered_udhaya_7916@example.com, Name: Udhaya
+ID: 5d6834a7-a114-4977-a6dc-51a5bed52e97, Email: zekeaot9876@gmail.com, Name: peter parker
+ID: e8d04887-2ae5-4fdb-8143-8fef5d89d37c, Email: emp26@example.com, Name: Employee
+ID: 376f1bc7-7f69-4289-922e-1063e90a0fab, Email: srihariharan26ias@gmail.com, Name: HARIHARAN V
+
+--- JOBS ---
+ID: b6e5a20b-c8f5-489e-9712-b79de8f11f50, Title: data analysist, RecruiterID: 9ebfe63e-fcae-4ae4-a251-2fa9691ee9bb (Email: recruiterhiring56@gmail.com)
+
+--- MATCHES ---

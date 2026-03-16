@@ -1,0 +1,134 @@
+/* ATS Pipeline — Dark Glassmorphic Theme */
+.ats-pipeline {
+    overflow-x: auto;
+    padding: 20px 0;
+    margin-top: 32px;
+}
+
+.pipeline-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(280px, 1fr));
+    gap: 20px;
+    min-width: 1700px;
+    padding-bottom: 20px;
+}
+
+.pipeline-column {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    border: 1px solid var(--glass-border);
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 8px;
+}
+
+.column-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.pipeline-column .count-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid var(--glass-border);
+}
+
+.column-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.pipeline-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    transition: all 0.2s;
+}
+
+.pipeline-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-color);
+}
+
+.card-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.card-info p {
+    margin: 0 0 12px 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.score-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.card-actions select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.empty-column-hint {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 40px 0;
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+}
+
+/* Specific column colors */
+.col-hired {
+    border-top: 4px solid #10b981;
+}
+
+.col-offered {
+    border-top: 4px solid #3b82f6;
+}
+
+.col-interview {
+    border-top: 4px solid #f59e0b;
+}
+
+.col-rejected {
+    border-top: 4px solid #ef4444;
+}
