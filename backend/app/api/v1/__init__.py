@@ -5,7 +5,8 @@ from fastapi import APIRouter
 from app.api.v1 import (
     candidates, jobs, matches, upload, auth, auth_simple, profiles,
     admin, ai, notifications, feedback, social, privacy,
-    bookmarks, skill_gap, interviews, messages, shortlists
+    bookmarks, interviews, messages, shortlists,
+    profile_settings, intelligence, training
 )
 
 api_router = APIRouter()
@@ -26,7 +27,9 @@ api_router.include_router(privacy.router, prefix="/privacy", tags=["privacy & co
 
 # New feature routers
 api_router.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
-api_router.include_router(skill_gap.router, prefix="/skill-gap", tags=["skill gap analysis"])
 api_router.include_router(interviews.router, prefix="/interviews", tags=["interviews"])
 api_router.include_router(messages.router, prefix="/messages", tags=["messages"])
 api_router.include_router(shortlists.router, prefix="/shortlists", tags=["shortlists"])
+api_router.include_router(profile_settings.router, tags=["profile-settings"])
+api_router.include_router(intelligence.router, prefix="/intelligence", tags=["Intelligence"])
+api_router.include_router(training.router, prefix="/training", tags=["AI Training & Career Coach"])

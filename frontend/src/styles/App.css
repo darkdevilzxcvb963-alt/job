@@ -37,6 +37,7 @@
   padding: 2rem 1.5rem;
   box-sizing: border-box;
   flex: 1;
+  transition: padding 0.3s ease;
 }
 
 /* UI Elements */
@@ -117,10 +118,36 @@
   padding: 40px 20px;
 }
 
+/* Responsiveness & Media Queries */
+@media (max-width: 1024px) {
+  .page-container {
+    max-width: 95%;
+  }
+}
+
 @media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
   .auth-content {
     padding: 20px 15px;
   }
+
+  .btn-primary {
+    width: 100%; /* Better touch targets on mobile */
+    padding: 0.9rem;
+  }
+
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.2rem; }
+
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .show-mobile { display: none !important; }
 }
 
 /* Margin Utilities */

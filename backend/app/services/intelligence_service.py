@@ -7,10 +7,18 @@ import json
 
 from app.models.match import Match
 from app.models.candidate import Candidate
+from app.models.user import CandidateProfile
 from app.models.job import Job
 from app.schemas.intelligence import (
     MatchIntelligence, IntelligenceIndicator, SkillCredibility, 
-    CareerTrajectory, BiasAudit
+    CareerTrajectory, BiasAudit, ProfileCompleteness, SkillGap,
+    SkillGapResponse, CareerSuggestionResponse
+)
+from app.models.profile_settings import (
+    UserExperience, UserEducation, UserProject, UserCertification
+)
+from app.models.intelligence import (
+    SkillGapAnalysis, CareerSuggestion, ResumeVersion
 )
 from app.services.llm_service import LLMService
 
@@ -174,3 +182,166 @@ class IntelligenceService:
             adjusted_score=adjusted_score,
             audit_log="Post-match audit completed. No protected attribute bias detected in inference."
         )
+
+    def calculate_profile_completeness(self, user_id: str) -> ProfileCompleteness:
+        """Calculate weighted profile completeness score"""
+        candidate = self.db.query(CandidateProfile).filter(CandidateProfile.user_id == user_id).first()
+        if not candidate:
+            return ProfileCompleteness(overall_score=0.0, breakdown={}, missing_critical_fields=[], suggestions=[])
+
+        # Define weights
+        weights = {
+            "bio": 10,
+            "headline": 5,
+            "profile_picture": 5,
+            "skills": 20,
+            "experience": 25,
+            "education": 15,
+            "projects": 10,
+            "location_prefs": 5,
+            "salary_prefs": 5
+        }
+
+        breakdown = {}
+        missing = []
+        
+        # Check fields
+        breakdown["bio"] = 10 if candidate.user and candidate.user.bio else 0
+        breakdown["headline"] = 5 if candidate.headline else 0
+        breakdown["profile_picture"] = 5 if candidate.user and candidate.user.profile_picture_url else 0
+        
+        # Skills safely handled
+        skills_raw = candidate.skills or []
+        if isinstance(skills_raw, str):
+            try:
+                skills = json.loads(skills_raw)
+            except:
+                skills = []
+        else:
+            skills = skills_raw
+            
+        breakdown["skills"] = 20 if len(skills) >= 5 else (len(skills) * 4)
+        
+        # Linked tables
+        exp_count = self.db.query(UserExperience).filter(UserExperience.user_id == user_id).count()
+        breakdown["experience"] = 25 if exp_count >= 2 else (exp_count * 12.5)
+        
+        edu_count = self.db.query(UserEducation).filter(UserEducation.user_id == user_id).count()
+        breakdown["education"] = 15 if edu_count >= 1 else 0
+        
+        proj_count = self.db.query(UserProject).filter(UserProject.user_id == user_id).count()
+        breakdown["projects"] = 10 if proj_count >= 1 else 0
+        
+        breakdown["location_prefs"] = 5 if candidate.preferred_locations else 0
+        breakdown["salary_prefs"] = 5 if candidate.salary_expectation_min else 0
+
+        overall = sum(breakdown.values())
+        
+        for field, score in breakdown.items():
+            if score == 0:
+                missing.append(field)
+
+        suggestions = []
+        if breakdown["experience"] < 25: suggestions.append("Add more work experience to improve visibility.")
+        if breakdown["skills"] < 20: suggestions.append("List at least 5 key skills to enhance matching.")
+        if breakdown["bio"] == 0: suggestions.append("Write a brief bio to showcase your personality.")
+
+        return ProfileCompleteness(
+            overall_score=float(overall),
+            breakdown=breakdown,
+            missing_critical_fields=missing,
+            suggestions=suggestions
+        )
+
+    def analyze_skill_gaps(self, user_id: str, target_job_id: str) -> SkillGapResponse:
+        """Analyze missing skills compared to a target job"""
+        candidate = self.db.query(CandidateProfile).filter(CandidateProfile.user_id == user_id).first()
+        job = self.db.query(Job).filter(Job.id == target_job_id).first()
+        
+        if not candidate or not job:
+            raise ValueError("Candidate or Job not found")
+
+        skills_raw = candidate.skills or []
+        if isinstance(skills_raw, str):
+            try:
+                cand_skills_list = json.loads(skills_raw)
+            except:
+                cand_skills_list = []
+        else:
+            cand_skills_list = skills_raw
+            
+        cand_skills = set([str(s).lower() for s in cand_skills_list])
+        job_skills = set([s.lower() for s in (job.required_skills or [])])
+        
+        missing = job_skills - cand_skills
+        gaps = []
+        for skill in missing:
+            gaps.append(SkillGap(
+                skill=skill,
+                gap_level=1.0,
+                importance="high" if skill in (job.required_skills or [])[:3] else "medium",
+                learning_resources=[f"https://www.coursera.org/search?query={skill}"]
+            ))
+            
+        return SkillGapResponse(
+            target_role=job.title,
+            match_score=len(cand_skills & job_skills) / max(len(job_skills), 1),
+            gaps=gaps,
+            recommendations=[f"Focus on learning {list(missing)[0]}" if missing else "No major gaps found"]
+        )
+
+    async def generate_career_suggestions(self, user_id: str):
+        """Generate and persist career suggestions for a user"""
+        # 1. Check profile completeness
+        completeness = self.calculate_profile_completeness(user_id)
+        
+        # 2. Get existing suggestions to avoid duplicates
+        existing = set([s.title for s in self.db.query(CareerSuggestion).filter(
+            CareerSuggestion.user_id == user_id,
+            CareerSuggestion.is_completed == False
+        ).all()])
+
+        new_suggestions = []
+        
+        # Suggestions based on completeness
+        for field in completeness.missing_critical_fields:
+            title = f"Complete your {field.replace('_', ' ')}"
+            if title not in existing:
+                new_suggestions.append(CareerSuggestion(
+                    user_id=user_id,
+                    title=title,
+                    description=f"Your {field} is missing. Filling this in will increase your match score by {completeness.breakdown.get(field, 5)}%.",
+                    priority="high" if field in ["skills", "experience"] else "medium",
+                    category="profile"
+                ))
+
+        # Suggestions based on skill gaps (from matches or general demand)
+        # For simplicity, we'll check if skills < 5
+        candidate = self.db.query(CandidateProfile).filter(CandidateProfile.user_id == user_id).first()
+        skills_raw = candidate.skills or []
+        if isinstance(skills_raw, str):
+            try:
+                cand_skills = json.loads(skills_raw)
+            except:
+                cand_skills = []
+        else:
+            cand_skills = skills_raw
+        if len(cand_skills) < 5:
+            title = "Expand your skill set"
+            if title not in existing:
+                new_suggestions.append(CareerSuggestion(
+                    user_id=user_id,
+                    title=title,
+                    description="You have fewer than 5 skills listed. AI matching works best with at least 8-10 specific skills.",
+                    priority="medium",
+                    category="skills"
+                ))
+
+        if new_suggestions:
+            self.db.add_all(new_suggestions)
+            self.db.commit()
+            logger.info(f"Generated {len(new_suggestions)} suggestions for user {user_id}")
+            
+        return len(new_suggestions)
+
+

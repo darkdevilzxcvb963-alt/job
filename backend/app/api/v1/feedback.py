@@ -71,9 +71,22 @@ async def get_skill_demand(
 ):
     """
     Get aggregated skill demand data from active job postings.
-    Returns which skills are most in-demand.
+    Filtered by recruiter roles for individual recruiters.
     """
-    jobs = db.query(Job).filter(Job.is_active == True).all()
+    # Skill demand is more useful as a MARKET insight
+    # So we show platform-wide skill demand, but can highlight recruiter's own data if needed
+    query = db.query(Job).filter(Job.is_active == True)
+    
+    # We always show global for "Skill Demand" to provide market intelligence
+    # But we can still count the recruiter's jobs separately
+    recruiter_jobs_count = 0
+    if current_user.role == "recruiter":
+        recruiter_jobs_count = db.query(Job).filter(
+            Job.is_active == True, 
+            Job.recruiter_id == current_user.id
+        ).count()
+        
+    jobs = query.all()
     
     skill_counts = {}
     for job in jobs:
@@ -86,7 +99,8 @@ async def get_skill_demand(
     
     return {
         "top_skills": [{"skill": s, "demand_count": c} for s, c in sorted_skills],
-        "total_active_jobs": len(jobs)
+        "total_active_jobs": recruiter_jobs_count if current_user.role == "recruiter" else len(jobs),
+        "platform_active_jobs": len(jobs)
     }
 
 @router.get("/analytics/match-quality")
@@ -97,25 +111,51 @@ async def get_match_quality_stats(
     """
     Get aggregate statistics on match quality and feedback.
     """
-    total_matches = db.query(func.count(Match.id)).scalar() or 0
+    query = db.query(Match)
+    
+    # For match quality, we also want to show platform-wide stats as a benchmark
+    total_platform_matches = db.query(Match).count()
+    
+    # If recruiter, we'll focus on their matches but provide platform data too
+    if current_user.role == "recruiter":
+        recruiter_query = query.join(Job).filter(Job.recruiter_id == current_user.id)
+        total_recruiter_matches = recruiter_query.count()
+        
+        # If the recruiter has NO matches yet, show platform stats so they see something
+        if total_recruiter_matches == 0:
+            query = query # Use global query
+        else:
+            query = recruiter_query
+    
+    total_matches = query.count()
     
     # Score distribution
-    excellent = db.query(func.count(Match.id)).filter(Match.overall_score >= 0.8).scalar() or 0
-    good = db.query(func.count(Match.id)).filter(
+    excellent = query.filter(Match.overall_score >= 0.8).count()
+    good = query.filter(
         and_(Match.overall_score >= 0.6, Match.overall_score < 0.8)
-    ).scalar() or 0
-    fair = db.query(func.count(Match.id)).filter(
+    ).count()
+    fair = query.filter(
         and_(Match.overall_score >= 0.4, Match.overall_score < 0.6)
-    ).scalar() or 0
-    low = db.query(func.count(Match.id)).filter(Match.overall_score < 0.4).scalar() or 0
+    ).count()
+    low = query.filter(Match.overall_score < 0.4).count()
     
     # Average scores
-    avg_overall = db.query(func.avg(Match.overall_score)).scalar() or 0
-    avg_semantic = db.query(func.avg(Match.semantic_similarity)).scalar() or 0
-    avg_skill = db.query(func.avg(Match.skill_overlap_score)).scalar() or 0
+    avg_overall = db.query(func.avg(Match.overall_score))
+    avg_semantic = db.query(func.avg(Match.semantic_similarity))
+    avg_skill = db.query(func.avg(Match.skill_overlap_score))
+    
+    if current_user.role == "recruiter":
+        avg_overall = avg_overall.join(Job).filter(Job.recruiter_id == current_user.id)
+        avg_semantic = avg_semantic.join(Job).filter(Job.recruiter_id == current_user.id)
+        avg_skill = avg_skill.join(Job).filter(Job.recruiter_id == current_user.id)
+        
+    avg_overall = avg_overall.scalar() or 0
+    avg_semantic = avg_semantic.scalar() or 0
+    avg_skill = avg_skill.scalar() or 0
     
     return {
         "total_matches": total_matches,
+        "total_platform_matches": total_platform_matches,
         "score_distribution": {
             "excellent_80_plus": excellent,
             "good_60_80": good,
@@ -137,13 +177,37 @@ async def get_recruitment_funnel(
     """
     Track candidates through the recruitment funnel.
     """
-    total_candidates = db.query(func.count(Candidate.id)).scalar() or 0
-    total_jobs = db.query(func.count(Job.id)).scalar() or 0
-    total_matches = db.query(func.count(Match.id)).scalar() or 0
-    applied = db.query(func.count(Match.id)).filter(Match.status == "applied").scalar() or 0
-    shortlisted = db.query(func.count(Match.id)).filter(Match.status == "shortlisted").scalar() or 0
-    selected = db.query(func.count(Match.id)).filter(Match.status == "selected").scalar() or 0
-    rejected = db.query(func.count(Match.id)).filter(Match.status == "rejected").scalar() or 0
+    # Base queries
+    match_query = db.query(Match)
+    job_query = db.query(Job)
+    candidate_query = db.query(Candidate)
+    
+    # Total candidates is ALWAYS platform-wide for market intelligence
+    # but we can also count those specifically matched to the recruiter
+    total_candidates_platform = db.query(Candidate).count()
+    
+    if current_user.role == "recruiter":
+        # Recruiters only see their jobs and matches for those jobs
+        job_query = job_query.filter(Job.recruiter_id == current_user.id)
+        match_query = match_query.join(Job).filter(Job.recruiter_id == current_user.id)
+        
+        # Recruiter-specific candidate pool
+        recruiter_candidate_count = candidate_query.join(Match).join(Job).filter(Job.recruiter_id == current_user.id).distinct().count()
+    else:
+        recruiter_candidate_count = total_candidates_platform
+
+    total_candidates = total_candidates_platform # Always show global pool
+    total_jobs = job_query.count()
+    total_matches = match_query.count()
+    
+    # Detailed funnel stages
+    applied = match_query.filter(Match.status == "applied").count()
+    screened = match_query.filter(Match.status == "screened").count()
+    interview = match_query.filter(Match.status == "interview").count()
+    offered = match_query.filter(Match.status == "offered").count()
+    hired = match_query.filter(Match.status == "hired").count()
+    rejected = match_query.filter(Match.status == "rejected").count()
+    selected = match_query.filter(Match.status == "selected").count()
     
     return {
         "funnel": {
@@ -151,13 +215,15 @@ async def get_recruitment_funnel(
             "total_jobs": total_jobs,
             "total_matches_generated": total_matches,
             "applied": applied,
-            "shortlisted": shortlisted,
-            "selected": selected,
+            "screened": screened,
+            "interview": interview,
+            "offered": offered,
+            "hired": hired + selected,
             "rejected": rejected
         },
         "conversion_rates": {
             "match_to_apply": f"{(applied / total_matches * 100):.1f}%" if total_matches > 0 else "N/A",
-            "apply_to_shortlist": f"{(shortlisted / applied * 100):.1f}%" if applied > 0 else "N/A",
-            "shortlist_to_select": f"{(selected / shortlisted * 100):.1f}%" if shortlisted > 0 else "N/A"
+            "apply_to_interview": f"{(interview / applied * 100):.1f}%" if applied > 0 else "N/A",
+            "interview_to_hire": f"{( (hired + selected) / interview * 100):.1f}%" if interview > 0 else "N/A"
         }
     }

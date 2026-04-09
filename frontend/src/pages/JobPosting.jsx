@@ -3,6 +3,7 @@ import { useMutation } from 'react-query'
 import { createJob, generateJD } from '../services/api'
 import { Plus, Trash2, Sparkles, ChevronDown, X } from 'lucide-react'
 import { JOB_CATEGORIES, SUB_CATEGORY_TEMPLATES, CATEGORY_DEFAULTS } from '../data/jobTemplates'
+import { useNotify } from '../contexts/NotifyContext'
 import '../styles/JobPosting.css'
 
 const CATEGORY_GROUPS = {
@@ -23,6 +24,7 @@ const CATEGORY_GROUPS = {
 }
 
 function JobPosting() {
+  const { success, error: notifyError, warning } = useNotify()
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -64,7 +66,7 @@ function JobPosting() {
   const handleAddCustomMain = () => {
     if (!newMainName.trim()) return;
     if (JOB_CATEGORIES[newMainName] || customMainCategories.includes(newMainName)) {
-      alert("This category already exists.");
+      warning("This category already exists.");
       return;
     }
     setCustomMainCategories([...customMainCategories, newMainName]);
@@ -81,7 +83,7 @@ function JobPosting() {
       ...(customSubCategories[selectedCategory] || [])
     ];
     if (currentSubs.includes(newSubName)) {
-      alert("This sub-category already exists.");
+      warning("This sub-category already exists.");
       return;
     }
     setCustomSubCategories(prev => ({
@@ -130,7 +132,7 @@ function JobPosting() {
 
   const createJobMutation = useMutation(createJob, {
     onSuccess: () => {
-      alert('Job posted successfully!')
+      success('Job posted successfully! 🎉')
       setFormData({
         title: '', company: '', description: '', location: '',
         job_type: 'full-time', experience_required: '', salary_min: '', salary_max: ''
@@ -143,7 +145,7 @@ function JobPosting() {
       setSelectedSubCategory('')
     },
     onError: (error) => {
-      alert('Failed to post job: ' + (error.response?.data?.detail || error.message))
+      notifyError('Failed to post job: ' + (error.response?.data?.detail || error.message))
     }
   })
 
@@ -157,7 +159,7 @@ function JobPosting() {
         setIsGeneratingJD(false)
       },
       onError: (err) => {
-        alert("AI JD Generation failed. Please try again.")
+        notifyError("AI JD Generation failed. Please try again.")
         setIsGeneratingJD(false)
       }
     }
@@ -165,7 +167,7 @@ function JobPosting() {
 
   const handleGenerateAIJD = () => {
     if (!formData.title) {
-      alert("Please enter a Job Title first.")
+      warning("Please enter a Job Title first.")
       return
     }
 
@@ -192,7 +194,7 @@ function JobPosting() {
     if (!newCategoryName.trim()) return
     const id = newCategoryName.toLowerCase().replace(/\s+/g, '_')
     if (dynamicCategories.find(c => c.id === id)) {
-      alert("This category already exists.")
+      warning("This category already exists.")
       return
     }
     setDynamicCategories([...dynamicCategories, { id, label: newCategoryName }])
@@ -518,7 +520,7 @@ function JobPosting() {
                 />
               </div>
               <div className="form-group">
-                <label>Salary Max ($)</label>
+                <label>Salary Max (₹)</label>
                 <input
                   type="number"
                   value={formData.salary_max}

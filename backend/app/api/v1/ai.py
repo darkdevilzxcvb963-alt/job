@@ -20,6 +20,7 @@ from app.schemas.ai import (
     InterviewPrepRequest, InterviewPrepResponse,
     SmartSearchRequest, SmartSearchResponse, SmartSearchCandidate
 )
+from app.schemas.ai_trainer import TrainingRequest, TrainingResponse
 from app.core.config import settings
 
 router = APIRouter()
@@ -27,6 +28,7 @@ router = APIRouter()
 # Lazy-load services
 _llm_service = None
 _nlp_processor = None
+_ai_trainer_service = None
 
 def get_llm_service():
     global _llm_service
@@ -42,6 +44,13 @@ def get_nlp_processor():
             embedding_model=settings.SENTENCE_TRANSFORMER_MODEL
         )
     return _nlp_processor
+
+def get_ai_trainer_service():
+    global _ai_trainer_service
+    if _ai_trainer_service is None:
+        from app.services.ai_trainer_service import AITrainerService
+        _ai_trainer_service = AITrainerService()
+    return _ai_trainer_service
 
 @router.post("/generate-outreach", response_model=OutreachResponse)
 async def generate_outreach(
@@ -172,3 +181,26 @@ async def score_resume(
 
     return result
 
+@router.post("/generate-training", response_model=TrainingResponse)
+async def generate_training(
+    request: TrainingRequest,
+    current_user: User = Depends(get_current_user),
+    ai_trainer: Any = Depends(get_ai_trainer_service)
+):
+    """
+    Generate structured AI training, skills gap analysis, and questions 
+    based on the master Ollama prompt.
+    """
+    try:
+        response_data = await ai_trainer.generate_training_plan(
+            job_role=request.job_role,
+            candidate_skills=request.candidate_skills,
+            required_skills=request.job_skills,  # map job_skills to required_skills
+            matched_skills=request.matched_skills,
+            question=request.question,
+            answer=request.answer
+        )
+        return response_data
+    except Exception as e:
+        logger.error(f"Error generating training plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

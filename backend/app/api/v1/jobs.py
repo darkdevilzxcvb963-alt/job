@@ -1,7 +1,7 @@
 """
 Job API Endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.core.database import get_db
@@ -37,6 +37,7 @@ def get_llm_service():
 @router.post("/", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 def create_job(
     job: JobCreate,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -58,6 +59,11 @@ def create_job(
     db.add(db_job)
     db.commit()
     db.refresh(db_job)
+
+    # Trigger background matching task so matches appear instantly for the recruiter
+    from app.api.v1.matches import generate_matches_for_job_task
+    background_tasks.add_task(generate_matches_for_job_task, db_job.id)
+    
     return db_job
 
 @router.get("/", response_model=List[JobResponse])
@@ -122,3 +128,28 @@ def update_job(
     db.commit()
     db.refresh(job)
     return job
+
+@router.delete("/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_job(
+    job_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a job posting (only by owner or admin)"""
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Job not found"
+        )
+    
+    # Ownership check
+    if job.recruiter_id != current_user.id and current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to delete this job"
+        )
+    
+    db.delete(job)
+    db.commit()
+    return None

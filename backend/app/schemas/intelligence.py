@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
+from datetime import datetime
 
 class IntelligenceIndicator(BaseModel):
     """Specific intelligence metric with confidence and reasoning"""
@@ -37,3 +38,34 @@ class MatchIntelligence(BaseModel):
     career_trajectory: CareerTrajectory
     bias_audit: BiasAudit
     labor_market_context: Optional[str] = None
+
+class ProfileCompleteness(BaseModel):
+    """Weighted profile completeness score and breakdown"""
+    overall_score: float
+    breakdown: Dict[str, float]
+    missing_critical_fields: List[str]
+    suggestions: List[str]
+
+class SkillGap(BaseModel):
+    """Analysis of missing skills against a target"""
+    skill: str
+    gap_level: float # 0.0 to 1.0 (1.0 = completely missing)
+    importance: str  # high, medium, low
+    learning_resources: Optional[List[str]] = None
+
+class SkillGapResponse(BaseModel):
+    """Aggregated skill gap analysis"""
+    target_role: str
+    match_score: float
+    gaps: List[SkillGap]
+    recommendations: List[str]
+
+class CareerSuggestionResponse(BaseModel):
+    """AI Career path suggestion schema"""
+    id: str
+    title: str
+    description: str
+    priority: str
+    category: str
+    created_at: datetime
+

@@ -242,7 +242,7 @@ Include sections for: About the Role, Responsibilities, and Requirements. Use a 
             prompt = f"""Generate 5 tailored technical and behavioral interview questions for a candidate applying for the role of {job_title}.
 Target Job Requirements: {', '.join(job_requirements[:10])}
 Candidate Skills: {', '.join(candidate_skills[:10])}
-
+ 
 Focus on the intersection of what the job needs and what the candidate knows, as well as probing for any missing critical skills.
 Return ONLY a JSON list of strings."""
             response = self.client.chat.completions.create(
@@ -268,3 +268,54 @@ Return ONLY a JSON list of strings."""
         except Exception as e:
             logger.error(f"Error generating interview questions: {e}")
             return ["Explain your background in " + job_title, "What is your experience with the required tech stack?"]
+
+    def extract_skills_categorized(self, text: str) -> Dict[str, list]:
+        """
+        Extract categorized skills from resume/job text using LLM.
+        Great fallback when local NLTK/SpaCy parser yields too few results.
+        """
+        if not self.client:
+            return {}
+            
+        try:
+            # We use a structured prompt to get precisely what the NLPProcessor expects
+            prompt = f"""Analyze the provided text (resume or job description) and extract professional skills categorized into exactly these 5 groups:
+1. Technical (Programming, Frameworks, Architecture, etc.)
+2. Software & Tools (IDEs, Version Control, SaaS tools, etc.)
+3. Leadership & Management (Team leading, Budgeting, Strategy, etc.)
+4. Communication & Interpersonal (Negotiation, Public Speaking, Customer Service, etc.)
+5. Industry Knowledge (FinTech, Healthcare, Logistics, etc.)
+
+Text:
+{text[:4000]}
+
+Return only a JSON object where keys are the category names and values are lists of extracted skill strings.
+Example: {{"Technical": ["Python", "React"], "Software & Tools": ["Git", "VS Code"], ...}}
+"""
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a professional HR assistant specialized in skill taxonomy. Return output in strict JSON format."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=800,
+                temperature=0.2,
+                response_format={"type": "json_object"} if "gpt-4" in self.model or "gpt-3.5" in self.model else None
+            )
+            import json
+            content = response.choices[0].message.content.strip()
+            data = json.loads(content)
+            
+            # Ensure all keys exist
+            cats = ["Technical", "Software & Tools", "Leadership & Management", "Communication & Interpersonal", "Industry Knowledge"]
+            for cat in cats:
+                if cat not in data:
+                    data[cat] = []
+                elif not isinstance(data[cat], list):
+                    # Handle cases where LLM might return a single string or non-list
+                    data[cat] = [str(data[cat])] if data[cat] else []
+            
+            return data
+        except Exception as e:
+            logger.error(f"Error in LLM categorized skill extraction: {e}")
+            return {}

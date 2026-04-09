@@ -410,11 +410,13 @@
   top: calc(100% + 8px);
   left: 0;
   width: 100%;
-  background: #0f172a;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--glass-shadow);
   animation: slideDownFade 0.3s ease-out;
   z-index: 101;
 }
@@ -666,10 +668,11 @@
 .inline-add-overlay {
   margin-top: 1rem;
   padding: 1.5rem;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
+  border-radius: 20px;
   animation: slideDownFade 0.3s ease-out;
 }
 

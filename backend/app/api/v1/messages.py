@@ -9,6 +9,7 @@ from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.models.message import Message
 from app.schemas.features import MessageCreate, MessageResponse, ConversationSummary
+from app.core.socket_manager import manager
 from typing import List
 
 router = APIRouter()
@@ -29,18 +30,36 @@ async def send_message(
     if data.receiver_id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot message yourself")
     
-    # Permission check: Only recruiters can initiate conversations
-    # Job seekers can only reply to existing threads
+    # Permission check: Recruiters can message anyone. 
+    # Job seekers can only message if they have a match OR if the recruiter started the conversation.
     if current_user.role == "job_seeker":
-        # Check if there's an existing message from the recruiter to this candidate
+        # Check for existing conversation
         has_intro = db.query(Message).filter(
             Message.sender_id == data.receiver_id,
             Message.receiver_id == current_user.id
         ).first()
+        
+        # Check for a match if no intro exists
+        has_match = False
         if not has_intro:
+            # Need to check if there is ANY match between this candidate and any job of the recruiter
+            from app.models.match import Match
+            from app.models.job import Job
+            from app.models.candidate import Candidate
+            
+            # Find the candidate record for the current user (based on email)
+            candidate = db.query(Candidate).filter(Candidate.email == current_user.email).first()
+            if candidate:
+                # Check if there is a match between this candidate and the receiver recruiter
+                has_match = db.query(Match).join(Job).filter(
+                    Match.candidate_id == candidate.id,
+                    Job.recruiter_id == data.receiver_id
+                ).first() is not None
+
+        if not has_intro and not has_match:
             raise HTTPException(
                 status_code=403,
-                detail="Candidates cannot initiate conversations. Please wait for the recruiter to message you first."
+                detail="Candidates can only message recruiters after a match is made or the recruiter contacts you first."
             )
     
     message = Message(
@@ -53,6 +72,39 @@ async def send_message(
     db.commit()
     db.refresh(message)
     
+    # Real-time update via WebSocket
+    try:
+        from loguru import logger
+        await manager.send_json_to_user({
+            "type": "new_message",
+            "message": {
+                "id": message.id,
+                "sender_id": message.sender_id,
+                "receiver_id": message.receiver_id,
+                "match_id": message.match_id,
+                "content": message.content,
+                "is_read": message.is_read,
+                "created_at": message.created_at.isoformat() + "Z",  # Explicit UTC
+                "sender_name": current_user.full_name
+            }
+        }, data.receiver_id)
+        # Also echo back to sender for multi-tab sync
+        await manager.send_json_to_user({
+            "type": "new_message",
+            "message": {
+                "id": message.id,
+                "sender_id": message.sender_id,
+                "receiver_id": message.receiver_id,
+                "match_id": message.match_id,
+                "content": message.content,
+                "is_read": message.is_read,
+                "created_at": message.created_at.isoformat() + "Z",
+                "sender_name": current_user.full_name
+            }
+        }, current_user.id)
+    except Exception as ws_err:
+        logger.error(f"Failed to send real-time message update: {ws_err}")
+
     return MessageResponse(
         id=message.id,
         sender_id=message.sender_id,
@@ -139,6 +191,8 @@ async def get_thread(
     results = []
     for msg in messages:
         sender = db.query(User).filter(User.id == msg.sender_id).first()
+        # Ensure created_at is returned in ISO format with Z suffix
+        # so the frontend treats it as UTC and converts to local time correctly
         results.append(MessageResponse(
             id=msg.id,
             sender_id=msg.sender_id,

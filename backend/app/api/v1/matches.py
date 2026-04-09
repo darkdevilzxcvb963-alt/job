@@ -6,6 +6,7 @@ from loguru import logger
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import json
+from datetime import datetime
 from app.core.database import get_db, SessionLocal
 from app.core.dependencies import get_current_user
 from app.models.match import Match
@@ -14,6 +15,7 @@ from app.models.job import Job
 from app.models.user import User, UserRole
 from app.models.application import Application
 from app.models.notification import Notification
+from app.core.socket_manager import manager
 from app.schemas.match import MatchResponse, MatchWithDetails
 from app.services.matching_engine import MatchingEngine
 from app.services.llm_service import LLMService
@@ -156,6 +158,7 @@ def create_match(
 @router.get("/my-matches", response_model=List[MatchWithDetails])
 async def get_my_matches(
     min_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Minimum match score filter"),
+    max_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Maximum match score filter"),
     job_type: Optional[str] = Query(None, description="Filter by job type"),
     location: Optional[str] = Query(None, description="Filter by location"),
     sort_by: Optional[str] = Query("score", description="Sort by: score, date, salary"),
@@ -188,6 +191,8 @@ async def get_my_matches(
     # Apply filters
     if min_score is not None:
         query = query.filter(Match.overall_score >= min_score)
+    if max_score is not None:
+        query = query.filter(Match.overall_score <= max_score)
     
     # Apply sorting
     if sort_by == "score":
@@ -417,6 +422,8 @@ async def get_candidate_matches(
             "education_required": job.education_required,
             "intelligence": IntelligenceService(db, llm_service).get_match_intelligence(match.id),
             "cover_letter": db.query(Application).filter(Application.match_id == match.id).first().cover_letter if db.query(Application).filter(Application.match_id == match.id).first() else None,
+            "candidate_user_id": candidate_user_id,
+            "recruiter_id": job.recruiter_id,
             "recruiter_name": recruiter_name,
             "recruiter_email": recruiter_email,
             "recruiter_phone": recruiter_phone
@@ -428,6 +435,7 @@ async def get_candidate_matches(
 @router.get("/recruiter-matches", response_model=List[MatchWithDetails])
 async def get_all_recruiter_matches(
     min_score: Optional[float] = Query(None, ge=0.0, le=1.0),
+    max_score: Optional[float] = Query(None, ge=0.0, le=1.0),
     limit: int = Query(50, ge=1, le=100),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -441,7 +449,7 @@ async def get_all_recruiter_matches(
     
     # Get all job IDs for this recruiter
     job_query = db.query(Job.id)
-    if current_user.role == UserRole.RECRUITER:
+    if current_user.role == UserRole.RECRUITER.value:
         job_query = job_query.filter(Job.recruiter_id == current_user.id)
     
     job_ids = [r[0] for r in job_query.all()]
@@ -454,6 +462,8 @@ async def get_all_recruiter_matches(
     
     if min_score is not None:
         query = query.filter(Match.overall_score >= min_score)
+    if max_score is not None:
+        query = query.filter(Match.overall_score <= max_score)
     
     matches = query.order_by(Match.overall_score.desc()).limit(limit).all()
     
@@ -509,6 +519,8 @@ async def get_all_recruiter_matches(
             "education_required": job.education_required,
             "intelligence": IntelligenceService(db, llm_service).get_match_intelligence(match.id),
             "cover_letter": db.query(Application).filter(Application.match_id == match.id).first().cover_letter if db.query(Application).filter(Application.match_id == match.id).first() else None,
+            "candidate_user_id": candidate_user_id,
+            "recruiter_id": job.recruiter_id,
             "recruiter_name": recruiter_name,
             "recruiter_email": recruiter_email,
             "recruiter_phone": recruiter_phone
@@ -521,6 +533,7 @@ async def get_all_recruiter_matches(
 async def get_job_matches(
     job_id: str,
     min_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Minimum match score filter"),
+    max_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Maximum match score filter"),
     limit: int = Query(10, ge=1, le=100),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -541,6 +554,8 @@ async def get_job_matches(
     
     if min_score is not None:
         query = query.filter(Match.overall_score >= min_score)
+    if max_score is not None:
+        query = query.filter(Match.overall_score <= max_score)
     
     matches = query.order_by(Match.overall_score.desc()).limit(limit).all()
     
@@ -561,6 +576,9 @@ async def get_job_matches(
         # Get application for cover letter
         application = db.query(Application).filter(Application.match_id == match.id).first()
         cover_letter = application.cover_letter if application else None
+
+        # Flatten candidate skills safely
+        c_skills = flatten_skills(candidate.skills)
 
         result.append({
             "id": match.id,
@@ -653,7 +671,7 @@ class ApplyWithFormRequest(PydanticBaseModel):
 
 
 @router.post("/{match_id}/apply-with-form")
-def apply_to_job_with_form(
+async def apply_to_job_with_form(
     match_id: str,
     body: ApplyWithFormRequest,
     background_tasks: BackgroundTasks,
@@ -699,6 +717,20 @@ def apply_to_job_with_form(
                 message=f"{candidate.name} applied to your '{job.title}' position at {job.company}.",
                 related_match_id=match_id
             ))
+            
+            # Real-time update via WebSocket
+            try:
+                await manager.send_json_to_user({
+                    "type": "new_notification",
+                    "notification": {
+                        "type": "application_received",
+                        "message": f"{candidate.name} applied to your '{job.title}' position.",
+                        "related_match_id": match_id,
+                        "created_at": datetime.utcnow().isoformat()
+                    }
+                }, recruiter_user.id)
+            except Exception as ws_err:
+                logger.error(f"Failed to send real-time notification: {ws_err}")
 
     db.commit()
 
@@ -756,7 +788,7 @@ def generate_matches_for_me(
 @router.patch("/{match_id}/status", response_model=MatchResponse)
 def update_match_status(
     match_id: str,
-    status: str = Query(..., regex="^(matched|applied|screened|interview|offered|hired|rejected)$"),
+    status: str = Query(..., pattern="^(matched|applied|screened|interview|offered|hired|rejected)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):

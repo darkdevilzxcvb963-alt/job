@@ -1,0 +1,12 @@
+2026-04-09 12:03:56.238 | INFO     | app.services.vector_store_service:__init__:33 - VectorStore service initialized.
+2026-04-09 12:03:56.902 | INFO     | app.services.llm_service:__init__:29 - OpenAI client initialized successfully
+2026-04-09 12:03:57.174 | INFO     | app.core.email:<module>:35 - Email service initialized
+2026-04-09 12:03:57.970 | INFO     | app.main:init_db:26 - Database tables initialized successfully
+INFO:     Started server process [26992]
+INFO:     Waiting for application startup.
+2026-04-09 12:03:58.290 | INFO     | app.main:startup_event:113 - Warming up AI models...
+2026-04-09 12:03:58.305 | INFO     | app.main:startup_event:118 - AI models warmed up and ready.
+INFO:     Application startup complete.
+ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8001): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

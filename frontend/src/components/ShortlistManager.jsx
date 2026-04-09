@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { getShortlists, createShortlist, getShortlistCandidates, deleteShortlist, removeFromShortlist } from '../services/api'
 import { Users, Plus, Trash2, ChevronDown, ChevronUp, UserMinus } from 'lucide-react'
+import { useNotify } from '../contexts/NotifyContext'
 
 export default function ShortlistManager() {
+  const { confirm, success } = useNotify()
   const [shortlists, setShortlists] = useState([])
   const [expanded, setExpanded] = useState(null)
   const [candidates, setCandidates] = useState({})
@@ -54,10 +56,12 @@ export default function ShortlistManager() {
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this shortlist?')) return
+    const ok = await confirm('Delete this shortlist? This cannot be undone.')
+    if (!ok) return
     try {
       await deleteShortlist(id)
       fetchShortlists()
+      success('Shortlist deleted.')
     } catch (err) {
       console.error('Failed to delete shortlist:', err)
     }

@@ -43,3 +43,6 @@ class Match(Base):
     # Relationships
     candidate = relationship("Candidate", back_populates="matches")
     job = relationship("Job", back_populates="matches")
+    application = relationship("Application", back_populates="match", uselist=False, cascade="all, delete-orphan")
+    notifications = relationship("Notification", backref="match", cascade="all, delete-orphan")
+    messages = relationship("Message", backref="match", cascade="all, delete-orphan")

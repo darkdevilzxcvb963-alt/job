@@ -103,6 +103,7 @@ class UserResponse(BaseModel):
     profile_picture_url: Optional[str] = None
     created_at: datetime
     last_login: Optional[datetime] = None
+    mfa_enabled: bool = False
     
     class Config:
         from_attributes = True
@@ -113,14 +114,48 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     bio: Optional[str] = None
     location: Optional[str] = None
+    profile_picture_url: Optional[str] = None
 
 class TokenResponse(BaseModel):
     """Schema for token response"""
-    access_token: str
-    refresh_token: str
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
-    expires_in: int
+    expires_in: Optional[int] = None
     user: Optional[UserResponse] = None
+    mfa_required: bool = False
+    mfa_token: Optional[str] = None # Temporary token for MFA verification
+    session_id: Optional[str] = None
+
+class SendOTP(BaseModel):
+    """Schema for sending OTP"""
+    email: EmailStr
+    type: str = Field("email", pattern="^(email|sms)$")
+    purpose: str = Field("login", pattern="^(login|verify_email|reset_password)$")
+
+class VerifyOTP(BaseModel):
+    """Schema for verifying OTP"""
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6)
+    purpose: str = Field("login", pattern="^(login|verify_email|reset_password)$")
+
+class MagicLinkRequest(BaseModel):
+    """Schema for magic link request"""
+    email: EmailStr
+
+class SessionResponse(BaseModel):
+    """Schema for session tracking"""
+    id: str
+    device_id: Optional[str]
+    user_agent: Optional[str]
+    ip_address: Optional[str]
+    last_activity: datetime
+    is_active: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
 
 class CandidateProfileUpdate(BaseModel):
     """Schema for candidate profile update"""
@@ -169,6 +204,17 @@ class RecruiterProfileUpdate(BaseModel):
     bio: Optional[str] = None
     location: Optional[str] = None
     
+    # Hiring Preferences
+    roles_hiring_for: Optional[List[str]] = None
+    experience_range: Optional[str] = None
+    job_types: Optional[List[str]] = None
+    work_modes: Optional[List[str]] = None
+    
+    # Job Defaults
+    default_skills: Optional[List[str]] = None
+    default_location: Optional[str] = None
+    default_deadline: Optional[str] = None
+    
     class Config:
         from_attributes = True
 
@@ -187,6 +233,18 @@ class RecruiterProfileResponse(BaseModel):
     company_verified: bool
     total_jobs_posted: int
     active_job_postings: int
+    
+    # Hiring Preferences
+    roles_hiring_for: Optional[List[str]] = None
+    experience_range: Optional[str] = None
+    job_types: Optional[List[str]] = None
+    work_modes: Optional[List[str]] = None
+    
+    # Job Defaults
+    default_skills: Optional[List[str]] = None
+    default_location: Optional[str] = None
+    default_deadline: Optional[str] = None
+    
     created_at: datetime
     updated_at: datetime
     
@@ -272,3 +330,14 @@ class UserDetailResponse(UserResponse):
     
     class Config:
         from_attributes = True
+
+class VerifyMFARequest(BaseModel):
+    """Schema for verifying MFA code"""
+    mfa_token: str
+    code: str
+
+class MFASetupResponse(BaseModel):
+    """Schema for MFA setup response"""
+    message: str
+    mfa_enabled: bool
+    secret: Optional[str] = None

@@ -13,11 +13,13 @@ import {
   getAdminStats,
   getUserDetails
 } from '../services/api';
+import { useNotify } from '../contexts/NotifyContext';
 import '../styles/AdminDashboard.css';
 import '../styles/AdminModal.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { success, error: notifyError, confirm, prompt, warning } = useNotify();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
 
@@ -103,48 +105,53 @@ const AdminDashboard = () => {
   };
 
   const rejectUser = async (userId) => {
-    const reason = prompt('Enter rejection reason:');
+    const reason = await prompt('Enter rejection reason:');
     if (!reason) return;
 
     try {
       await apiRejectUser(userId, reason);
       setMessage('User rejected successfully');
+      success('User rejected successfully');
       if (activeTab === 'users') fetchUsers();
     } catch (error) {
       setMessage('Failed to reject user: ' + (error.response?.data?.detail || error.message));
+      notifyError('Failed to reject user: ' + (error.response?.data?.detail || error.message));
       console.error(error);
     }
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-      return;
-    }
+    const ok = await confirm('Are you sure you want to permanently delete this user? This action cannot be undone.');
+    if (!ok) return;
 
     try {
       await apiDeleteUser(userId);
       setMessage('User deleted successfully');
+      success('User deleted successfully');
       closeDetailModal();
       if (activeTab === 'users') fetchUsers();
     } catch (error) {
       setMessage('Failed to delete user: ' + (error.response?.data?.detail || error.message));
+      notifyError('Failed to delete user: ' + (error.response?.data?.detail || error.message));
       console.error(error);
     }
   };
 
   const handleAdminResetPassword = async (userId) => {
-    const newPassword = prompt('Enter new password for this user (min 8 chars):');
+    const newPassword = await prompt('Enter new password for this user (min 8 chars):');
     if (!newPassword) return;
     if (newPassword.length < 8) {
-      alert('Password must be at least 8 characters long');
+      warning('Password must be at least 8 characters long');
       return;
     }
 
     try {
       await adminResetPassword(userId, newPassword);
       setMessage('User password reset successfully');
+      success('User password reset successfully');
     } catch (error) {
       setMessage('Failed to reset user password: ' + (error.response?.data?.detail || error.message));
+      notifyError('Failed to reset user password: ' + (error.response?.data?.detail || error.message));
       console.error(error);
     }
   };
@@ -347,12 +354,12 @@ const AdminDashboard = () => {
                   <p className="stat-label">In Match Engine</p>
                 </div>
 
-                <div className="stat-card clickable" onClick={() => { setActiveTab('users'); setHasFetchedUsers(true); }}>
+                <div className="stat-card clickable" onClick={() => { setFilterRole('all'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Registered Users</h3>
                   <p className="stat-value">{stats.total_users}</p>
                   <div className="card-footer">
                     <span className="stat-label">Verified & Pending</span>
-                    <button className="btn-card-view">View</button>
+                    <button className="btn-card-view"><Eye size={14} /> View</button>
                   </div>
                 </div>
 
@@ -362,16 +369,22 @@ const AdminDashboard = () => {
                   <p className="stat-label">Currently active</p>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-card clickable" onClick={() => { setFilterRole('job_seeker'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Job Seeker Accounts</h3>
                   <p className="stat-value">{stats.job_seekers}</p>
-                  <p className="stat-label">Registered Candidates</p>
+                  <div className="card-footer">
+                    <span className="stat-label">Registered Candidates</span>
+                    <button className="btn-card-view"><Eye size={14} /> View</button>
+                  </div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-card clickable" onClick={() => { setFilterRole('recruiter'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Recruiter Accounts</h3>
                   <p className="stat-value">{stats.recruiters}</p>
-                  <p className="stat-label">Indiv. Recruiters</p>
+                  <div className="card-footer">
+                    <span className="stat-label">Indiv. Recruiters</span>
+                    <button className="btn-card-view"><Eye size={14} /> View</button>
+                  </div>
                 </div>
               </div>
             ) : (

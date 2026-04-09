@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { changePassword, updateMe } from '../services/api';
+import { changePassword, updateMe, uploadProfilePicture } from '../services/api';
 import { Eye, EyeOff, Camera, Check, X, Edit2 } from 'lucide-react';
 import '../styles/Profile.css';
 
@@ -32,15 +32,25 @@ const Profile = () => {
         setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
     };
 
-    const handlePhotoChange = (e) => {
+    const handlePhotoChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfilePhoto(reader.result);
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+        setLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await uploadProfilePicture(formData);
+            const photoUrl = res.data.url;
+            setProfilePhoto(photoUrl);
+            await refreshUser();
+            setMessage({ type: 'success', text: 'Profile photo updated!' });
+        } catch (error) {
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.detail || 'Photo upload failed'
+            });
         }
+        setLoading(false);
     };
 
     const handleSubmit = async (e) => {
@@ -107,8 +117,8 @@ const Profile = () => {
                 <div className="profile-header">
                     <div className="profile-avatar-container" onClick={() => fileInputRef.current?.click()}>
                         <div className="profile-avatar">
-                            {profilePhoto ? (
-                                <img src={profilePhoto} alt="Profile" className="profile-photo-img" />
+                            {profilePhoto || user.profile_picture_url ? (
+                                <img src={profilePhoto || user.profile_picture_url} alt="Profile" className="profile-photo-img" />
                             ) : (
                                 user.full_name?.charAt(0).toUpperCase() || 'U'
                             )}

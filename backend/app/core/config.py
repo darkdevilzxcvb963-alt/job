@@ -33,12 +33,25 @@ class Settings(BaseSettings):
     
     # LLM Configuration
     OPENAI_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY_2: str = ""
+    GEMINI_API_KEY_3: str = ""
+    GEMINI_API_KEY_4: str = ""
+    GEMINI_API_KEY_5: str = ""
+    OPENROUTER_API_KEY: str = ""
     LLM_MODEL: str = "gpt-4-turbo-preview"
     EMBEDDING_MODEL: str = "text-embedding-3-large"
+    
+    # LlamaParse Configuration
+    LLAMA_CLOUD_API_KEY: str = ""
     
     # NLP Configuration
     SPACY_MODEL: str = "en_core_web_sm"
     SENTENCE_TRANSFORMER_MODEL: str = "all-MiniLM-L6-v2"
+
+    # Ollama Configuration
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3"
     
     # File Upload
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB

@@ -28,7 +28,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     else:
         expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    to_encode.update({"exp": expire, "type": "access"})
+    to_encode.update({"exp": expire})
+    if "type" not in to_encode:
+        to_encode.update({"type": "access"})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
@@ -66,3 +68,7 @@ def generate_verification_token() -> str:
 def generate_password_reset_token() -> str:
     """Generate a secure password reset token"""
     return secrets.token_urlsafe(32)
+
+def generate_mfa_code() -> str:
+    """Generate a 6-digit numeric MFA code"""
+    return "".join(secrets.choice("0123456789") for _ in range(6))

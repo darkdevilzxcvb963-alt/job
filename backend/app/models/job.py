@@ -46,3 +46,6 @@ class Job(Base):
     # Relationships
     recruiter = relationship("User", backref="jobs")
     matches = relationship("Match", back_populates="job", cascade="all, delete-orphan")
+    applications = relationship("Application", back_populates="job", cascade="all, delete-orphan")
+    shortlists = relationship("Shortlist", back_populates="job", cascade="all, delete-orphan")
+    saved_jobs = relationship("SavedJob", back_populates="job", cascade="all, delete-orphan")

@@ -16,19 +16,7 @@ from app.core.database import Base, engine
 from app.api.v1 import api_router
 
 # Import all models to register them with Base before creating tables
-from app.models.user import User, UserRole, CandidateProfile, RecruiterProfile
-from app.models.candidate import Candidate
-from app.models.job import Job
-from app.models.match import Match
-from app.models.password_reset import PasswordReset
-from app.models.user_session import UserSession
-from app.models.application import Application
-from app.models.notification import Notification
-from app.models.saved_job import SavedJob
-from app.models.interview import Interview
-from app.models.message import Message
-from app.models.shortlist import Shortlist, ShortlistCandidate
-from app.models.skill_gap import SkillGapAnalysis
+import app.models  # This imports everything from __init__.py and registers with Base
 
 # Initialize database tables
 def init_db():
@@ -65,6 +53,18 @@ def _migrate_missing_columns():
         "ALTER TABLE matches ADD COLUMN location_score FLOAT",
         "ALTER TABLE matches ADD COLUMN salary_score FLOAT",
         "ALTER TABLE matches ADD COLUMN seniority_score FLOAT",
+        # User MFA additions
+        "ALTER TABLE users ADD COLUMN mfa_enabled BOOLEAN DEFAULT 0 NOT NULL",
+        "ALTER TABLE users ADD COLUMN mfa_secret VARCHAR(255)",
+        "ALTER TABLE users ADD COLUMN mfa_type VARCHAR(50)",
+        "ALTER TABLE users ADD COLUMN mfa_backup_codes JSON",
+        # CandidateProfile extended preferences
+        "ALTER TABLE candidate_profiles ADD COLUMN preferred_roles TEXT",
+        "ALTER TABLE candidate_profiles ADD COLUMN work_mode VARCHAR(20)",
+        "ALTER TABLE candidate_profiles ADD COLUMN industry VARCHAR(255)",
+        "ALTER TABLE candidate_profiles ADD COLUMN notice_period VARCHAR(50)",
+        "ALTER TABLE candidate_profiles ADD COLUMN open_to_work BOOLEAN DEFAULT 1 NOT NULL",
+        "ALTER TABLE users ADD COLUMN deletion_requested_at DATETIME",
     ]
 
     db = SessionLocal()
@@ -128,6 +128,8 @@ origins = settings.CORS_ORIGINS
 # Add frontend URL if not present
 if settings.FRONTEND_URL not in origins:
     origins.append(settings.FRONTEND_URL)
+# Add common local development origins
+origins.extend(["http://localhost:3002", "http://127.0.0.1:3002", "http://localhost:3003", "http://127.0.0.1:3003"])
 
 app.add_middleware(
     CORSMiddleware,
@@ -149,6 +151,10 @@ app.mount("/uploads", StaticFiles(directory=str(uploads_path)), name="uploads")
 
 # Include API routes
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+# WebSocket endpoint (outside of standard API prefix for cleanliness)
+from app.api.v1.sockets import router as socket_router
+app.include_router(socket_router)
 
 @app.get("/")
 async def root():
@@ -178,9 +184,10 @@ async def health_check():
     }
     # Check DB connectivity
     try:
+        from sqlalchemy import text
         from app.core.database import SessionLocal
         db = SessionLocal()
-        db.execute("SELECT 1" if "sqlite" not in settings.DATABASE_URL else None)
+        db.execute(text("SELECT 1"))
         db.close()
         status["database"] = "connected"
     except Exception:

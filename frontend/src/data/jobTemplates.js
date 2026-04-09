@@ -449,7 +449,7 @@ Lead cross-functional teams to deliver high-impact projects on time and within s
             technical: ["Agile/Scrum/Kanban", "Budget Forecasting", "Resource Leveling", "Change Request Mgmt"],
             tools: ["Microsoft Project", "Jira / Asana / Monday", "Slack", "Spreadsheet Modeling"],
             soft: ["Influential Leadership", "Negotiation", "Conflict Resolution"],
-            experience: ["5+ Years Project Leadership", "Experience with Budgets >$1M"],
+            experience: ["5+ Years Project Leadership", "Experience with Budgets >₹1M"],
             education: ["PMP Certification", "Scrum Master (CSM)", "MBA preferred"]
         }
     },
@@ -589,7 +589,7 @@ Direct office operations and administrative teams to maximize organizational eff
             technical: ["Budget Management", "Vendor Contract Negotiation", "Policy Development", "Health & Safety Compliance"],
             tools: ["ERP Systems", "Expert MS Office Suite", "Project Management Software", "Inventory Mgmt Systems"],
             soft: ["Strategic Leadership", "Complex Problem Solving", "Operational Efficiency", "Diplomacy"],
-            experience: ["4+ Years in Office Management", "Experience managing teams and budgets >$10k"],
+            experience: ["4+ Years in Office Management", "Experience managing teams and budgets >₹10k"],
             education: ["Bachelor's Degree in Business Administration or related", "Office Management Professional Certification"]
         }
     },
@@ -710,7 +710,7 @@ Deliver personalized advisory and investment management for high-net-worth clien
             technical: ["Investment Research", "Alternative Investments", "Retirement Planning", "Financial Goal Setting"],
             tools: ["Envestnet / MoneyGuidePro", "Morningstar Direct", "Bloomberg", "Addepar (Portfolio Reporting)", "CRM (Salesforce/Wealthbox)"],
             soft: ["Client Empathy", "Trusted Advisory", "Discretion & Confidentiality", "Sales Influence"],
-            experience: ["4+ Years in Wealth Management or Private Banking", "History of managing $100M+ in AUM"],
+            experience: ["4+ Years in Wealth Management or Private Banking", "History of managing ₹100M+ in AUM"],
             education: ["Bachelor's Degree in Finance or Business", "CFP (Certified Financial Planner)", "CFA or Series 65 License"]
         }
     },
@@ -1047,7 +1047,7 @@ Coordinate large-scale construction projects managing budgets, schedules, and qu
             technical: ["Supply Chain Mgmt", "Resource Leveling", "RFI & Submittal Tracking", "Method Statement Review", "Risk Assessment"],
             tools: ["Procore", "Primavera P6", "MS Project", "HeavyJob / B2W", "Bluebeam Revu"],
             soft: ["Integrity", "Strategic Focus", "Negotiation", "Crisis Leadership"],
-            experience: ["5+ Years in Construction Leadership", "Managed Projects >$10M", "High-rise or Commercial Experience"],
+            experience: ["5+ Years in Construction Leadership", "Managed Projects >₹10M", "High-rise or Commercial Experience"],
             education: ["BS in Construction Management or Civil Engineering", "PMP Certification", "OSHA 30-Hour Certification"]
         }
     },
@@ -1591,7 +1591,7 @@ Cultivate client relationships and maximize CLV via churn mitigation and expansi
             technical: ["Financial Health Auditing", "Product Adoption Analysis", "Contract Negotiation", "Revenue Forecasting", "Portfolio Management"],
             tools: ["Salesforce / HubSpot CRM", "Gainsight / Totango", "LinkedIn Sales Navigator", "Project Management Software", "Advanced Data Tools"],
             soft: ["Consultative Influence", "Empathy", "Conflict Resolution", "Clarity of Communication"],
-            experience: ["4+ Years in Account Management or CS", "Experience managing $1M+ portfolios"],
+            experience: ["4+ Years in Account Management or CS", "Experience managing ₹1M+ portfolios"],
             education: ["Bachelor's in Business, Marketing, or Communications", "CSM Certification (preferred)"]
         }
     },

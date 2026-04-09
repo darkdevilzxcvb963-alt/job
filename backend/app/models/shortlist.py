@@ -2,6 +2,7 @@
 Shortlist Models - recruiter candidate shortlisting
 """
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship
 import uuid
 from datetime import datetime
 from app.core.database import Base
@@ -16,6 +17,9 @@ class Shortlist(Base):
     name = Column(String(255), nullable=False)
     job_id = Column(String(36), ForeignKey("jobs.id"), nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    job = relationship("Job", back_populates="shortlists")
 
 
 class ShortlistCandidate(Base):

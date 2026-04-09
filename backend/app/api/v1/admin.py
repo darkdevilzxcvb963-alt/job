@@ -224,7 +224,7 @@ async def admin_reset_user_password(
 async def get_recruiters(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    status: str = Query(None, regex="^(pending|verified|all)$"),
+    status: str = Query(None, pattern="^(pending|verified|all)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):

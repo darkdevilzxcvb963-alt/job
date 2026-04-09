@@ -1,0 +1,275 @@
+{
+  "main_heading": "Administrative",
+  "fields": [
+    {
+      "field": "Specialized Field",
+      "mcq": [
+        {"q": "What is a key skill in specialized admin roles?", "options": ["General administration", "Domain knowledge", "Event planning", "Basic accounting"], "answer": "Domain knowledge"},
+        {"q": "ERP systems are primarily used for?", "options": ["Social media management", "Business processes", "Graphic design", "Website hosting"], "answer": "Business processes"},
+        {"q": "Confidential data handling requires strict adherence to?", "options": ["Marketing guidelines", "Security protocols", "Creative design", "Public sharing"], "answer": "Security protocols"},
+        {"q": "Legal admin work most commonly includes?", "options": ["Financial audits", "Documentation and case filing", "Inventory management", "Software testing"], "answer": "Documentation and case filing"},
+        {"q": "Medical admin strictly involves managing?", "options": ["Software code", "Patient records and compliance", "Facility layout", "Product design"], "answer": "Patient records and compliance"},
+        {"q": "Finance admin primarily handles?", "options": ["Reconciliations and billing", "Social media campaigns", "Client entertainment", "Hardware repair"], "answer": "Reconciliations and billing"},
+        {"q": "Specialized admins need a high level of?", "options": ["General knowledge", "Niche expertise", "Casual interaction", "Basic mathematics"], "answer": "Niche expertise"},
+        {"q": "CRM stands for?", "options": ["Customer Relationship Management", "Client Resource Mechanism", "Code Review Metrics", "Cash Rate Management"], "answer": "Customer Relationship Management"},
+        {"q": "Data privacy compliance is considered?", "options": ["Optional", "Critical", "Supplementary", "Irrelevant"], "answer": "Critical"},
+        {"q": "Industry-specific tools help significantly in improving?", "options": ["Operational efficiency", "Lunch breaks", "System downtime", "Manual errors"], "answer": "Operational efficiency"}
+      ],
+      "fill_blank": [
+        {"q": "Specialized admins require deep ______ knowledge.", "answer": "domain"},
+        {"q": "ERP software helps manage core ______ processes.", "answer": "business"},
+        {"q": "Confidential data compliance must be kept highly ______.", "answer": "secure"},
+        {"q": "CRM is primarily used for ______ relationship management.", "answer": "customer"},
+        {"q": "Finance admins handle sensitive ______ reconciliation.", "answer": "accounts"},
+        {"q": "Medical admins manage EHR, which stands for Electronic ______ Records.", "answer": "Health"},
+        {"q": "Legal admins prepare compliance ______ for review.", "answer": "documents"},
+        {"q": "Specialized roles require ______ and specialized skills.", "answer": "advanced"},
+        {"q": "Data privacy protocols ensure ______ of sensitive information.", "answer": "protection"},
+        {"q": "Industry-specific software tools directly improve ______.", "answer": "efficiency"}
+      ],
+      "long": [
+        {"q": "Explain specialized administrative roles.", "answer": "Specialized administrative roles focus on domain-specific tasks such as legal documentation, medical records management, and financial processing. These roles require deep knowledge of industry tools and compliance standards. Professionals must handle sensitive information securely and ensure accuracy in all processes. They often use systems like ERP and CRM to streamline workflows. Their responsibilities include maintaining records, assisting professionals, and ensuring regulatory compliance. Strong analytical and organizational skills are essential for success."}
+      ]
+    },
+    {
+      "field": "Executive Support",
+      "mcq": [
+        {"q": "Executive assistants primarily support?", "options": ["Entry-level staff", "C-Suite Executives", "External clients", "Vendors"], "answer": "C-Suite Executives"},
+        {"q": "Advanced calendar management involves?", "options": ["Basic lists", "Strategic scheduling", "Data entry", "Inventory counting"], "answer": "Strategic scheduling"},
+        {"q": "High-level meeting coordination includes?", "options": ["Logistical planning and agendas", "Taking naps", "Writing code", "Running errands"], "answer": "Logistical planning and agendas"},
+        {"q": "Maintaining confidentiality at the executive level is?", "options": ["Optional", "Imperative", "Supplementary", "Rare"], "answer": "Imperative"},
+        {"q": "International travel arrangements include?", "options": ["Booking itineraries and visas", "Cooking meals", "Drafting designs", "Sorting mail"], "answer": "Booking itineraries and visas"},
+        {"q": "Executive briefing reports require absolute?", "options": ["Accuracy", "Estimation", "Delay", "Formatting"], "answer": "Accuracy"},
+        {"q": "Executive inboxes must be aggressively?", "options": ["Ignored", "Triaged and managed", "Deleted", "Forwarded"], "answer": "Triaged and managed"},
+        {"q": "Strict time management is?", "options": ["A luxury", "Essential for executives", "Optional", "Inefficient"], "answer": "Essential for executives"},
+        {"q": "Top executives heavily rely on their assistants for?", "options": ["Workflow optimization", "Gaming sessions", "Music recommendations", "Sports updates"], "answer": "Workflow optimization"},
+        {"q": "Ruthless priority setting helps executives maintain?", "options": ["Strategic focus", "Meeting delays", "Confusion", "Email backlogs"], "answer": "Strategic focus"}
+      ],
+      "fill_blank": [
+        {"q": "Executive assistants strategically manage ______ conflicts.", "answer": "schedule"},
+        {"q": "Board meetings require proper logistical ______.", "answer": "coordination"},
+        {"q": "Complex travel must be meticulously ______ in advance.", "answer": "planned"},
+        {"q": "Proprietary company data must be strictly ______.", "answer": "protected"},
+        {"q": "High-volume executive emails should be efficiently ______.", "answer": "triaged"},
+        {"q": "Financial and strategic reports must be 100% ______.", "answer": "accurate"},
+        {"q": "Effective time management directly improves executive ______.", "answer": "productivity"},
+        {"q": "C-suite executives heavily depend on their ______.", "answer": "assistants"},
+        {"q": "Daily operational tasks should be heavily ______.", "answer": "prioritized"},
+        {"q": "Upward communication must convey absolute ______.", "answer": "clarity"}
+      ],
+      "long": [
+        {"q": "Explain the executive support role.", "answer": "Executive support professionals assist top-level management in handling daily operations efficiently. Their responsibilities include managing calendars, organizing meetings, handling communication, and preparing reports. They ensure that executives can focus on strategic decisions by taking care of administrative tasks. Confidentiality and professionalism are critical as they deal with sensitive information. Strong organizational, communication, and time management skills are essential for success in this role."}
+      ]
+    },
+    {
+      "field": "Administrative Assistance",
+      "mcq": [
+        {"q": "Admin assistants primarily handle?", "options": ["Daily operational tasks", "Software architecture", "Mechanical repair", "Graphic design"], "answer": "Daily operational tasks"},
+        {"q": "Standardized document filing is?", "options": ["Optional", "Crucial for retrieval", "A waste of time", "For HR only"], "answer": "Crucial for retrieval"},
+        {"q": "A systematic filing system helps prevent?", "options": ["Organization", "Data loss", "Early departures", "Meeting delays"], "answer": "Data loss"},
+        {"q": "General inquiry emails are typically?", "options": ["Ignored", "Managed and routed", "Deleted immediately", "Sent to spam"], "answer": "Managed and routed"},
+        {"q": "Proactive scheduling explicitly improves?", "options": ["Team efficiency", "Commute times", "Budget deficits", "Resource waste"], "answer": "Team efficiency"},
+        {"q": "Inter-departmental communication must be?", "options": ["Clear and concise", "Confusing and long", "Silent", "Loud and aggressive"], "answer": "Clear and concise"},
+        {"q": "Routine data handling requires?", "options": ["High accuracy", "Frequent errors", "Loud noise", "Constant delay"], "answer": "High accuracy"},
+        {"q": "Essential office tools almost always include?", "options": ["MS Office / Google Workspace", "Video games", "Spotify", "AutoCAD"], "answer": "MS Office / Google Workspace"},
+        {"q": "General admin roles fundamentally require strong?", "options": ["Organization skills", "Mess tolerance", "Procrastination", "Physical strength"], "answer": "Organization skills"},
+        {"q": "Diligent task tracking ensures timely?", "options": ["Project completion", "System failure", "Data breaches", "Financial loss"], "answer": "Project completion"}
+      ],
+      "fill_blank": [
+        {"q": "Admin assistants oversee daily operational ______.", "answer": "tasks"},
+        {"q": "Systematic filing ensures proper office ______.", "answer": "organization"},
+        {"q": "Inbound emails must be properly ______.", "answer": "handled"},
+        {"q": "Optimized schedules improve team ______.", "answer": "efficiency"},
+        {"q": "Inter-office communication should be extremely ______.", "answer": "clear"},
+        {"q": "Routine data entry must be highly ______.", "answer": "accurate"},
+        {"q": "Standard office tools include productivity ______.", "answer": "software"},
+        {"q": "Pending tasks must be continuously ______.", "answer": "tracked"},
+        {"q": "Physical and digital documents must be ______ correctly.", "answer": "stored"},
+        {"q": "Effective administrative work relies heavily on ______.", "answer": "organization"}
+      ],
+      "long": [
+        {"q": "Explain administrative assistance.", "answer": "Administrative assistance involves supporting daily office operations by handling tasks such as documentation, scheduling, communication, and record keeping. Administrative assistants ensure smooth workflow by organizing files, managing emails, and assisting staff. They use office software tools to complete tasks efficiently. Strong communication, organization, and time management skills are required. Their role is essential in maintaining productivity and ensuring that all administrative processes run smoothly."}
+      ]
+    },
+    {
+      "field": "Office Management",
+      "mcq": [
+        {"q": "Office managers ensure?", "options": ["Workplace chaos", "Smooth daily operations", "Client acquisition", "Software deployment"], "answer": "Smooth daily operations"},
+        {"q": "Office inventory management tracks?", "options": ["Employee lunches", "Office supplies and equipment", "Streaming services", "Company vehicles"], "answer": "Office supplies and equipment"},
+        {"q": "Effective budgeting helps maintain?", "options": ["Rampant overspending", "Strict cost control", "Delayed shipments", "Financial waste"], "answer": "Strict cost control"},
+        {"q": "Standard Operating Procedures (SOPs) ensure?", "options": ["Workplace confusion", "Process consistency", "Frequent errors", "Operational delays"], "answer": "Process consistency"},
+        {"q": "Optimized office layout directly impacts?", "options": ["Staff productivity", "Street noise", "Food waste", "Typing errors"], "answer": "Staff productivity"},
+        {"q": "Vendor management actively involves?", "options": ["Ignoring emails", "Contract coordination", "Deleting invoices", "Gaming vendors"], "answer": "Contract coordination"},
+        {"q": "Operational reports help leadership in?", "options": ["Data-driven decision making", "Sleeping at desks", "Gaming the system", "Driving commutes"], "answer": "Data-driven decision making"},
+        {"q": "Office facilities management includes overseeing?", "options": ["Workstations and HVAC", "Just the coffee machine", "Nothing at all", "Client laptops"], "answer": "Workstations and HVAC"},
+        {"q": "Workplace health and safety is?", "options": ["An optional perk", "A critical compliance standard", "Useless bureaucracy", "Rarely monitored"], "answer": "A critical compliance standard"},
+        {"q": "Successful office management requires strong?", "options": ["Leadership and negotiation", "Procrastination", "Confusion tactics", "Typing speed"], "answer": "Leadership and negotiation"}
+      ],
+      "fill_blank": [
+        {"q": "Office managers handle day-to-day facility ______.", "answer": "operations"},
+        {"q": "Inventory management tracks consumable ______.", "answer": "supplies"},
+        {"q": "Operational budgeting controls department ______.", "answer": "costs"},
+        {"q": "Company policies ensure behavioral ______.", "answer": "consistency"},
+        {"q": "Monthly reports support executive ______.", "answer": "decisions"},
+        {"q": "Third-party vendors require active ______.", "answer": "management"},
+        {"q": "Workplace compliance and safety is critically ______.", "answer": "important"},
+        {"q": "Physical office facilities must be regularly ______.", "answer": "maintained"},
+        {"q": "Strong leadership improves staff ______.", "answer": "performance"},
+        {"q": "Ergonomic office layout directly affects ______.", "answer": "productivity"}
+      ],
+      "long": [
+        {"q": "Explain office management.", "answer": "Office management involves overseeing daily administrative operations to ensure efficiency and productivity. It includes managing staff, handling budgets, maintaining facilities, and coordinating with vendors. Office managers ensure policies are followed and resources are used effectively. They also handle reporting and decision-making processes. Strong leadership, communication, and organizational skills are required. Effective office management creates a structured work environment that supports business success."}
+      ]
+    },
+    {
+      "field": "Reception & Front Desk",
+      "mcq": [
+        {"q": "Corporate receptionists first and foremost greet?", "options": ["Incoming visitors", "Delivery drivers only", "Esports players", "Internal staff only"], "answer": "Incoming visitors"},
+        {"q": "The front desk acts as the primary hub for handling?", "options": ["Inbound calls", "Catering preparation", "Forklift driving", "Game testing"], "answer": "Inbound calls"},
+        {"q": "In a corporate setting, the first impression is?", "options": ["Completely unimportant", "Critically important", "A useless metric", "Rarely noticed"], "answer": "Critically important"},
+        {"q": "Managing guest appointments requires seamless?", "options": ["Scheduling software", "Ignoring of calendars", "Deleting of emails", "Delaying tactics"], "answer": "Scheduling software"},
+        {"q": "Visitor logbooks are mandated to track?", "options": ["Security entries", "Elevator music", "Video games", "Employee cars"], "answer": "Security entries"},
+        {"q": "Verbal communication at the front desk must be?", "options": ["Polite and clear", "Confusing and fast", "Silent", "Loud and informal"], "answer": "Polite and clear"},
+        {"q": "A well-run front desk ensures lobby?", "options": ["Confusion", "Order and security", "Delays", "Accounting errors"], "answer": "Order and security"},
+        {"q": "General inquiry emails sent to 'info@' should be?", "options": ["Ignored", "Managed and routed", "Deleted", "Hidden"], "answer": "Managed and routed"},
+        {"q": "Maintaining composure and professionalism is?", "options": ["Optional on Fridays", "Absolutely essential", "Useless in modern business", "Rarely expected"], "answer": "Absolutely essential"},
+        {"q": "Receptionists manage the flow of?", "options": ["Office visitors and deliveries", "Warehouse chaos", "Network traffic", "Office noise"], "answer": "Office visitors and deliveries"}
+      ],
+      "fill_blank": [
+        {"q": "Corporate receptionists professionally greet ______.", "answer": "visitors"},
+        {"q": "Inbound multi-line calls must be promptly ______.", "answer": "answered"},
+        {"q": "Guest appointments are digitally ______.", "answer": "scheduled"},
+        {"q": "Visitor logs record strict security ______.", "answer": "entries"},
+        {"q": "Front desk communication should be exceptionally ______.", "answer": "clear"},
+        {"q": "The front desk ensures lobby security and ______.", "answer": "order"},
+        {"q": "General inquiry emails are meticulously ______.", "answer": "managed"},
+        {"q": "Unwavering professionalism is absolutely ______.", "answer": "essential"},
+        {"q": "Lost or confused visitors must be politely ______.", "answer": "guided"},
+        {"q": "The reception area must be kept spotless and ______.", "answer": "clean"}
+      ],
+      "long": [
+        {"q": "Explain the reception & front desk role.", "answer": "Reception and front desk staff are the first point of contact in an organization. They greet visitors, handle phone calls, manage appointments, and maintain visitor records. Their role is crucial in creating a positive first impression. They ensure smooth communication between departments and assist visitors with their needs. Professionalism, communication skills, and organization are essential. A well-managed front desk improves overall customer experience and office efficiency."}
+      ]
+    },
+    {
+      "field": "Data Entry",
+      "mcq": [
+        {"q": "Professional data entry strictly requires?", "options": ["Unfailing accuracy", "Acceptable errors", "Background noise", "Process delays"], "answer": "Unfailing accuracy"},
+        {"q": "Expected typing speed (WPM) should be?", "options": ["Very slow", "Fast and accurate", "Non-existent", "Randomly paced"], "answer": "Fast and accurate"},
+        {"q": "Data validation protocols ensure output?", "options": ["Contains errors", "Correctness and integrity", "Is delayed", "Is randomized"], "answer": "Correctness and integrity"},
+        {"q": "Relational databases are primarily built to store?", "options": ["Structured data", "MP3 music", "Video games", "Physical documents"], "answer": "Structured data"},
+        {"q": "Confidential PII (Personally Identifiable Information) must be?", "options": ["Shared publicly", "Strictly protected", "Ignored", "Lost in transit"], "answer": "Strictly protected"},
+        {"q": "Excel and spreadsheets are extensively used for?", "options": ["Data analysis and sorting", "Playing games", "Safe driving", "Cooking recipes"], "answer": "Data analysis and sorting"},
+        {"q": "Data discrepancies and errors should be immediately?", "options": ["Ignored completely", "Investigated and corrected", "Added to the master file", "Hidden from management"], "answer": "Investigated and corrected"},
+        {"q": "Extended data entry sessions require intense?", "options": ["Mental focus", "Workplace confusion", "Schedule delays", "Audio noise"], "answer": "Mental focus"},
+        {"q": "Routine data backup protocols ensure overall file?", "options": ["Data loss", "Security and safety", "Formatting errors", "Process delay"], "answer": "Security and safety"},
+        {"q": "Formatting consistency directly translates to data?", "options": ["Accuracy and usability", "Formatting errors", "Background noise", "Approval delay"], "answer": "Accuracy and usability"}
+      ],
+      "fill_blank": [
+        {"q": "High-volume data entry requires extreme ______.", "answer": "accuracy"},
+        {"q": "Keyboard typing must be accurate and ______.", "answer": "fast"},
+        {"q": "Input data must be meticulously ______ against sources.", "answer": "validated"},
+        {"q": "Cloud databases safely store company ______.", "answer": "information"},
+        {"q": "Input errors must be immediately flagged and ______.", "answer": "corrected"},
+        {"q": "PII data must remain confidential and highly ______.", "answer": "secure"},
+        {"q": "Pivot tables in spreadsheets help in data ______.", "answer": "analysis"},
+        {"q": "Daily system backup ensures data ______.", "answer": "safety"},
+        {"q": "Data formatting consistency improves reporting ______.", "answer": "quality"},
+        {"q": "Sustained mental focus improves input ______.", "answer": "accuracy"}
+      ],
+      "long": [
+        {"q": "Explain the data entry role.", "answer": "Data entry involves inputting, updating, and maintaining information in digital systems. Accuracy and speed are critical as errors can impact business decisions. Data entry professionals use spreadsheets and databases to manage information efficiently. They ensure data validation, consistency, and security. Regular backups are important to prevent data loss. Strong attention to detail and focus are essential skills. This role supports data-driven decision making in organizations."}
+      ]
+    },
+    {
+      "field": "Customer Service",
+      "mcq": [
+        {"q": "Customer service heavily prioritizes?", "options": ["Retaining customers", "Playing games", "Washing cars", "Listening to music"], "answer": "Retaining customers"},
+        {"q": "Exceptional service actively builds brand?", "options": ["Trust and loyalty", "Syntax errors", "Background noise", "Process delay"], "answer": "Trust and loyalty"},
+        {"q": "Verbal and written communication must be?", "options": ["Empathetic and clear", "Hostile and confusing", "Completely silent", "Loud and demanding"], "answer": "Empathetic and clear"},
+        {"q": "Escalated client complaints should be swiftly?", "options": ["Ignored and deleted", "Addressed and resolved", "Delayed indefinitely", "Hidden from management"], "answer": "Addressed and resolved"},
+        {"q": "Soliciting user feedback directly drives continuous?", "options": ["Service improvement", "Data entry errors", "System noise", "Shipping delay"], "answer": "Service improvement"},
+        {"q": "Measuring customer satisfaction (CSAT) is considered?", "options": ["Optional", "A key performance metric", "A useless endeavor", "Rarely tracked"], "answer": "A key performance metric"},
+        {"q": "Handling irate users fundamentally requires?", "options": ["Extreme patience diplomacy", "Aggressive anger", "White noise", "Intentional delay"], "answer": "Extreme patience diplomacy"},
+        {"q": "High service quality is synonymous with operational?", "options": ["Excellence", "Errors", "Noise", "Delay"], "answer": "Excellence"},
+        {"q": "When reaching out to support, customers primarily expect?", "options": ["Immediate help and solutions", "Intentional delay", "More errors", "Elevator noise"], "answer": "Immediate help and solutions"},
+        {"q": "A CRM system is designed for tracking and?", "options": ["Managing customer relationships", "Playing video games", "Autonomous driving", "Cooking meals"], "answer": "Managing customer relationships"}
+      ],
+      "fill_blank": [
+        {"q": "Customer service heavily prioritizes retaining ______.", "answer": "customers"},
+        {"q": "Providing good service builds brand ______.", "answer": "trust"},
+        {"q": "Formal complaints must be swiftly ______.", "answer": "resolved"},
+        {"q": "User feedback actively improves the provided ______.", "answer": "service"},
+        {"q": "Client communication should be extremely ______.", "answer": "clear"},
+        {"q": "Tech support needs extreme empathy and ______.", "answer": "patience"},
+        {"q": "Frustrated customers explicitly expect immediate ______.", "answer": "help"},
+        {"q": "Client satisfaction (CSAT) is critically ______.", "answer": "important"},
+        {"q": "Zendesk and Salesforce are used to manage ______.", "answer": "customers"},
+        {"q": "Service quality is measured by operational ______.", "answer": "excellence"}
+      ],
+      "long": [
+        {"q": "Explain the customer service role.", "answer": "Customer service involves assisting customers by addressing their needs, resolving complaints, and providing information. It plays a key role in building trust and maintaining customer satisfaction. Effective communication and patience are essential skills. Customer service professionals use tools like CRM systems to manage interactions. Their goal is to provide excellent service and improve customer experience. Strong service leads to customer loyalty and business growth."}
+      ]
+    },
+    {
+      "field": "Office Support",
+      "mcq": [
+        {"q": "Office support professionals primarily assist?", "options": ["Internal staff and teams", "Video game NPCs", "Race cars", "Music producers"], "answer": "Internal staff and teams"},
+        {"q": "Typical daily tasks prominently include?", "options": ["Routine clerical work", "Competitive gaming", "Commuter driving", "Gourmet cooking"], "answer": "Routine clerical work"},
+        {"q": "Adequate administrative support dramatically improves?", "options": ["Overall team efficiency", "Data entry errors", "HVAC noise", "Project delay"], "answer": "Overall team efficiency"},
+        {"q": "Physical and digital documents must be systematically?", "options": ["Organized and archived", "Lost in transit", "Ignored entirely", "Deleted randomly"], "answer": "Organized and archived"},
+        {"q": "Breakroom and office supplies must be continuously?", "options": ["Managed and restocked", "Ignored until empty", "Lost or stolen", "Hidden from staff"], "answer": "Managed and restocked"},
+        {"q": "Clear inter-office communication is?", "options": ["Critically important", "Useless jargon", "Strictly optional", "Rarely executed"], "answer": "Critically important"},
+        {"q": "Support roles inherently require high levels of?", "options": ["Teamwork and adaptability", "Unintentional delay", "Processing errors", "Audio noise"], "answer": "Teamwork and adaptability"},
+        {"q": "Standard clerical work frequently includes?", "options": ["Data filing and scanning", "Playing computer games", "Driving forklifts", "Cooking for staff"], "answer": "Data filing and scanning"},
+        {"q": "Effective office support ensures an uninterrupted?", "options": ["Smooth workflow", "Chaotic environment", "Shipping delay", "Payroll error"], "answer": "Smooth workflow"},
+        {"q": "Assigned administrative tasks must be reliably?", "options": ["Completed on time", "Ignored by management", "Delayed by weeks", "Lost in emails"], "answer": "Completed on time"}
+      ],
+      "fill_blank": [
+        {"q": "Office support actively helps internal ______.", "answer": "staff"},
+        {"q": "Daily tasks heavily include ______ work.", "answer": "clerical"},
+        {"q": "Critical physical documents must be securely ______.", "answer": "organized"},
+        {"q": "Consumable office supplies must be strictly ______.", "answer": "managed"},
+        {"q": "Inter-departmental communication is highly ______.", "answer": "important"},
+        {"q": "Active teamwork drastically improves office ______.", "answer": "efficiency"},
+        {"q": "Basic clerical tasks include scanning and ______.", "answer": "filing"},
+        {"q": "The core operational workflow must be ______.", "answer": "smooth"},
+        {"q": "Delegated tasks must be successfully ______.", "answer": "completed"},
+        {"q": "Support roles ensure overall workplace ______.", "answer": "productivity"}
+      ],
+      "long": [
+        {"q": "Explain the office support role.", "answer": "Office support involves assisting staff with clerical and administrative tasks to ensure smooth workflow. Responsibilities include filing, managing documents, handling supplies, and supporting daily operations. Communication and teamwork are essential for coordination. Office support staff help maintain organization and efficiency in the workplace. Their role ensures that all administrative tasks are completed effectively, contributing to overall productivity."}
+      ]
+    },
+    {
+      "field": "Project Support",
+      "mcq": [
+        {"q": "Project support coordinators primarily assist?", "options": ["Project Managers and deployments", "Video gamers", "Rental cars", "Live music"], "answer": "Project Managers and deployments"},
+        {"q": "Meticulous project planning heavily ensures?", "options": ["Timeline success", "Immediate failure", "Coding errors", "Intentional delay"], "answer": "Timeline success"},
+        {"q": "Gantt charts and scheduling strictly track?", "options": ["Resource time allocations", "Background noise", "Board games", "Employee cars"], "answer": "Resource time allocations"},
+        {"q": "Comprehensive project documentation is?", "options": ["Legally and functionally important", "Useless paperwork", "Strictly optional", "Rarely archived"], "answer": "Legally and functionally important"},
+        {"q": "Cross-functional coordination heavily involves?", "options": ["Inter-departmental teamwork", "Systematic delay", "Software errors", "White noise"], "answer": "Inter-departmental teamwork"},
+        {"q": "Status update reports accurately show?", "options": ["Sprint progress", "Office noise levels", "Video games won", "Cars parked"], "answer": "Sprint progress"},
+        {"q": "Project milestone deadlines must absolutely be?", "options": ["Met without fail", "Ignored completely", "Delayed indefinitely", "Lost in transit"], "answer": "Met without fail"},
+        {"q": "Stakeholder communication must be exceptionally?", "options": ["Clear and transparent", "Confusing and vague", "Silent", "Loud and hostile"], "answer": "Clear and transparent"},
+        {"q": "Asana and Jira tools greatly help with?", "options": ["Task tracking and assignment", "Playing browser games", "Driving simulations", "Cooking tutorials"], "answer": "Task tracking and assignment"},
+        {"q": "Dedicated project support explicitly ensures?", "options": ["Milestone completion", "Sprint failure", "Vendor delay", "Budget errors"], "answer": "Milestone completion"}
+      ],
+      "fill_blank": [
+        {"q": "Project support teams help manage enterprise ______.", "answer": "projects"},
+        {"q": "Strategic sprint planning ensures deployment ______.", "answer": "success"},
+        {"q": "Gantt chart schedules track resource ______.", "answer": "time"},
+        {"q": "Sprint documentation is functionally ______.", "answer": "important"},
+        {"q": "Cross-functional coordination needs active ______.", "answer": "teamwork"},
+        {"q": "Weekly status reports showcase milestone ______.", "answer": "progress"},
+        {"q": "Strict project deadlines must be actively ______.", "answer": "met"},
+        {"q": "Stakeholder communication should be totally ______.", "answer": "clear"},
+        {"q": "Jira software tools help in defect ______.", "answer": "tracking"},
+        {"q": "Administrative support ensures final ______.", "answer": "completion"}
+      ],
+      "long": [
+        {"q": "Explain the project support role.", "answer": "Project support involves assisting project managers and teams in planning, scheduling, and executing tasks. It includes maintaining documentation, tracking progress, and ensuring deadlines are met. Effective communication and coordination are essential for success. Project support staff use tools to monitor performance and manage workflows. Their role ensures projects are completed efficiently and meet organizational goals. Strong organizational and teamwork skills are required."}
+      ]
+    }
+  ]
+}

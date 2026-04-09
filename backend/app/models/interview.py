@@ -2,6 +2,7 @@
 Interview Model - scheduling and tracking interviews
 """
 from sqlalchemy import Column, String, Integer, Text, DateTime, JSON, ForeignKey
+from sqlalchemy.orm import relationship
 import uuid
 from datetime import datetime
 from app.core.database import Base
@@ -13,6 +14,10 @@ class Interview(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
     application_id = Column(String(36), ForeignKey("applications.id"), nullable=False, index=True)
+    
+    # Relationships
+    application = relationship("Application", back_populates="interviews")
+    
     recruiter_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
     candidate_id = Column(String(36), ForeignKey("candidates.id"), nullable=False, index=True)
 

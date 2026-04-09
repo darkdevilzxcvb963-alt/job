@@ -30,8 +30,10 @@ class NotificationService:
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(url, headers=headers, json=payload)
-                response.raise_for_status()
+                response = await client.post(url, headers=headers, json=payload, timeout=10.0)
+                if response.status_code >= 400:
+                    logger.error(f"OneSignal Error {response.status_code}: {response.text}")
+                    return False
                 logger.info(f"OneSignal notification sent: {response.json()}")
                 return True
         except Exception as e:
@@ -54,7 +56,8 @@ class NotificationService:
         # Try OneSignal first
         if settings.ONESIGNAL_APP_ID and settings.ONESIGNAL_REST_API_KEY:
             payload = {
-                "email_to_address": to_email,
+                "target_channel": "email",
+                "include_email_tokens": [to_email.lower().strip()],
                 "email_subject": subject,
                 "email_body": html_body
             }
@@ -76,7 +79,7 @@ class NotificationService:
             import functools
 
             def sync_send():
-                with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
+                with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT, timeout=10) as server:
                     server.ehlo()
                     if settings.MAIL_TLS:
                         server.starttls()
@@ -97,8 +100,8 @@ class NotificationService:
         # Try OneSignal first
         if settings.ONESIGNAL_APP_ID and settings.ONESIGNAL_REST_API_KEY:
             payload = {
-                "sms_from": settings.TWILIO_PHONE_NUMBER, # OneSignal might need a sender name or number
-                "sms_to_number": to_phone.strip(),
+                "sms_from": settings.TWILIO_PHONE_NUMBER, 
+                "include_phone_numbers": [to_phone.strip()],
                 "contents": {"en": message}
             }
             if await self._send_onesignal_request(payload):
@@ -117,9 +120,11 @@ class NotificationService:
             
             def sync_sms():
                 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+                # Ensure we have a valid from number
+                from_num = settings.TWILIO_PHONE_NUMBER or "+1234567890" # Example fallback
                 client.messages.create(
                     body=message,
-                    from_=settings.TWILIO_PHONE_NUMBER,
+                    from_=from_num,
                     to=to_phone.strip()
                 )
 

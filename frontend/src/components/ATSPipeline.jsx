@@ -12,7 +12,7 @@ const COLUMNS = [
     { id: 'rejected', label: 'Rejected' },
 ];
 
-const ATSPipeline = ({ matches, onStatusUpdate }) => {
+const ATSPipeline = ({ matches, onStatusUpdate, onSchedule }) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation(
@@ -72,6 +72,16 @@ const ATSPipeline = ({ matches, onStatusUpdate }) => {
                                                 <option key={c.id} value={c.id}>{c.label}</option>
                                             ))}
                                         </select>
+                                        
+                                        {match.status === 'interview' && (
+                                            <button 
+                                                className="btn-action-small btn-schedule"
+                                                onClick={() => onSchedule(match)}
+                                                title="Schedule Interview"
+                                            >
+                                                📅 Schedule
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}

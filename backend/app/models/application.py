@@ -21,6 +21,7 @@ class Application(Base):
     applied_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    match = relationship("Match", backref="application")
+    match = relationship("Match", back_populates="application")
     candidate = relationship("Candidate", backref="applications")
-    job = relationship("Job", backref="applications")
+    job = relationship("Job", back_populates="applications")
+    interviews = relationship("Interview", back_populates="application", cascade="all, delete-orphan")

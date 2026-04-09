@@ -1,7 +1,7 @@
 import requests
 import json
 
-base_url = "http://localhost:8012/api/v1"
+base_url = "http://localhost:8001/api/v1"
 
 def test_signup():
     url = f"{base_url}/auth/signup"

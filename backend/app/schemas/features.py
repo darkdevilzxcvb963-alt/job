@@ -84,6 +84,9 @@ class MessageResponse(BaseModel):
     
     class Config:
         from_attributes = True
+        json_encoders = {
+            datetime: lambda v: v.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+        }
 
 class ConversationSummary(BaseModel):
     other_user_id: str

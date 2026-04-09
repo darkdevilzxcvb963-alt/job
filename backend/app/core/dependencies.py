@@ -31,7 +31,7 @@ async def get_user_from_token(token: str, db: Session) -> User:
         logger.warning(f"User not found in database for ID: {user_id}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
+            detail="User found in token but not in database"
         )
     
     if not user.is_active:
@@ -39,6 +39,13 @@ async def get_user_from_token(token: str, db: Session) -> User:
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is inactive"
         )
+        
+    # Auto-verify if email service is not configured (Simplified Auth mode)
+    from app.core.config import settings
+    if not user.is_verified and (not settings.MAIL_USERNAME or not settings.MAIL_PASSWORD):
+        user.is_verified = True
+        db.commit()
+        db.refresh(user)
     
     return user
 

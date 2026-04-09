@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { verifyMFA } from '../services/api'
 import '../styles/Signup.css'
 
 function Signup() {
@@ -18,6 +19,9 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [showMfa, setShowMfa] = useState(false)
+  const [mfaCode, setMfaCode] = useState('')
+  const [mfaToken, setMfaToken] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { signup, loginWithGoogle } = useAuth()
@@ -125,35 +129,70 @@ function Signup() {
     const result = await signup(signupData)
 
     if (result.success) {
-      setSuccess(true)
-      setSuccessMessage(`Welcome, ${formData.full_name}! Your account has been created successfully. Redirecting to login...`)
-      setTimeout(() => {
-        navigate('/login')
-      }, 3000)
+      const respData = result.data;
+      if (respData.mfa_required) {
+        setMfaToken(respData.mfa_token)
+        setShowMfa(true)
+        setSuccessMessage('Account created! Please verify your identity with the OTP sent to your email.')
+      } else {
+        setSuccess(true)
+        setSuccessMessage(`Welcome! Your account has been created successfully. Redirecting to login...`)
+        setTimeout(() => navigate('/login'), 2000)
+      }
     } else {
-      console.error('Signup failed:', result.error)
-      setErrors({ submit: result.error || 'Signup failed. Please try again. If the error persists, make sure the backend server is running at http://127.0.0.1:8000' })
+      setErrors({ submit: result.error || 'Signup failed. Please try again.' })
     }
-
     setLoading(false)
+  }
+
+  const handleMfaVerify = async (e) => {
+    e.preventDefault()
+    setErrors({})
+    setLoading(true)
+    try {
+      const response = await verifyMFA({ mfa_token: mfaToken, code: mfaCode })
+      const { access_token, refresh_token, user } = response.data
+      
+      localStorage.setItem('access_token', access_token)
+      localStorage.setItem('refresh_token', refresh_token)
+      localStorage.setItem('user', JSON.stringify(user))
+      
+      setSuccess(true)
+      setSuccessMessage(`Verification successful! Welcome, ${user.full_name}.`)
+      
+      setTimeout(() => {
+        if (user.role === 'admin') navigate('/admin')
+        else if (user.role === 'recruiter') navigate('/jobs')
+        else navigate('/candidate')
+        window.location.reload()
+      }, 2000)
+    } catch (err) {
+      setErrors({ mfa: err.response?.data?.detail || 'Invalid or expired verification code.' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true)
     setErrors({})
 
-    // Pass the selected role to the Google login handler
     const result = await loginWithGoogle(credentialResponse.credential, formData.role)
 
     if (result.success) {
-      setSuccess(true)
-      setSuccessMessage(`Welcome, ${result.user.full_name}! You've successfully signed up with Google. Redirecting...`)
-      setTimeout(() => {
-        // Redirect based on role
-        if (result.user.role === 'admin') navigate('/admin')
-        else if (result.user.role === 'recruiter') navigate('/jobs')
-        else navigate('/candidate')
-      }, 2000)
+      // Check if MFA is required (for new Google signups)
+      if (result.mfa_required) {
+        setMfaToken(result.mfa_token)
+        setShowMfa(true)
+      } else {
+        setSuccess(true)
+        setSuccessMessage(`Welcome! You've successfully signed up with Google.`)
+        setTimeout(() => {
+          if (result.user.role === 'admin') navigate('/admin')
+          else if (result.user.role === 'recruiter') navigate('/jobs')
+          else navigate('/candidate')
+        }, 2000)
+      }
     } else {
       setErrors({ submit: result.error })
     }
@@ -299,33 +338,77 @@ function Signup() {
             {errors.role && <span className="field-error">{errors.role}</span>}
           </div>
 
-          <div className="google-divider">OR</div>
 
-          <div className="google-login-container">
-            {import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID' ? (
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                text="signup_with"
-                useOneTap
-                theme="outline"
-                size="large"
-                width="100%"
-              />
-            ) : (
-              <div className="google-status-error">
-                <p>Sign up with Google is currently unavailable (Unconfigured)</p>
+          {!showMfa ? (
+            <>
+              <button
+                type="submit"
+                disabled={loading}
+                className="submit-button"
+              >
+                {loading ? 'Creating Account...' : 'Sign Up'}
+              </button>
+              
+              <div className="google-divider">OR</div>
+              <div className="google-login-container">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  text="signup_with"
+                  useOneTap
+                  theme="outline"
+                  size="large"
+                  width="100%"
+                />
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="mfa-signup-section animate-slide-up">
+              <div className="mfa-header-compact">
+                <ShieldCheck size={32} className="mfa-icon" />
+                <label>Verify Your Account</label>
+              </div>
+              <p className="mfa-instruction">
+                We've sent a 6-digit code to your email to complete your registration.
+              </p>
+              
+              {errors.mfa && <div className="field-error">{errors.mfa}</div>}
+              
+              <div className="otp-input-container">
+                <input
+                  type="text"
+                  value={mfaCode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    if (val.length <= 6) setMfaCode(val);
+                  }}
+                  required
+                  maxLength={6}
+                  placeholder="000000"
+                  className="otp-input"
+                  autoFocus
+                />
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="submit-button"
-          >
-            {loading ? 'Creating Account...' : 'Sign Up'}
-          </button>
+              <button 
+                type="button" 
+                className="submit-button"
+                onClick={handleMfaVerify}
+                disabled={loading || mfaCode.length !== 6}
+              >
+                {loading ? 'Verifying...' : 'Complete Registration'}
+              </button>
+              
+              <button 
+                type="button" 
+                className="btn-link-small" 
+                style={{ marginTop: '1rem', width: '100%' }}
+                onClick={() => setShowMfa(false)}
+              >
+                Back to signup
+              </button>
+            </div>
+          )}
 
           <div className="form-footer">
             <p>Already have an account? <Link to="/login">Login here</Link></p>

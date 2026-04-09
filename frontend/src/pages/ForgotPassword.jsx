@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotify } from '../contexts/NotifyContext'
 import '../styles/ForgotPassword.css'
 
 function ForgotPassword() {
+  const { success: notifySuccess } = useNotify()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -81,7 +83,7 @@ function ForgotPassword() {
                   className="copy-button"
                   onClick={() => {
                     navigator.clipboard.writeText(devResetLink)
-                    alert('Link copied to clipboard!')
+                    notifySuccess('Link copied to clipboard!')
                   }}
                 >
                   Copy Link

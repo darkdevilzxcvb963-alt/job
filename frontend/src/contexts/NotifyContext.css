@@ -1,0 +1,187 @@
+/* ==============================
+   Global Notify System Styles
+   ============================== */
+
+/* Toast Stack — fixed bottom-right */
+.notify-toast-stack {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 380px;
+  pointer-events: none;
+}
+
+.notify-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.45;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0,0,0,0.15);
+  pointer-events: all;
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  border: 1px solid rgba(255,255,255,0.1);
+  word-break: break-word;
+}
+
+@keyframes toastSlideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.notify-toast--success {
+  background: rgba(16, 185, 129, 0.18);
+  color: #d1fae5;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.notify-toast--error {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fee2e2;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.notify-toast--warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fef3c7;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.notify-toast--info {
+  background: rgba(99, 102, 241, 0.18);
+  color: #e0e7ff;
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.notify-toast__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notify-toast__msg {
+  flex: 1;
+}
+
+.notify-toast__close {
+  background: none;
+  border: none;
+  color: currentColor;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: opacity 0.2s;
+  margin-top: 1px;
+}
+.notify-toast__close:hover { opacity: 1; }
+
+/* Confirm Dialog */
+.notify-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeOverlay 0.2s ease both;
+}
+
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.notify-confirm {
+  background: #1e2030;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 2rem 2.25rem;
+  width: min(420px, 90vw);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: confirmPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  text-align: center;
+}
+
+@keyframes confirmPop {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.notify-confirm__icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.notify-confirm__msg {
+  font-size: 1rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+}
+
+.notify-confirm__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.notify-confirm__btn {
+  padding: 0.65rem 1.75rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.notify-confirm__btn--cancel {
+  background: rgba(255,255,255,0.08);
+  color: #94a3b8;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.notify-confirm__btn--cancel:hover {
+  background: rgba(255,255,255,0.14);
+  color: #e2e8f0;
+}
+
+.notify-confirm__btn--ok {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+}
+.notify-confirm__btn--ok:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99,102,241,0.5);
+}
+
+.notify-prompt__msg {
+  margin-bottom: 1rem;
+}
+
+.notify-prompt__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.notify-prompt__input:focus {
+  border-color: #6366f1;
+}

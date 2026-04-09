@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
-function ProtectedRoute({ children, requireVerified = true, allowedRoles = [] }) {
+function ProtectedRoute({ children, requireVerified = false, allowedRoles = [] }) {
   const { isAuthenticated, user, loading } = useAuth()
 
   if (loading) {

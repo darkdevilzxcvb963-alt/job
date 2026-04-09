@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 from loguru import logger
 from app.core.database import get_db, SessionLocal
+from app.core.dependencies import get_current_user
 from app.models.candidate import Candidate
-from app.models.user import User
+from app.models.user import User, CandidateProfile
 from app.schemas.candidate import CandidateCreate, CandidateResponse, CandidateUpdate, ProcessResumeRequest
 from app.services.resume_parser import ResumeParser
 from app.services.nlp_processor import NLPProcessor
@@ -15,6 +16,7 @@ from app.services.llm_service import LLMService
 from app.services.matching_engine import MatchingEngine
 from app.models.job import Job
 from app.models.match import Match
+from app.services.vector_store_service import vector_store
 from app.core.config import settings
 import os
 import shutil
@@ -56,11 +58,8 @@ def generate_matches_task(candidate_id: str):
         if not candidate or not candidate.resume_text:
             return
 
-        nlp_processor = NLPProcessor(
-            spacy_model=settings.SPACY_MODEL,
-            embedding_model=settings.SENTENCE_TRANSFORMER_MODEL
-        )
-        llm_service = LLMService()
+        nlp_processor = get_nlp_processor()
+        llm_service = get_llm_service()
         matching_engine = MatchingEngine()
 
         # Phase 1: Heavy AI work (Backgrounded)
@@ -74,17 +73,30 @@ def generate_matches_task(candidate_id: str):
         
         db.commit()
 
-        # Phase 2: Rapid numerical matching
+        # Phase 2: Rapid numerical matching (Optimized with VectorStore)
         active_jobs = db.query(Job).filter(Job.is_active == True).all()
+        
+        # Build Vector Index for Jobs on the fly (or reuse if persistent)
+        job_data_list = []
+        for job in active_jobs:
+            if job.job_embedding:
+                job_data_list.append({"id": job.id, "embedding": job.job_embedding})
+        
+        vector_store.update_job_index(job_data_list)
+        
         candidate_data = {
             "embedding": candidate.resume_embedding,
             "skills": candidate.skills or [].copy() if isinstance(candidate.skills, list) else candidate.skills or {},
             "experience_years": candidate.experience_years or 0
         }
         
+        # Find similar jobs using spatial index
+        similar_jobs = vector_store.find_similar_jobs(candidate.resume_embedding, top_k=50)
+        
         match_results = []
-        for job in active_jobs:
-            if not job.job_embedding: continue
+        for sim in similar_jobs:
+            job = db.query(Job).filter(Job.id == sim["id"]).first()
+            if not job: continue
             
             existing_match = db.query(Match).filter(
                 Match.candidate_id == candidate.id,
@@ -110,6 +122,8 @@ def generate_matches_task(candidate_id: str):
         
         db.commit()
         
+        db.commit()
+
         # Phase 3: Prioritized AI Explanations for Top 10
         match_results.sort(key=lambda x: x[1]["overall_score"], reverse=True)
         for db_match, scores, job_data in match_results[:10]:
@@ -121,6 +135,15 @@ def generate_matches_task(candidate_id: str):
                 logger.error(f"Error in background match explanation: {e}")
         
         db.commit()
+
+        # Sync with CandidateProfile if available (ensures profile strength is updated)
+        user = db.query(User).filter(User.email == candidate.email).first()
+        if user and user.candidate_profile:
+            user.candidate_profile.skills = candidate.skills
+            # user.candidate_profile.headline = candidate.seniority_level  # Optional sync
+            db.commit()
+            logger.info(f"Synced Candidate data to CandidateProfile for {candidate.email}")
+            
         logger.info(f"Background processing complete for candidate {candidate_id}")
         
     except Exception as e:
@@ -161,12 +184,20 @@ async def get_candidates(
     email: str = None,
     skip: int = 0,
     limit: int = 100,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get all candidates or filter by email"""
+    """Get candidates (filtered for recruiters to their own job matches if applicable)"""
     query = db.query(Candidate)
+    
+    # Filter by recruiter's job matches if not admin
+    if current_user.role == "recruiter":
+        # Only show candidates who have a match with one of the recruiter's jobs
+        query = query.join(Match).join(Job).filter(Job.recruiter_id == current_user.id).distinct()
+        
     if email:
         query = query.filter(Candidate.email == email)
+        
     candidates = query.offset(skip).limit(limit).all()
     return candidates
 
@@ -265,6 +296,15 @@ def process_resume(
             categorized_skills = {cat: [] for cat in nlp_processor.skill_keywords.keys()} if hasattr(nlp_processor, 'skill_keywords') else {}
         else:
             categorized_skills = nlp_processor.extract_skills_categorized(resume_text)
+            
+            # Fallback to LLM if local extraction finds nothing but text is present
+            total_skills = sum(len(skills) for skills in categorized_skills.values())
+            if total_skills == 0 and len(resume_text.strip()) > 50:
+                logger.info(f"Local NLP found 0 skills for {candidate.name}. Falling back to LLM extraction.")
+                llm_skills = llm_service.extract_skills_categorized(resume_text)
+                if any(len(s) > 0 for s in llm_skills.values()):
+                    categorized_skills = llm_skills
+                    logger.info(f"LLM successfully extracted {sum(len(s) for s in llm_skills.values())} skills as fallback.")
         
         # Organize resume file into candidate-specific folder (only if file exists)
         final_file_path = file_path
@@ -313,7 +353,9 @@ def process_resume(
             "skills_by_category": categorized_skills,
             "summary": "Generating in background...",
             "debug_text_len": len(resume_text),
-            "file_path": final_file_path
+            "file_path": final_file_path,
+            "extraction_method": parsed_data.get("extraction_method", "unknown") if file_found else "database",
+            "warning": parsed_data.get("warning") if file_found else None
         }
     except HTTPException:
         raise
@@ -383,6 +425,16 @@ async def upload_and_analyze_resume(
              
         categorized_skills = nlp_processor.extract_skills_categorized(resume_text)
         
+        # Fallback to LLM if local extraction finds nothing but text is present
+        total_skills_local = sum(len(skills) for skills in categorized_skills.values())
+        if total_skills_local == 0 and len(resume_text.strip()) > 50:
+            logger.info(f"Local NLP found 0 skills for {candidate.name}. Falling back to LLM extraction.")
+            llm_service = get_llm_service()
+            llm_skills = llm_service.extract_skills_categorized(resume_text)
+            if any(len(s) > 0 for s in llm_skills.values()):
+                categorized_skills = llm_skills
+                logger.info(f"LLM successfully extracted {sum(len(s) for s in llm_skills.values())} skills as fallback.")
+        
         # 3. Update Candidate
         candidate.skills = categorized_skills
         candidate.resume_text = resume_text
@@ -407,7 +459,10 @@ async def upload_and_analyze_resume(
             "skills_extracted": total_skills,
             "skills": all_skills_flat,
             "skills_by_category": categorized_skills,
-            "file_path": file_path
+            "debug_text_len": len(resume_text),
+            "extraction_method": parsed_data.get("extraction_method", "unknown"),
+            "file_path": file_path,
+            "warning": parsed_data.get("warning")
         }
 
     except HTTPException:

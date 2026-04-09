@@ -89,6 +89,16 @@ export const refreshToken = (refreshToken) =>
 export const changePassword = (data) => api.post('/auth/change-password', data)
 export const updateMe = (data) => api.patch('/auth/me', data)
 
+// Advanced Auth APIs
+export const sendOTP = (data) => api.post('/auth/send-otp', data)
+export const verifyOTP = (data) => api.post('/auth/verify-otp', data)
+export const verifyMFA = (data) => api.post('/auth/mfa/verify', data)
+export const enableMFA = () => api.post('/auth/mfa/setup')
+export const disableMFA = () => api.post('/auth/mfa/disable')
+export const getActiveSessions = () => api.get('/auth/sessions')
+export const revokeSession = (sessionId) => api.delete(`/auth/sessions/${sessionId}`)
+
+
 // Admin APIs
 export const adminResetPassword = (userId, newPassword) =>
   api.post(`/admin/users/${userId}/reset-password`, { new_password: newPassword })
@@ -106,6 +116,8 @@ export const createCandidate = (data) => api.post('/candidates', data)
 export const getCandidates = (params) => api.get('/candidates', { params })
 export const getCandidate = (id) => api.get(`/candidates/${id}`)
 export const updateCandidate = (id, data) => api.put(`/candidates/${id}`, data)
+export const getRecruiterProfile = () => api.get('/profiles/recruiter/me')
+export const updateRecruiterProfile = (data) => api.post('/profiles/recruiter/me', data)
 export const processResume = (candidateId, filePath) =>
   api.post(`/candidates/${candidateId}/process-resume`, { file_path: filePath })
 
@@ -129,6 +141,7 @@ export const createJob = (data) => api.post('/jobs', data)
 export const getJobs = () => api.get('/jobs')
 export const getJob = (id) => api.get(`/jobs/${id}`)
 export const updateJob = (id, data) => api.put(`/jobs/${id}`, data)
+export const deleteJob = (id) => api.delete(`/jobs/${id}`)
 
 // Match APIs
 export const createMatch = (candidateId, jobId) =>
@@ -183,6 +196,21 @@ export const uploadResume = (formData) => {
     uploadApi.defaults.headers.common['Authorization'] = `Bearer ${token}`
   }
   return uploadApi.post('/upload/resume', formData)
+}
+
+export const uploadProfilePicture = (formData) => {
+  const uploadApi = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 30000,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  const token = localStorage.getItem('access_token')
+  if (token) {
+    uploadApi.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }
+  return uploadApi.post('/upload/profile-picture', formData)
 }
 
 export const getSelectionStats = () => api.get('/matches/selection-stats')
@@ -244,5 +272,63 @@ export const removeFromShortlist = (shortlistId, candidateId) =>
 // Resume Scoring API
 export const scoreResume = (candidateId, jobId) =>
   api.post('/ai/score-resume', null, { params: { candidate_id: candidateId, job_id: jobId } })
+
+// ========== PROFILE SETTINGS APIs ==========
+
+// Experience
+export const getExperiences = () => api.get('/settings/experience')
+export const addExperience = (data) => api.post('/settings/experience', data)
+export const updateExperience = (id, data) => api.put(`/settings/experience/${id}`, data)
+export const deleteExperience = (id) => api.delete(`/settings/experience/${id}`)
+
+// Education
+export const getEducation = () => api.get('/settings/education')
+export const addEducation = (data) => api.post('/settings/education', data)
+export const updateEducation = (id, data) => api.put(`/settings/education/${id}`, data)
+export const deleteEducation = (id) => api.delete(`/settings/education/${id}`)
+
+// Projects
+export const getProjects = () => api.get('/settings/projects')
+export const addProject = (data) => api.post('/settings/projects', data)
+export const updateProject = (id, data) => api.put(`/settings/projects/${id}`, data)
+export const deleteProject = (id) => api.delete(`/settings/projects/${id}`)
+
+// Certifications
+export const getCertifications = () => api.get('/settings/certifications')
+export const addCertification = (data) => api.post('/settings/certifications', data)
+export const updateCertification = (id, data) => api.put(`/settings/certifications/${id}`, data)
+export const deleteCertification = (id) => api.delete(`/settings/certifications/${id}`)
+
+// Job Preferences
+export const getJobPreferences = () => api.get('/settings/preferences')
+export const updateJobPreferences = (data) => api.put('/settings/preferences', data)
+
+// AI Settings
+export const getAISettings = () => api.get('/settings/ai')
+export const updateAISettings = (data) => api.put('/settings/ai', data)
+
+// Notification Preferences
+export const getNotificationPrefs = () => api.get('/settings/notifications')
+export const updateNotificationPrefs = (data) => api.put('/settings/notifications', data)
+
+// Privacy Settings
+export const getPrivacySettingsApi = () => api.get('/settings/privacy')
+export const updatePrivacySettingsApi = (data) => api.put('/settings/privacy', data)
+
+// Profile Strength / Completeness
+export const getProfileStrength = () => api.get('/settings/profile-strength')
+export const getProfileCompleteness = () => api.get('/intelligence/completeness')
+export const getSkillGapsAnalysis = (jobId) => api.get(`/intelligence/gaps/${jobId}`)
+export const getCareerSuggestionsApi = () => api.get('/intelligence/suggestions')
+export const completeCareerSuggestionApi = (id) => api.post(`/intelligence/suggestions/${id}/complete`)
+
+
+// AI Trainer & Interview Intelligence APIs
+export const generateTrainingPlan = (params) => api.post('/training/generate', null, { params })
+export const getTrainingStatus = () => api.get('/training/status')
+export const evaluateAnswer = (question, answer, matchId) => 
+  api.post('/training/generate', null, { 
+    params: { match_id: matchId, question, answer } 
+  })
 
 export default api

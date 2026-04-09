@@ -12,15 +12,25 @@ import VerifyEmail from './pages/VerifyEmail'
 import CandidateDashboard from './pages/CandidateDashboard'
 import JobPosting from './pages/JobPosting'
 import Matches from './pages/Matches'
-import AdminDashboard from './pages/AdminDashboard'
 import Profile from './pages/Profile'
+import ProfileSettings from './pages/ProfileSettings'
+import CareerDashboard from './pages/CareerDashboard'
+import TrainingDashboard from './pages/TrainingDashboard'
+
+import AnalyticsDashboard from './pages/AnalyticsDashboard'
+import AllTalent from './pages/AllTalent'
+import ActiveRoles from './pages/ActiveRoles'
+import AdminDashboard from './pages/AdminDashboard'
 import MessageCenter from './components/MessageCenter'
 import MessageSidebar from './components/MessageSidebar'
 import { MessagingProvider } from './contexts/MessagingContext'
+ import { NotifyProvider } from './contexts/NotifyContext'
 import { useAuth } from './contexts/AuthContext'
 import useOneSignal from './hooks/useOneSignal'
 import './styles/App.css'
 import './styles/Features.css'
+
+import ErrorBoundary from './components/ErrorBoundary'
 
 const queryClient = new QueryClient()
 
@@ -33,12 +43,14 @@ function OneSignalInitializer() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <OneSignalInitializer />
-        <MessagingProvider>
-          <Router>
-            <div className="App">
-              <MessageSidebar />
+      <ErrorBoundary>
+        <AuthProvider>
+          <NotifyProvider>
+            <OneSignalInitializer />
+            <MessagingProvider>
+              <Router>
+              <div className="App">
+                <MessageSidebar />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<div className="auth-page-wrapper"><Navbar /><div className="auth-content"><Login /></div></div>} />
@@ -49,7 +61,7 @@ function App() {
                 <Route
                   path="/candidate"
                   element={
-                    <ProtectedRoute requireVerified={true} allowedRoles={['job_seeker']}>
+                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker']}>
                       <><Navbar /><CandidateDashboard /></>
                     </ProtectedRoute>
                   }
@@ -57,7 +69,7 @@ function App() {
                 <Route
                   path="/jobs"
                   element={
-                    <ProtectedRoute requireVerified={true} allowedRoles={['recruiter']}>
+                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter']}>
                       <><Navbar /><JobPosting /></>
                     </ProtectedRoute>
                   }
@@ -65,16 +77,40 @@ function App() {
                 <Route
                   path="/matches"
                   element={
-                    <ProtectedRoute requireVerified={true}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><Matches /></>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/analytics"
+                  element={
+                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                      <><Navbar /><AnalyticsDashboard /></>
                     </ProtectedRoute>
                   }
                 />
                 <Route
                   path="/admin"
                   element={
-                    <ProtectedRoute requireVerified={true} allowedRoles={['admin']}>
+                    <ProtectedRoute requireVerified={false} allowedRoles={['admin']}>
                       <><Navbar /><AdminDashboard /></>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/all-talent"
+                  element={
+                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                      <><Navbar /><AllTalent /></>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/active-roles"
+                  element={
+                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                      <><Navbar /><ActiveRoles /></>
                     </ProtectedRoute>
                   }
                 />
@@ -87,18 +123,45 @@ function App() {
                   }
                 />
                 <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute requireVerified={false}>
+                      <><Navbar /><ProfileSettings /></>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/messages"
                   element={
-                    <ProtectedRoute requireVerified={true}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><div style={{maxWidth:'900px',margin:'24px auto',padding:'0 16px'}}><MessageCenter /></div></>
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/career-dashboard"
+                  element={
+                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker']}>
+                      <><Navbar /><CareerDashboard /></>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/training/:matchId"
+                  element={
+                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker', 'recruiter', 'admin']}>
+                      <><Navbar /><TrainingDashboard /></>
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
-            </div>
-          </Router>
-        </MessagingProvider>
-      </AuthProvider>
+
+              </div>
+            </Router>
+          </MessagingProvider>
+          </NotifyProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </QueryClientProvider>
   )
 }

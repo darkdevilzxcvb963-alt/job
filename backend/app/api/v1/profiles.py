@@ -26,10 +26,11 @@ async def get_candidate_profile(
     db: Session = Depends(get_db)
 ):
     """Get current candidate profile"""
-    if current_user.role != UserRole.JOB_SEEKER:
+    if current_user.role not in [UserRole.JOB_SEEKER.value, UserRole.ADMIN.value]:
+        logger.warning(f"Permission denied for get_candidate_profile: user {current_user.email} has role {current_user.role}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only job seekers can access candidate profiles"
+            detail="Only candidates can access candidate profiles"
         )
     
     candidate = db.query(CandidateProfile).filter(CandidateProfile.user_id == current_user.id).first()
@@ -49,10 +50,11 @@ async def create_or_update_candidate_profile(
     db: Session = Depends(get_db)
 ):
     """Create or update candidate profile"""
-    if current_user.role != UserRole.JOB_SEEKER:
+    if current_user.role not in [UserRole.JOB_SEEKER.value, UserRole.ADMIN.value]:
+        logger.warning(f"Permission denied for create_or_update_candidate_profile: user {current_user.email} has role {current_user.role}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only job seekers can create candidate profiles"
+            detail="Only candidates can create candidate profiles"
         )
     
     candidate = db.query(CandidateProfile).filter(CandidateProfile.user_id == current_user.id).first()
@@ -68,13 +70,13 @@ async def create_or_update_candidate_profile(
     if profile_data.years_of_experience is not None:
         candidate.years_of_experience = profile_data.years_of_experience
     if profile_data.skills is not None:
-        candidate.skills = json.dumps(profile_data.skills)
+        candidate.skills = profile_data.skills
     if profile_data.expertise_areas is not None:
-        candidate.expertise_areas = json.dumps(profile_data.expertise_areas)
+        candidate.expertise_areas = profile_data.expertise_areas
     if profile_data.preferred_locations is not None:
-        candidate.preferred_locations = json.dumps(profile_data.preferred_locations)
+        candidate.preferred_locations = profile_data.preferred_locations
     if profile_data.preferred_job_types is not None:
-        candidate.preferred_job_types = json.dumps(profile_data.preferred_job_types)
+        candidate.preferred_job_types = profile_data.preferred_job_types
     if profile_data.salary_expectation_min is not None:
         candidate.salary_expectation_min = profile_data.salary_expectation_min
     if profile_data.salary_expectation_max is not None:
@@ -124,7 +126,7 @@ async def get_recruiter_profile(
     db: Session = Depends(get_db)
 ):
     """Get current recruiter profile"""
-    if current_user.role != UserRole.RECRUITER:
+    if current_user.role != UserRole.RECRUITER.value:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only recruiters can access recruiter profiles"
@@ -147,16 +149,22 @@ async def create_or_update_recruiter_profile(
     db: Session = Depends(get_db)
 ):
     """Create or update recruiter profile"""
-    if current_user.role != UserRole.RECRUITER:
+    # Allow both recruiters and admins to manage recruiter profiles
+    logger.info(f"Updating recruiter profile for user: {current_user.email}, role: {current_user.role}")
+    if current_user.role not in [UserRole.RECRUITER.value, UserRole.ADMIN.value]:
+        logger.warning(f"Permission denied for recruiter profile update: user {current_user.email} has role {current_user.role}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only recruiters can create recruiter profiles"
+            detail=f"Only recruiters can create recruiter profiles (your role: {current_user.role})"
         )
     
     recruiter = db.query(RecruiterProfile).filter(RecruiterProfile.user_id == current_user.id).first()
+    logger.info(f"Existing recruiter profile found: {recruiter is not None}")
     
     if not recruiter:
+        logger.info("Creating new recruiter profile")
         if not profile_data.company_name:
+            logger.warning("Missing company name for new recruiter profile")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Company name is required for new recruiter profiles"
@@ -168,32 +176,61 @@ async def create_or_update_recruiter_profile(
         )
         db.add(recruiter)
     
-    # Update fields if provided
-    if profile_data.company_name is not None:
-        recruiter.company_name = profile_data.company_name
-    if profile_data.company_website is not None:
-        recruiter.company_website = profile_data.company_website
-    if profile_data.company_description is not None:
-        recruiter.company_description = profile_data.company_description
-    if profile_data.company_size is not None:
-        recruiter.company_size = profile_data.company_size
-    if profile_data.company_industry is not None:
-        recruiter.company_industry = profile_data.company_industry
-    if profile_data.job_title is not None:
-        recruiter.job_title = profile_data.job_title
-    if profile_data.department is not None:
-        recruiter.department = profile_data.department
-    
-    # Update user profile data
-    if profile_data.bio is not None:
-        current_user.bio = profile_data.bio
-    if profile_data.location is not None:
-        current_user.location = profile_data.location
-    
-    recruiter.updated_at = datetime.utcnow()
-    
-    db.commit()
-    db.refresh(recruiter)
-    
-    logger.info(f"Recruiter profile updated for user: {current_user.email}")
-    return recruiter
+    try:
+        # Update fields if provided
+        if profile_data.company_name is not None:
+            recruiter.company_name = profile_data.company_name
+        if profile_data.company_website is not None:
+            recruiter.company_website = profile_data.company_website
+        if profile_data.company_description is not None:
+            recruiter.company_description = profile_data.company_description
+        if profile_data.company_size is not None:
+            recruiter.company_size = profile_data.company_size
+        if profile_data.company_industry is not None:
+            recruiter.company_industry = profile_data.company_industry
+        if profile_data.job_title is not None:
+            recruiter.job_title = profile_data.job_title
+        if profile_data.department is not None:
+            recruiter.department = profile_data.department
+        
+        # Update user profile data
+        if profile_data.bio is not None:
+            current_user.bio = profile_data.bio
+        if profile_data.location is not None:
+            current_user.location = profile_data.location
+        
+        # Update hiring preferences
+        logger.info("Updating JSON hiring preferences")
+        if profile_data.roles_hiring_for is not None:
+            recruiter.roles_hiring_for = profile_data.roles_hiring_for
+        if profile_data.experience_range is not None:
+            recruiter.experience_range = profile_data.experience_range
+        if profile_data.job_types is not None:
+            recruiter.job_types = profile_data.job_types
+        if profile_data.work_modes is not None:
+            recruiter.work_modes = profile_data.work_modes
+            
+        # Update job defaults
+        if profile_data.default_skills is not None:
+            recruiter.default_skills = profile_data.default_skills
+        if profile_data.default_location is not None:
+            recruiter.default_location = profile_data.default_location
+        if profile_data.default_deadline is not None:
+            recruiter.default_deadline = profile_data.default_deadline
+        
+        recruiter.updated_at = datetime.utcnow()
+        
+        db.commit()
+        db.refresh(recruiter)
+        
+        logger.info(f"Recruiter profile updated for user: {current_user.email}")
+        return recruiter
+    except Exception as e:
+        import traceback
+        error_tb = traceback.format_exc()
+        logger.error(f"Failed to update recruiter profile: {str(e)}\n{error_tb}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal error saving profile: {str(e)}"
+        )

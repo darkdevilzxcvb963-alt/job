@@ -5,11 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    open: false,
     middlewareMode: false,
     hmr: {
       protocol: 'ws',
-      host: 'localhost',
-      port: 3000
     },
     watch: {
       usePolling: true,
@@ -17,12 +16,13 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8001',
         changeOrigin: true,
         ws: true,
         timeout: 300000,
         proxyTimeout: 300000
       }
     }
+
   }
 })

@@ -17,10 +17,18 @@ function VerifyEmail() {
     if (token) {
       handleVerify()
     } else {
-      // If no token provided and using simplified auth, redirect to login
+      // If no token provided and using simplified auth, check if logged in
       setMessage('Using simplified authentication - no email verification required.')
       setTimeout(() => {
-        navigate('/login')
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const nextPath = userData.role === 'admin' ? '/admin' : (userData.role === 'recruiter' ? '/jobs' : '/career-dashboard');
+        
+        // If user is already logged in, go to home, else login
+        if (localStorage.getItem('access_token')) {
+          navigate(nextPath);
+        } else {
+          navigate('/login');
+        }
       }, 2000)
     }
   }, [token, navigate])

@@ -24,8 +24,36 @@ async def schedule_interview(
     """Schedule a new interview"""
     # Verify application exists
     application = db.query(Application).filter(Application.id == data.application_id).first()
+    
+    # Fallback: Check if application_id is actually a match_id
     if not application:
-        raise HTTPException(status_code=404, detail="Application not found")
+        application = db.query(Application).filter(Application.match_id == data.application_id).first()
+    
+    # Fallback: If still not found, try to resolve from Match record (auto-create application)
+    if not application:
+        from app.models.match import Match
+        match = db.query(Match).filter(Match.id == data.application_id).first()
+        if match:
+            # Security check: Does recruiter own this job?
+            from app.models.job import Job
+            job = db.query(Job).filter(Job.id == match.job_id).first()
+            if not job or (current_user.role != "admin" and job.recruiter_id != current_user.id):
+                raise HTTPException(status_code=403, detail="Not authorized to schedule for this match")
+            
+            # Auto-create the application link
+            application = Application(
+                match_id=match.id,
+                candidate_id=match.candidate_id,
+                job_id=match.job_id,
+                cover_letter="Recruiter-initiated interview"
+            )
+            db.add(application)
+            db.flush() # Populate application.id
+            
+            # Update match status to interview
+            match.status = "interview"
+        else:
+            raise HTTPException(status_code=404, detail="Application not found")
     
     # Generate interview questions using LLM
     llm = LLMService()

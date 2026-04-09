@@ -181,6 +181,86 @@
   transform: scale(1.1);
 }
 
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.mfa-signup-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.mfa-header-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mfa-header-compact label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mfa-icon {
+  color: var(--accent-color);
+}
+
+.mfa-instruction {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.otp-input-container {
+  margin-bottom: 24px;
+}
+
+.otp-input {
+  width: 100%;
+  max-width: 240px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 2px solid var(--glass-border) !important;
+  border-radius: 12px;
+  color: white !important;
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  letter-spacing: 8px !important;
+  transition: all 0.3s;
+}
+
+.otp-input:focus {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2) !important;
+}
+
+.btn-link-small {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-link-small:hover {
+  color: var(--text-primary);
+}
+
 @media (max-width: 480px) {
   .signup-card {
     padding: 30px 20px;

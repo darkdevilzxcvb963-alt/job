@@ -18,10 +18,11 @@ def test_database():
     print("="*60)
     
     db = SessionLocal()
+    from sqlalchemy import text
     try:
         # Test connection
-        result = db.execute("SELECT 1")
-        print("✓ Database connection successful")
+        db.execute(text("SELECT 1"))
+        print("Database connection successful")
         
         # Check if users table exists
         from sqlalchemy import inspect
@@ -29,14 +30,14 @@ def test_database():
         tables = inspector.get_table_names()
         
         if 'users' in tables:
-            print("✓ Users table exists")
+            print("Users table exists")
         else:
-            print("✗ Users table NOT found")
+            print("Users table NOT found")
             return False
             
         return True
     except Exception as e:
-        print(f"✗ Database error: {str(e)}")
+        print(f"FAILED - Database error: {str(e)}")
         return False
     finally:
         db.close()
@@ -55,7 +56,7 @@ def test_user_creation():
         if existing:
             db.delete(existing)
             db.commit()
-            print(f"✓ Cleared existing test user")
+            print(f"Cleared existing test user")
         
         # Create new user
         new_user = User(
@@ -72,7 +73,7 @@ def test_user_creation():
         db.commit()
         db.refresh(new_user)
         
-        print(f"✓ User created successfully")
+        print(f"User created successfully")
         print(f"  - ID: {new_user.id}")
         print(f"  - Email: {new_user.email}")
         print(f"  - Role: {new_user.role}")
@@ -80,7 +81,7 @@ def test_user_creation():
         return True
         
     except Exception as e:
-        print(f"✗ User creation failed: {str(e)}")
+        print(f"FAILED - User creation failed: {str(e)}")
         db.rollback()
         return False
     finally:
@@ -98,23 +99,23 @@ def test_password_verification():
         
         is_valid = verify_password(password, hashed)
         if is_valid:
-            print("✓ Password verification works")
+            print("Password verification works")
         else:
-            print("✗ Password verification failed")
+            print("FAILED - Password verification failed")
             return False
         
         # Test wrong password
         is_invalid = verify_password("WrongPass123", hashed)
         if not is_invalid:
-            print("✓ Wrong password rejected correctly")
+            print("Wrong password rejected correctly")
         else:
-            print("✗ Wrong password NOT rejected")
+            print("FAILED - Wrong password NOT rejected")
             return False
             
         return True
         
     except Exception as e:
-        print(f"✗ Password test failed: {str(e)}")
+        print(f"FAILED - Password test failed: {str(e)}")
         return False
 
 def test_api_endpoint():
@@ -139,7 +140,7 @@ def test_api_endpoint():
         response = requests.post(url, json=data, timeout=5)
         
         if response.status_code == 201:
-            print(f"✓ Signup successful (Status: {response.status_code})")
+            print(f"Signup successful (Status: {response.status_code})")
             user_data = response.json()
             print(f"  - Email: {user_data.get('email')}")
             print(f"  - Role: {user_data.get('role')}")
@@ -147,22 +148,22 @@ def test_api_endpoint():
         elif response.status_code == 400:
             error = response.json().get('detail', 'Unknown error')
             if 'already exists' in error:
-                print(f"✓ Signup validation works (User exists)")
+                print(f"Signup validation works (User exists)")
                 return True
             else:
-                print(f"✗ Signup failed: {error}")
+                print(f"FAILED - Signup failed: {error}")
                 return False
         else:
-            print(f"✗ Signup failed (Status: {response.status_code})")
+            print(f"FAILED - Signup failed (Status: {response.status_code})")
             print(f"  Response: {response.json()}")
             return False
             
     except requests.exceptions.ConnectionError:
-        print("✗ Cannot connect to backend (http://127.0.0.1:8000)")
+        print("FAILED - Cannot connect to backend (http://127.0.0.1:8000)")
         print("  Make sure backend is running")
         return False
     except Exception as e:
-        print(f"✗ API test failed: {str(e)}")
+        print(f"FAILED - API test failed: {str(e)}")
         return False
 
 if __name__ == "__main__":
@@ -187,16 +188,16 @@ if __name__ == "__main__":
     print("="*60)
     
     for test_name, result in results:
-        status = "✓ PASS" if result else "✗ FAIL"
+        status = "PASS" if result else "FAIL"
         print(f"{status} - {test_name}")
     
     all_passed = all(result for _, result in results)
     
     print("="*60)
     if all_passed:
-        print("\n✅ ALL TESTS PASSED - Signup system is working!\n")
+        print("\nALL TESTS PASSED - Signup system is working!\n")
         print("Frontend ready for signup at: http://localhost:3001/signup")
         sys.exit(0)
     else:
-        print("\n❌ SOME TESTS FAILED - Check errors above\n")
+        print("\nSOME TESTS FAILED - Check errors above\n")
         sys.exit(1)

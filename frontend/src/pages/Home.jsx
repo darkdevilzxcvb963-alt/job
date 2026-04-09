@@ -47,8 +47,8 @@ function Home() {
               ) : (
                 <>
                   {user?.role === 'job_seeker' ? (
-                    <Link to="/candidate" className="btn-primary btn-large">
-                      Go to Dashboard
+                    <Link to="/career-dashboard" className="btn-primary btn-large">
+                      Go to Career Hub
                     </Link>
                   ) : (
                     <Link to="/jobs" className="btn-primary btn-large">

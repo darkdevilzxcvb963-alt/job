@@ -8,7 +8,7 @@ from datetime import datetime
 class CandidateBase(BaseModel):
     """Base candidate schema"""
     name: str
-    email: EmailStr
+    email: str
     phone: Optional[str] = None
 
 class CandidateCreate(CandidateBase):
@@ -19,8 +19,17 @@ class CandidateUpdate(BaseModel):
     """Schema for updating a candidate"""
     name: Optional[str] = None
     phone: Optional[str] = None
+    headline: Optional[str] = None
     skills: Optional[Any] = None
     experience_years: Optional[float] = None
+    preferred_locations: Optional[List[str]] = None
+    preferred_job_types: Optional[List[str]] = None
+    salary_expectation_min: Optional[float] = None
+    salary_expectation_max: Optional[float] = None
+    notice_period: Optional[str] = None
+    work_mode: Optional[str] = None
+    industry: Optional[str] = None
+    open_to_work: Optional[bool] = None
 
 class CandidateResponse(CandidateBase):
     """Schema for candidate response"""

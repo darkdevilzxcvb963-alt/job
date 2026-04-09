@@ -1,0 +1,3 @@
+DEBUG: BASE_DIR is C:\Users\ADMIN\new-project\backend
+DEBUG: DATABASE_URL is sqlite:///C:/Users/ADMIN/new-project/resume_matching.db
+DEBUG: Startup info written to server_startup_debug.log

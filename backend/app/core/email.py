@@ -189,3 +189,63 @@ async def send_password_reset_email(email: str, token: str, name: str) -> bool:
     except Exception as e:
         logger.error(f"Failed to send password reset email to {email}: {str(e)}")
         return False
+
+async def send_mfa_email(email: str, code: str, name: str) -> bool:
+    """Send Multi-Factor Authentication code via email"""
+    try:
+        html_body = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: 'Inter', Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; }}
+                .container {{ max-width: 500px; margin: 40px auto; background-color: #ffffff; padding: 0; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }}
+                .header {{ background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 32px 20px; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }}
+                .content {{ padding: 32px; text-align: center; }}
+                .code-box {{ background-color: #f3f4f6; border: 2px dashed #6366f1; border-radius: 12px; padding: 20px; margin: 24px 0; font-family: 'Courier New', monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; }}
+                .footer {{ background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }}
+                .warning {{ font-size: 13px; color: #ef4444; margin-top: 16px; font-weight: 500; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Identity Verification</h1>
+                </div>
+                <div class="content">
+                    <p>Hello <strong>{name}</strong>,</p>
+                    <p>To access your account, please enter the following 6-digit verification code:</p>
+                    <div class="code-box">{code}</div>
+                    <p class="warning">This code will expire in 10 minutes.</p>
+                    <p>If you didn't try to log in, please secure your account immediately.</p>
+                </div>
+                <div class="footer">
+                    <p>© ResumeMatch. All rights reserved.</p>
+                    <p>AI-Powered Talent Matching Ecosystem</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        if onesignal and settings.ONESIGNAL_APP_ID:
+            await onesignal.send_email(email, f"{code} is your verification code", html_body)
+            return True
+
+        if not fm:
+            logger.info(f"Email service disabled - MFA code for {email}: {code}")
+            return True
+            
+        message = MessageSchema(
+            subject=f"{code} is your verification code",
+            recipients=[email],
+            body=html_body,
+            subtype=MessageType.html
+        )
+        await fm.send_message(message)
+        logger.info(f"MFA email sent to {email}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send MFA email to {email}: {str(e)}")
+        return False

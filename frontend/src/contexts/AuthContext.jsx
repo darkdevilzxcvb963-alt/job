@@ -43,6 +43,16 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (email, password) => {
     try {
       const response = await login({ email, password })
+      // Handle MFA requirement
+      if (response.data.mfa_required) {
+        return { 
+          success: true, 
+          mfa_required: true, 
+          mfa_token: response.data.mfa_token,
+          user: response.data.user 
+        }
+      }
+
       const { access_token, refresh_token, user: userData } = response.data
       localStorage.setItem('access_token', access_token)
       localStorage.setItem('refresh_token', refresh_token)
@@ -86,6 +96,15 @@ export const AuthProvider = ({ children }) => {
   const handleGoogleLogin = async (idToken, role = 'job_seeker') => {
     try {
       const response = await googleAuth({ id_token: idToken, role })
+      if (response.data.mfa_required) {
+        return { 
+          success: true, 
+          mfa_required: true, 
+          mfa_token: response.data.mfa_token,
+          user: response.data.user
+        }
+      }
+
       const { access_token, refresh_token, user: userData } = response.data
       localStorage.setItem('access_token', access_token)
       localStorage.setItem('refresh_token', refresh_token)
@@ -130,7 +149,7 @@ export const AuthProvider = ({ children }) => {
       if (!error.response) {
         return {
           success: false,
-          error: 'Network error: Unable to connect to server. Please check if the backend is running on http://127.0.0.1:8000'
+          error: 'Network error: Unable to connect to server. Please check if the backend is running on http://127.0.0.1:8001'
         }
       }
 

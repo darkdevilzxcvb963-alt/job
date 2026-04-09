@@ -340,13 +340,42 @@
   -webkit-text-fill-color: transparent;
 }
 
+.analysis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.analysis-header {
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 1.25rem;
+}
+
+.analysis-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.analysis-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
 /* Skills Display in Stat Card */
 .skills-categorized {
-  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .skill-category-section {
-  margin-bottom: 1.2rem;
+  width: 100%;
 }
 
 .skill-category-section h4 {
@@ -392,6 +421,11 @@
 @media (max-width: 968px) {
   .dashboard-content {
     grid-template-columns: 1fr;
+  }
+  
+  .analysis-header-top {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

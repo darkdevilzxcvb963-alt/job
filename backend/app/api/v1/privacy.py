@@ -99,15 +99,22 @@ async def request_data_deletion(
     Request deletion of all personal data.
     Note: This creates a deletion request; actual deletion may be deferred for audit.
     """
-    logger.warning(f"Data deletion requested by user {current_user.email} (id={current_user.id})")
+    # GDPR Article 17 implementation: Mark user as inactive and record deletion timestamp
+    current_user.is_active = False
+    current_user.deletion_requested_at = datetime.utcnow()
+    
+    db.add(current_user)
+    db.commit()
+    
+    logger.warning(f"Data deletion requested by user {current_user.email} (id={current_user.id}). Account deactivated.")
 
     return {
         "status": "deletion_requested",
         "user_id": current_user.id,
-        "message": "Your data deletion request has been recorded. "
+        "message": "Your account has been deactivated and a data deletion request has been recorded. "
                    "Your data will be permanently deleted within 30 days as required by GDPR. "
-                   "You will receive a confirmation email when the process is complete.",
-        "requested_at": datetime.utcnow().isoformat()
+                   "You will receive a final confirmation email when the process is complete.",
+        "requested_at": current_user.deletion_requested_at.isoformat()
     }
 
 

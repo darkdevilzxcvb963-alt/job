@@ -2,6 +2,7 @@
 Saved Job Model - allows candidates to bookmark jobs
 """
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship
 import uuid
 from datetime import datetime
 from app.core.database import Base
@@ -16,5 +17,8 @@ class SavedJob(Base):
     job_id = Column(String(36), ForeignKey("jobs.id"), nullable=False, index=True)
     notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    job = relationship("Job", back_populates="saved_jobs")
 
     __table_args__ = (UniqueConstraint('user_id', 'job_id', name='uq_user_job'),)

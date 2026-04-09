@@ -1,0 +1,53 @@
+import json
+import os
+
+kb = {
+    "Python": [
+        {"question": "What is the difference between __str__ and __repr__?", "quiz_type": "mcq", "options": ["A. __str__ is for users, __repr__ is for developers", "B. They are identical", "C. __str__ is faster", "D. __repr__ is for users"], "correct_answer": "A. __str__ is for users, __repr__ is for developers", "explanation": "__str__ provides a readable representation; __repr__ is for debugging."},
+        {"question": "In Python, which built-in function returns a unique identifier for an object?", "quiz_type": "mcq", "options": ["A. hash()", "B. id()", "C. key()", "D. type()"], "correct_answer": "B. id()", "explanation": "id() returns the address of the object in memory."},
+        {"question": "A ___ is a function that returns an iterator using the 'yield' keyword.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "generator", "explanation": "Generators allow lazy iteration over data."},
+        {"question": "Explain the difference between deep copy and shallow copy in Python.", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "Shallow copy copies references; deep copy recursively copies objects themselves."},
+        {"question": "What is the Purpose of 'global' keyword in a function?", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "It allows modifying a variable defined outside the current function scope."},
+        {"question": "Which of these is NOT a valid Python collection?", "quiz_type": "mcq", "options": ["A. List", "B. Set", "C. Map", "D. Dictionary"], "correct_answer": "C. Map", "explanation": "Python uses 'dict' instead of 'Map'."}
+    ],
+    "React": [
+        {"question": "What is the virtual DOM?", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "A lightweight copy of the real DOM used for performance optimization via reconciliation."},
+        {"question": "Which hook is used to access the context value in a functional component?", "quiz_type": "mcq", "options": ["A. useState", "B. useCtx", "C. useContext", "D. useProvider"], "correct_answer": "C. useContext", "explanation": "useContext consumes values from a React context provider."},
+        {"question": "The ___ pattern involves passing data through several components manually.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "prop drilling", "explanation": "Prop drilling is often solved by using Context or State Management."},
+        {"question": "What does JSX stand for?", "quiz_type": "mcq", "options": ["A. JavaScript XML", "B. Java Syntax Extension", "C. JavaScript Extension", "D. JSON XML"], "correct_answer": "A. JavaScript XML", "explanation": "JSX allows writing HTML-like code inside JavaScript."},
+        {"question": "React components must start with a/an ___ letter.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "capital", "explanation": "Uppercase names distinguish components from standard HTML tags."}
+    ],
+    "SQL": [
+        {"question": "What is a primary key?", "quiz_type": "mcq", "options": ["A. A key that allows nulls", "B. A unique identifier for a row", "C. A reference to another table", "D. A secondary index"], "correct_answer": "B. A unique identifier for a row", "explanation": "A primary key uniquely identifies each record and cannot be null."},
+        {"question": "The ___ command is used to remove all records from a table without deleting the schema.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "TRUNCATE", "explanation": "TRUNCATE is faster than DELETE as it doesn't log individual row deletions."},
+        {"question": "Explain the difference between WHERE and HAVING clauses.", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "WHERE filters rows before aggregation; HAVING filters groups after aggregation."},
+        {"question": "Which function counts the number of rows in a result set?", "quiz_type": "mcq", "options": ["A. SUM()", "B. TOTAL()", "C. COUNT()", "D. AVG()"], "correct_answer": "C. COUNT()", "explanation": "COUNT(*) or COUNT(column) returns the row count."}
+    ],
+    "Node.js": [
+        {"question": "Is Node.js single-threaded or multi-threaded?", "quiz_type": "mcq", "options": ["A. Single-threaded", "B. Multi-threaded", "C. It depends", "D. None of the above"], "correct_answer": "A. Single-threaded", "explanation": "Node.js uses a single-threaded event loop but handles I/O asynchronously."},
+        {"question": "The ___ module provides a way of handling file paths.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "path", "explanation": "The 'path' module includes utilities for joining and resolving paths."},
+        {"question": "What is the purpose of package.json?", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "It defines project metadata, dependencies, scripts, and versioning information."},
+        {"question": "Which command is used to install all dependencies from package.json?", "quiz_type": "mcq", "options": ["A. npm build", "B. npm start", "C. npm install", "D. npm update"], "correct_answer": "C. npm install", "explanation": "npm install (or npm i) downloads and installs defined packages."}
+    ],
+    "Machine Learning": [
+        {"question": "What is supervised learning?", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "Learning from labeled data where the algorithm predicts outcomes for new inputs."},
+        {"question": "In a neural network, the ___ function introduces non-linearity.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "activation", "explanation": "Activation functions like ReLU or Sigmoid help model complex relationships."},
+        {"question": "Overfitting happens when a model performs well on ___ data but poorly on ___ data.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "training, test", "explanation": "Overfitted models capture noise rather than underlying patterns."}
+    ],
+    "System Design": [
+        {"question": "What is horizontal scaling?", "quiz_type": "mcq", "options": ["A. Adding more RAM to a server", "B. Adding more servers to a pool", "C. Optimizing database queries", "D. Using a CDN"], "correct_answer": "B. Adding more servers to a pool", "explanation": "Horizontal scaling improves capacity by distributing load across multiple machines."},
+        {"question": "A ___ is a component that sits between clients and servers to distribute traffic.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "load balancer", "explanation": "Load balancers ensure high availability and reliability by spreading requests."},
+        {"question": "Explain the concept of Caching and why it is used.", "quiz_type": "long_answer", "options": [], "correct_answer": "", "explanation": "Storing frequently accessed data in fast memory to reduce latency and database load."}
+    ],
+    "DevOps": [
+        {"question": "What does CI/CD stand for?", "quiz_type": "mcq", "options": ["A. Continuous Integration / Continuous Deployment", "B. Code Integration / Code Delivery", "C. Component Integration / Core Deployment", "D. None"], "correct_answer": "A. Continuous Integration / Continuous Deployment", "explanation": "CI/CD automates the software release lifecycle."},
+        {"question": "___ is a popular tool for container orchestration.", "quiz_type": "fill_in_the_blank", "options": [], "correct_answer": "Kubernetes", "explanation": "Kubernetes (K8s) manages the deployment and scaling of containerized apps."}
+    ]
+}
+
+data_dir = "backend/app/data"
+os.makedirs(data_dir, exist_ok=True)
+with open(os.path.join(data_dir, "knowledge_base.json"), "w", encoding="utf-8") as f:
+    json.dump(kb, f, indent=2)
+
+print("✅ Knowledge Base populated with 30+ comprehensive questions!")

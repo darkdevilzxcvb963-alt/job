@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
-import { Mail, Phone, FileText, User, Briefcase, CheckCircle, ArrowRight, TrendingUp, MessageCircle, List, Kanban } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { Mail, Phone, FileText, User, Briefcase, CheckCircle, ArrowRight, TrendingUp, MessageCircle, List, Kanban, Calendar } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import {
   getMyMatches, getJobMatches, getJobs, generateMatches, generateMatchesForRecruiter,
@@ -8,15 +9,30 @@ import {
 } from '../services/api'
 import '../styles/Matches.css'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotify } from '../contexts/NotifyContext'
 import ApplicationModal from '../components/ApplicationModal'
 import { useMessaging } from '../contexts/MessagingContext'
 
 
 import ATSPipeline from '../components/ATSPipeline'
 import SmartSearch from '../components/SmartSearch'
+import ScheduleInterviewModal from '../components/ScheduleInterviewModal'
+
+const getResumeUrl = (path) => {
+  if (!path) return '';
+  const normalizedPath = path.replace(/\\/g, '/');
+  const uploadIndex = normalizedPath.lastIndexOf('uploads/');
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1').replace('/api/v1', '');
+  if (uploadIndex !== -1) {
+    return `${baseUrl}/uploads/${encodeURI(normalizedPath.substring(uploadIndex + 8))}`;
+  }
+  return `${baseUrl}/uploads/${encodeURI(normalizedPath.split('/').pop())}`;
+};
 
 function Matches() {
   const { user } = useAuth()
+  const { success } = useNotify()
+  const location = useLocation()
   const { openChat } = useMessaging()
   const isRecruiter = user?.role === 'recruiter' || user?.role === 'admin'
   const queryClient = useQueryClient()
@@ -29,17 +45,22 @@ function Matches() {
   const [matchToDelete, setMatchToDelete] = useState(null)
   const [filterMode, setFilterMode] = useState('all') // 'all', 'ai', 'manual'
   const [applyModal, setApplyModal] = useState(null) // match object or null
+  const [scheduleModal, setScheduleModal] = useState(null) // match object or null
   const [applyToast, setApplyToast] = useState('')
 
   const [outreachDraft, setOutreachDraft] = useState({ matchId: null, text: '' })
   const [isGeneratingOutreach, setIsGeneratingOutreach] = useState(false)
 
   // Filtering and Sorting State
-  const [filters, setFilters] = useState({
-    minScore: 0.0,
-    jobType: '',
-    location: '',
-    sortBy: 'score'
+  const [filters, setFilters] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return {
+      minScore: parseFloat(params.get('min_score')) || 0.0,
+      maxScore: parseFloat(params.get('max_score')) || 1.0,
+      jobType: '',
+      location: '',
+      sortBy: 'score'
+    };
   })
 
   // Mutation for generating matches
@@ -70,7 +91,7 @@ function Matches() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['myMatches'])
-        alert('Application submitted successfully!')
+        success('Application submitted successfully! 🎉')
       }
     }
   )
@@ -115,6 +136,7 @@ function Matches() {
     ['myMatches', filters],
     () => getMyMatches({
       min_score: filters.minScore,
+      max_score: filters.maxScore,
       job_type: filters.jobType,
       location: filters.location,
       sort_by: filters.sortBy
@@ -131,21 +153,28 @@ function Matches() {
       setLoadingAllMatches(true)
       const fetchAllMatches = async () => {
         try {
-          const matchesData = {}
-          for (const job of recruiterJobs.data) {
-            const response = await getJobMatches(job.id, { min_score: filters.minScore })
-            matchesData[job.id] = response.data || response || []
-          }
-          setAllMatches(matchesData)
+          const jobs = recruiterJobs.data;
+          const matchPromises = jobs.map(job => 
+            getJobMatches(job.id, { min_score: 0.0, limit: 100 })
+              .then(res => ({ jobId: job.id, matches: res.data || res || [] }))
+              .catch(err => ({ jobId: job.id, matches: [], error: err }))
+          );
+          
+          const results = await Promise.all(matchPromises);
+          const matchesData = {};
+          results.forEach(res => {
+            matchesData[res.jobId] = res.matches;
+          });
+          setAllMatches(matchesData);
         } catch (error) {
-          console.error('Error fetching matches:', error)
+          console.error('Error fetching matches:', error);
         } finally {
-          setLoadingAllMatches(false)
+          setLoadingAllMatches(false);
         }
       }
       fetchAllMatches()
     }
-  }, [isRecruiter, recruiterJobs, filters.minScore])
+  }, [isRecruiter, recruiterJobs, filters.minScore, filters.maxScore, filters.sortBy])
 
   const getMatchColor = (score) => {
     if (score >= 0.8) return '#10b981'
@@ -286,12 +315,31 @@ function Matches() {
       {isRecruiter ? (
         <div className="recruiter-view">
           {(() => {
-            const filteredMatches = flattenedAllMatches.filter(m => {
-              if (filterMode === 'all') return true;
-              if (filterMode === 'manual') return !m.match_explanation || !m.semantic_similarity || m.semantic_similarity === 0;
-              if (filterMode === 'ai') return m.match_explanation && m.semantic_similarity && m.semantic_similarity > 0;
+            const filteredMatches = (flattenedAllMatches || []).filter(m => {
+              // Priority 1: Recruitment Stage Filters (AI vs Manual)
+              let passStage = true;
+              if (filterMode === 'manual') passStage = m.status !== 'matched';
+              if (filterMode === 'ai') passStage = m.status === 'matched';
+              if (!passStage) return false;
+
+              // Priority 2: Score Filters
+              if (m.overall_score < filters.minScore || m.overall_score > filters.maxScore) return false;
+
+              // Priority 3: Search Terms (if applicable)
+              if (filters.location && !m.location?.toLowerCase().includes(filters.location.toLowerCase())) return false;
+              if (filters.jobType && m.job_type !== filters.jobType) return false;
+
               return true;
             });
+
+            // Logic for counts based on current filters (except the stage filter itself)
+            const matchesWithScore = (flattenedAllMatches || []).filter(m => 
+              m.overall_score >= filters.minScore && m.overall_score <= filters.maxScore
+            );
+            
+            const aiCount = matchesWithScore.filter(m => m.status === 'matched').length;
+            const manualCount = matchesWithScore.filter(m => m.status !== 'matched').length;
+            const allCount = matchesWithScore.length;
 
             return viewMode === 'pipeline' ? (
               <ATSPipeline
@@ -305,6 +353,7 @@ function Matches() {
                     return updated;
                   });
                 }}
+                onSchedule={(match) => setScheduleModal(match)}
               />
             ) : (
               <div className="recruiter-dashboard">
@@ -322,20 +371,20 @@ function Matches() {
                     
                     <span className="divider" style={{ width: '1px', height: '24px', background: '#e2e8f0', margin: '0 12px' }}></span>
                     <button className={`filter-btn ${filterMode === 'all' ? 'active' : ''}`} onClick={() => setFilterMode('all')}>
-                      All Applicants
+                      All ({allCount})
                     </button>
                     <button className={`filter-btn ${filterMode === 'ai' ? 'active' : ''}`} onClick={() => setFilterMode('ai')}>
-                      AI Matched
+                      Recommended ({aiCount})
                     </button>
                     <button className={`filter-btn ${filterMode === 'manual' ? 'active' : ''}`} onClick={() => setFilterMode('manual')}>
-                      Manual Applied
+                      Manual Applied ({manualCount})
                     </button>
                   </div>
                 </div>
 
                 <div className="jobs-container">
                   {Object.entries(groupByJob(filteredMatches)).map(([jobId, jobMatches]) => {
-                    const job = recruiterJobs?.data?.find(j => j.id === parseInt(jobId));
+                    const job = recruiterJobs?.data?.find(j => j.id === jobId);
                     if (!job) return null;
                     const isExpanded = expandedJob === job.id;
 
@@ -383,9 +432,9 @@ function Matches() {
                                         )}
                                       </div>
                                       <div className="application-type" style={{ marginTop: '0.75rem' }}>
-                                        {match.match_explanation && match.semantic_similarity && match.semantic_similarity > 0 ? (
+                                        {match.status === 'matched' ? (
                                           <span className="type-badge ai-match" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                                            ✨ AI Matched
+                                            ✨ Recommended
                                           </span>
                                         ) : (
                                           <span className="type-badge manual-apply" style={{ background: 'rgba(244, 114, 182, 0.1)', color: '#f472b6', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, border: '1px solid rgba(244, 114, 182, 0.2)' }}>
@@ -404,30 +453,71 @@ function Matches() {
                                   </div>
 
                                   <div className="recruiter-card-footer">
-                                    <select
-                                      value={match.status}
-                                      onChange={(e) => updateMatchStatus(match.id, e.target.value).then(() => queryClient.invalidateQueries(['recruiterJobs']))}
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      <option value="matched">Matched</option>
-                                      <option value="applied">Applied</option>
-                                      <option value="screened">Screened</option>
-                                      <option value="interview">Interview</option>
-                                      <option value="offered">Offered</option>
-                                      <option value="hired">Hired</option>
-                                      <option value="rejected">Rejected</option>
-                                    </select>
+                                    <div className="status-email-row" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                      <select
+                                        className="status-select-premium"
+                                        value={match.status}
+                                        onChange={(e) => updateMatchStatus(match.id, e.target.value).then(() => queryClient.invalidateQueries(['recruiterJobs']))}
+                                        onClick={(e) => e.stopPropagation()}
+                                        style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', fontWeight: 600 }}
+                                      >
+                                        <option value="matched">Matched</option>
+                                        <option value="applied">Applied</option>
+                                        <option value="screened">Screened</option>
+                                        <option value="interview">Interview</option>
+                                        <option value="offered">Offered</option>
+                                        <option value="hired">Hired</option>
+                                        <option value="rejected">Rejected</option>
+                                      </select>
+                                      
+                                      <a 
+                                        href={`mailto:${match.candidate_email}?subject=Interested in your profile for ${match.job_title}&body=Hello ${match.candidate_name}, we are interested in your profile for the ${match.job_title} role at ${match.company}.`} 
+                                        className="btn-email-direct"
+                                        style={{ 
+                                          display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', 
+                                          background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', borderRadius: '10px', 
+                                          textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, border: '1px solid rgba(99, 102, 241, 0.2)' 
+                                        }}
+                                      >
+                                        <Mail size={16} /> Email
+                                      </a>
+
+                                      <div className="candidate-skills-buttons" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                        {(match.candidate_skills || []).slice(0, 4).map(skill => (
+                                          <button key={skill} style={{ fontSize: '0.75rem', background: 'var(--bg-secondary)', color: 'var(--text-primary)', padding: '5px 14px', borderRadius: '20px', border: '1px solid var(--border-color)', cursor: 'default', fontWeight: 500, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                                            {skill}
+                                          </button>
+                                        ))}
+                                        <button 
+                                          onClick={(e) => { e.stopPropagation(); if (match.candidate_resume_path) window.open(getResumeUrl(match.candidate_resume_path), '_blank') }}
+                                          style={{ fontSize: '0.75rem', background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9', padding: '5px 14px', borderRadius: '20px', border: '1px solid rgba(14, 165, 233, 0.2)', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.2s' }}
+                                          title={match.candidate_resume_summary || "Click to view full Resume Info"}
+                                        >
+                                          <FileText size={12} /> Candidate Info
+                                        </button>
+                                      </div>
+                                    </div>
+
                                     <div className="recruiter-card-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                                       <button 
                                         className="btn-chat-premium"
-                                        onClick={(e) => { e.stopPropagation(); openChat(match.candidate_id, match.candidate_name); }}
+                                        onClick={(e) => { e.stopPropagation(); openChat(match.candidate_user_id, match.candidate_name); }}
                                         style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', color: '#818cf8', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                                       >
                                         <MessageCircle size={16} /> <span>Message</span>
                                       </button>
+                                      {match.status === 'interview' && (
+                                        <button 
+                                          className="btn-chat-premium"
+                                          onClick={(e) => { e.stopPropagation(); setScheduleModal(match); }}
+                                          style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                                        >
+                                          <Calendar size={16} /> <span>Schedule</span>
+                                        </button>
+                                      )}
                                       <button 
                                         className="btn-resume-view"
-                                        onClick={(e) => { e.stopPropagation(); if (match.candidate_resume_path) window.open(`http://localhost:8000/api/v1/upload/${match.candidate_resume_path.split('/').pop()}`, '_blank') }}
+                                        onClick={(e) => { e.stopPropagation(); if (match.candidate_resume_path) window.open(getResumeUrl(match.candidate_resume_path), '_blank') }}
                                         style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: 'var(--text-secondary)', padding: '6px', borderRadius: '8px', cursor: 'pointer' }}
                                       >
                                         <FileText size={18} />
@@ -562,34 +652,71 @@ function Matches() {
                           const candidateSkills = (match.candidate_skills || []).map(s => s.toLowerCase());
                           const matched = (match.required_skills || []).filter(s => candidateSkills.includes(s.toLowerCase()));
                           const missing = (match.required_skills || []).filter(s => !candidateSkills.includes(s.toLowerCase()));
-                          const extra = (match.candidate_skills || []).filter(s => !((match.required_skills || []).map(rs => rs.toLowerCase()).includes(s.toLowerCase())));
+                          // Deduplicate extra skills
+                          const extraRaw = (match.candidate_skills || []).filter(s => !((match.required_skills || []).map(rs => rs.toLowerCase()).includes(s.toLowerCase())));
+                          const extraSeen = new Set();
+                          const extra = extraRaw.filter(s => {
+                            const key = s.toLowerCase();
+                            if (extraSeen.has(key)) return false;
+                            extraSeen.add(key);
+                            return true;
+                          });
+
+                          const MAX_GAPS = 8;
+                          const MAX_EXTRA = 10;
+                          const visibleMissing = missing.slice(0, MAX_GAPS);
+                          const hiddenMissingCount = missing.length - visibleMissing.length;
+                          const visibleExtra = extra.slice(0, MAX_EXTRA);
+                          const hiddenExtraCount = extra.length - visibleExtra.length;
 
                           return (
                             <div className="skills-comparison-grid">
-                              <div className="skills-group">
-                                <div className="req-header">
-                                  <h5>Required Skills</h5>
-                                  <div className="skill-legend">
-                                    <span className="legend-item"><span className="dot match"></span> Matched</span>
-                                    <span className="legend-item"><span className="dot missing"></span> Missing</span>
+                              {/* Matched skills — shown first, positive emphasis */}
+                              {matched.length > 0 && (
+                                <div className="skills-group" style={{ marginBottom: '1.5rem' }}>
+                                  <div className="req-header">
+                                    <h5>✅ Skills You Match ({matched.length}/{(match.required_skills || []).length})</h5>
+                                  </div>
+                                  <div className="tags-list">
+                                    {matched.map(skill => (
+                                      <span key={`match-${skill}`} className="tag match">✅ {skill}</span>
+                                    ))}
                                   </div>
                                 </div>
-                                <div className="tags-list">
-                                  {matched.map(skill => (
-                                    <span key={`match-${skill}`} className="tag match">✅ {skill}</span>
-                                  ))}
-                                  {missing.map(skill => (
-                                    <span key={`miss-${skill}`} className="tag missing">❌ {skill}</span>
-                                  ))}
+                              )}
+
+                              {/* Missing skills — limited to MAX_GAPS, softer wording */}
+                              {visibleMissing.length > 0 && (
+                                <div className="skills-group" style={{ marginBottom: '1.5rem' }}>
+                                  <div className="req-header">
+                                    <h5>📚 Skills to Explore ({missing.length})</h5>
+                                  </div>
+                                  <div className="tags-list">
+                                    {visibleMissing.map(skill => (
+                                      <span key={`miss-${skill}`} className="tag missing">🔖 {skill}</span>
+                                    ))}
+                                    {hiddenMissingCount > 0 && (
+                                      <span className="tag" style={{ background: 'rgba(148,163,184,0.1)', color: '#94a3b8', border: '1px dashed #94a3b8', fontSize: '0.8rem' }}>
+                                        +{hiddenMissingCount} more
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                              {extra.length > 0 && (
-                                <div className="skills-group" style={{ marginTop: '1.5rem' }}>
+                              )}
+
+                              {/* Extra skills — capped, deduplicated */}
+                              {visibleExtra.length > 0 && (
+                                <div className="skills-group">
                                   <h5>✨ Your Extra Skills (Value Add)</h5>
                                   <div className="tags-list">
-                                    {extra.map(skill => (
+                                    {visibleExtra.map(skill => (
                                       <span key={`extra-${skill}`} className="tag extra">{skill}</span>
                                     ))}
+                                    {hiddenExtraCount > 0 && (
+                                      <span className="tag" style={{ background: 'rgba(168,85,247,0.08)', color: '#a855f7', border: '1px dashed #a855f7', fontSize: '0.8rem' }}>
+                                        +{hiddenExtraCount} more
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               )}
@@ -633,6 +760,21 @@ function Matches() {
           onClose={() => setApplyModal(null)}
           isSubmitting={applyFormMutation.isLoading}
           onSubmit={(coverLetter) => applyFormMutation.mutate({ matchId: applyModal.id, coverLetter })}
+        />
+      )}
+
+      {/* Schedule Interview Modal */}
+      {scheduleModal && (
+        <ScheduleInterviewModal
+          isOpen={!!scheduleModal}
+          candidate={{ id: scheduleModal.candidate_id, name: scheduleModal.candidate_name }}
+          application_id={scheduleModal.id} // match.id is often used as application identifier in this flow
+          onClose={() => setScheduleModal(null)}
+          onSuccess={() => {
+            setApplyToast('📅 Interview scheduled! Candidate will be notified.');
+            setTimeout(() => setApplyToast(''), 5000);
+            queryClient.invalidateQueries(['recruiterJobs']);
+          }}
         />
       )}
 

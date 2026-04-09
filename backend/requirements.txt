@@ -30,6 +30,7 @@ pypdf==3.17.1
 openai==1.6.1
 langchain==0.0.340
 langchain-openai==0.0.2
+google-generativeai==0.8.3
 
 # Utilities
 python-dotenv==1.0.0
@@ -47,6 +48,7 @@ fastapi-mail==1.4.1
 # pin aiosmtplib to a version compatible with fastapi-mail
 aiosmtplib==2.0.2
 email-validator==2.1.0
+twilio==8.10.2
 
 # Rate Limiting
 slowapi==0.1.9

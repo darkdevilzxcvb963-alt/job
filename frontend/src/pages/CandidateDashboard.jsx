@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone'
 import { useMutation, useQuery } from 'react-query'
 import { uploadAndAnalyzeResume, createCandidate, updateCandidate, getCandidates, processResume, getSelectionStats } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotify } from '../contexts/NotifyContext'
 import { Link } from 'react-router-dom'
 import { useMessaging } from '../contexts/MessagingContext'
 import { MessageCircle } from 'lucide-react'
@@ -125,12 +126,14 @@ function CandidateDashboard() {
         const stats = data.data
         setResumeStats(stats)
 
-        if (stats.debug_text_len === 0) {
-          alert('Warning: No text could be extracted from your resume. Is it a scanned image? Please try uploading a text-based PDF or DOCX.')
+        if (stats.warning) {
+          warning('Warning: ' + stats.warning)
+        } else if (stats.debug_text_len === 0) {
+          warning('Warning: No text could be extracted from your resume. Is it a scanned image? Please try uploading a text-based PDF or DOCX.')
         } else if (stats.skills_extracted === 0) {
-          alert('Resume uploaded and analyzed, but no specific skills were found. Text length: ' + stats.debug_text_len + ' chars.')
+          warning('Resume uploaded and analyzed, but no specific skills were found. Text length: ' + stats.debug_text_len + ' chars.')
         } else {
-          alert('Resume uploaded and analyzed successfully! ' + stats.skills_extracted + ' skills found.')
+          success('Resume uploaded and analyzed successfully! ' + stats.skills_extracted + ' skills found.')
         }
       },
       onError: (error) => {
@@ -139,7 +142,7 @@ function CandidateDashboard() {
           || error.response?.data?.message
           || error.message
           || JSON.stringify(error)
-        alert('Error processing resume: ' + errorMsg)
+        notifyError('Error processing resume: ' + errorMsg)
       }
     }
   )
@@ -150,11 +153,11 @@ function CandidateDashboard() {
       onSuccess: (data) => {
         const stats = data.data
         setResumeStats(stats)
-        alert('Resume re-analyzed successfully! Found ' + stats.skills_extracted + ' skills.')
+        success('Resume re-analyzed successfully! Found ' + stats.skills_extracted + ' skills.')
       },
       onError: (error) => {
         console.error('Re-analysis error:', error)
-        alert('Error re-analyzing resume: ' + (error.response?.data?.detail || error.message))
+        notifyError('Error re-analyzing resume: ' + (error.response?.data?.detail || error.message))
       }
     }
   )
@@ -210,14 +213,14 @@ function CandidateDashboard() {
           file: fileToUpload
         })
       } else if (!existingCandidateId) {
-        alert('Profile created successfully!')
+        success('Profile created successfully!')
       } else {
-        alert('Profile updated successfully!')
+        success('Profile updated successfully!')
       }
     } catch (error) {
       console.error('Submit error:', error)
       const errorMsg = error.response?.data?.detail || error.message
-      alert('Error: ' + errorMsg)
+      notifyError('Error: ' + errorMsg)
     }
   }
 
@@ -249,7 +252,7 @@ function CandidateDashboard() {
                     className="btn-copy"
                     onClick={() => {
                       navigator.clipboard.writeText(user.id)
-                      alert('Candidate ID copied to clipboard!')
+                      success('Candidate ID copied to clipboard!')
                     }}
                   >
                     📋 Copy
@@ -442,26 +445,41 @@ function CandidateDashboard() {
             </div>
           </div>
 
-          <button type="submit" className="btn-primary" disabled={createCandidateMutation.isLoading || updateCandidateMutation.isLoading}>
-            {createCandidateMutation.isLoading || updateCandidateMutation.isLoading
-              ? 'Processing...'
+          <button 
+            type="submit" 
+            className="btn-primary" 
+            disabled={createCandidateMutation.isLoading || updateCandidateMutation.isLoading || uploadResumeMutation.isLoading}
+          >
+            {createCandidateMutation.isLoading || updateCandidateMutation.isLoading || uploadResumeMutation.isLoading
+              ? (uploadResumeMutation.isLoading ? 'AI Analyzing Resume...' : 'Processing...')
               : existingCandidateId ? 'Update Profile' : 'Create Profile'}
           </button>
+          
+          {uploadResumeMutation.isLoading && (
+            <p className="loading-hint" style={{ textAlign: 'center', marginTop: '1rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+              💡 AI analysis can take up to 1-2 minutes for complex resumes. Please don't refresh.
+            </p>
+          )}
         </form>
 
         <div className="dashboard-stats">
-          <div className="stat-card">
+          <div className="stat-card analysis-card">
             {resumeStats ? (
-              <>
-                <h3>📊 Resume Analysis</h3>
-                <div className="stat-value">{resumeStats.skills_extracted} Skills</div>
-                <p style={{ marginTop: '0.5rem', opacity: 0.9, fontSize: '0.9rem' }}>
-                  Extracted across 5 categories
-                </p>
+              <div className="analysis-container">
+                <div className="analysis-header">
+                  <div className="analysis-header-top">
+                    <h3>📊 Resume Analysis</h3>
+                    <div className="stat-value">{resumeStats.skills_extracted} Skills</div>
+                  </div>
+                  <p className="analysis-subtitle">
+                    Extracted across 5 key categories from your parsed resume
+                  </p>
+                </div>
 
-                {/* Categorized Skills Display */}
-                {resumeStats.skills_by_category && (
-                  <div className="skills-categorized" style={{ marginTop: '1.5rem' }}>
+                <div className="analysis-body">
+                  {/* Categorized Skills Display */}
+                  {resumeStats.skills_by_category && (
+                    <div className="skills-categorized">
                     {Object.entries(resumeStats.skills_by_category).map(([category, skills]) => (
                       skills.length > 0 && (
                         <div key={category} className="skill-category-section" style={{ marginBottom: '1.2rem' }}>
@@ -533,9 +551,10 @@ function CandidateDashboard() {
                         </div>
                       )
                     ))}
-                  </div>
-                )}
-              </>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
               <>
                 <h3>Get Started</h3>
