@@ -11,7 +11,7 @@ psycopg2-binary==2.9.9
 
 # NLP & ML Libraries
 transformers==4.35.0
-torch==2.1.0
+torch>=2.0.0
 sentence-transformers==2.2.2
 spacy==3.7.2
 nltk==3.8.1
