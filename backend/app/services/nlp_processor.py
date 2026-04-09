@@ -7,7 +7,7 @@ import re
 import nltk
 import threading
 from typing import List, Dict, Optional
-import spacy
+# import spacy (removed from top-level to speed up build)
 import httpx
 from loguru import logger
 from cachetools import LRUCache
@@ -93,9 +93,14 @@ class NLPProcessor:
             
             logger.info("Initializing NLP models (this may take a moment)...")
             try:
-                self.nlp = spacy.load(self._spacy_model_name)
-            except OSError:
-                logger.warning(f"SpaCy model {self._spacy_model_name} not found. Please install it.")
+                if settings.ENVIRONMENT == "production":
+                    logger.warning("Production mode: Skipping heavy spaCy model load.")
+                    self.nlp = None
+                else:
+                    import spacy
+                    self.nlp = spacy.load(self._spacy_model_name)
+            except Exception as e:
+                logger.warning(f"SpaCy model {self._spacy_model_name} not available: {e}.")
                 self.nlp = None
             
             try:
@@ -132,10 +137,7 @@ class NLPProcessor:
             Dictionary with entity types and values
         """
         self._ensure_initialized()
-        if not self.nlp:
-            return {}
         
-        doc = self.nlp(text)
         entities = {
             'PERSON': [],
             'ORG': [],
@@ -144,10 +146,25 @@ class NLPProcessor:
             'MONEY': []
         }
         
-        for ent in doc.ents:
-            if ent.label_ in entities:
-                entities[ent.label_].append(ent.text)
-        
+        if self.nlp:
+            doc = self.nlp(text)
+            for ent in doc.ents:
+                if ent.label_ in entities:
+                    entities[ent.label_].append(ent.text)
+        else:
+            # Simple regex-based fallback for production if spaCy is missing
+            # PERSON (Capitalized words followed by space and capitalized word)
+            names = re.findall(r'\b[A-Z][a-z]+ [A-Z][a-z]+\b', text)
+            entities['PERSON'] = names[:5]
+            
+            # GPE (Locations - very simple check)
+            locations = re.findall(r'\b(New York|San Francisco|London|Berlin|India|USA|UK|Remote)\b', text, re.I)
+            entities['GPE'] = list(set(locations))
+            
+            # Dates
+            dates = re.findall(r'\b\d{4}\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{4}\b', text)
+            entities['DATE'] = [d[0] if isinstance(d, tuple) else d for d in dates]
+            
         return entities
     
     def extract_skills(self, text: str) -> List[str]:
