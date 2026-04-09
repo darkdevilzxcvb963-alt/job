@@ -8,10 +8,11 @@ import nltk
 import threading
 from typing import List, Dict, Optional
 import spacy
-from sentence_transformers import SentenceTransformer
-import numpy as np
+import httpx
 from loguru import logger
 from cachetools import LRUCache
+from app.core.config import settings
+import os
 
 # Download required NLTK data
 try:
@@ -98,10 +99,16 @@ class NLPProcessor:
                 self.nlp = None
             
             try:
-                self.embedding_model = SentenceTransformer(self._embedding_model_name)
+                if settings.ENVIRONMENT == "production":
+                    logger.info("Production mode: Using Cloud Gemini for embeddings (Torch disabled).")
+                    self.embedding_model = "cloud"
+                else:
+                    from sentence_transformers import SentenceTransformer
+                    self.embedding_model = SentenceTransformer(self._embedding_model_name)
+                    logger.info("Local mode: SentenceTransformer loaded.")
             except Exception as e:
-                logger.warning(f"Failed to load embedding model: {e}")
-                self.embedding_model = None
+                logger.warning(f"Failed to load local embedding model: {e}. Falling back to Cloud API.")
+                self.embedding_model = "cloud"
             
             self._initialized = True
     
@@ -321,9 +328,6 @@ class NLPProcessor:
             List of floats (embedding vector)
         """
         self._ensure_initialized()
-        if not self.embedding_model:
-            return [0.0] * 384
-        
         # Create a hash key for the cache
         cache_key = hashlib.md5(text.encode('utf-8')).hexdigest()
         
@@ -332,10 +336,57 @@ class NLPProcessor:
             return self._embedding_cache[cache_key]
         
         self._cache_misses += 1
-        embedding = self.embedding_model.encode(text, convert_to_numpy=True)
-        result = embedding.tolist()
-        self._embedding_cache[cache_key] = result
-        return result
+        
+        # 1. Try Cloud Embedding if configured
+        if self.embedding_model == "cloud" or not self._is_local_model(self.embedding_model):
+            try:
+                embedding = self._generate_cloud_embedding(text)
+                if embedding:
+                    self._embedding_cache[cache_key] = embedding
+                    return embedding
+            except Exception as e:
+                logger.error(f"Cloud embedding error: {e}")
+
+        # 2. Try Local Embedding as fallback (if not in production)
+        if self._is_local_model(self.embedding_model):
+            try:
+                embedding = self.embedding_model.encode(text, convert_to_numpy=True)
+                result = embedding.tolist()
+                self._embedding_cache[cache_key] = result
+                return result
+            except Exception as e:
+                logger.error(f"Local embedding error: {e}")
+        
+        # 3. Final Fallback
+        return [0.0] * 384
+
+    def _is_local_model(self, model):
+        """Check if model is a local SentenceTransformer instance"""
+        return not isinstance(model, str)
+
+    def _generate_cloud_embedding(self, text: str) -> Optional[List[float]]:
+        """Call Gemini API for embeddings"""
+        if not settings.GEMINI_API_KEY:
+            return None
+            
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key={settings.GEMINI_API_KEY}"
+        payload = {
+            "model": "models/embedding-001",
+            "content": {"parts": [{"text": text}]}
+        }
+        
+        try:
+            # Note: Using synchronous request for simplicity in this helper, 
+            # though async is preferred for high-throughput
+            with httpx.Client(timeout=30.0) as client:
+                res = client.post(url, json=payload)
+                if res.status_code == 200:
+                    return res.json().get("embedding", {}).get("values", [])
+                else:
+                    logger.error(f"Gemini Embedding API Error: {res.status_code} - {res.text}")
+        except Exception as e:
+            logger.error(f"Network error calling Gemini Embedding: {e}")
+        return None
     
     def generate_embeddings_batch(self, texts: List[str]) -> List[list]:
         """
