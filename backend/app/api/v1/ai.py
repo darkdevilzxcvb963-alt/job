@@ -3,7 +3,7 @@ AI Assistant API Endpoints
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from itertools import islice
 import numpy as np
 from loguru import logger
