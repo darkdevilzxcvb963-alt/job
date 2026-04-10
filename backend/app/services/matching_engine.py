@@ -6,7 +6,6 @@ import numpy as np
 import re
 import json
 from typing import List, Dict, Tuple, Optional
-from sklearn.metrics.pairwise import cosine_similarity
 from loguru import logger
 from app.services.skill_categories import SKILL_SYNONYMS, SKILL_TO_CATEGORY, SKILL_HIERARCHY
 
@@ -34,14 +33,23 @@ class MatchingEngine:
             if not embedding1 or not embedding2:
                 return 0.5  # Neutral similarity if missing embeddings
                 
-            vec1 = np.array(embedding1).reshape(1, -1)
-            vec2 = np.array(embedding2).reshape(1, -1)
+            v1 = np.array(embedding1)
+            v2 = np.array(embedding2)
             
-            if vec1.shape[1] == 0 or vec2.shape[1] == 0:
+            if v1.shape[0] == 0 or v2.shape[0] == 0:
                 return 0.5
                 
-            similarity = cosine_similarity(vec1, vec2)[0][0]
-            # Normalize to 0-1 range
+            # Manual cosine similarity Calculation (avoids sklearn dependency)
+            dot_product = np.dot(v1, v2)
+            norm_v1 = np.linalg.norm(v1)
+            norm_v2 = np.linalg.norm(v2)
+            
+            if norm_v1 == 0 or norm_v2 == 0:
+                return 0.5
+                
+            similarity = dot_product / (norm_v1 * norm_v2)
+            
+            # Normalize to 0-1 range (cosine similarity is -1 to 1)
             return float((similarity + 1) / 2)
         except Exception as e:
             logger.error(f"Error calculating semantic similarity: {e}")

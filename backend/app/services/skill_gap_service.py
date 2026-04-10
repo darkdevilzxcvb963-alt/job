@@ -126,7 +126,7 @@ class SkillGapService:
         
         skill_names = [g['skill'] for g in all_gaps[:10]]  # Limit to top 10
         
-        if self.llm_service and self.llm_service.client:
+        if self.llm_service and (self.llm_service.gemini_model or self.llm_service.openai_client):
             try:
                 prompt = f"""For each of the following technical skills, provide a learning recommendation.
 Return a JSON array of objects with keys: "skill", "course", "platform", "duration", "url".
@@ -137,25 +137,24 @@ Example format:
 [{{"skill": "Docker", "course": "Docker Mastery", "platform": "Udemy", "duration": "4 weeks", "url": "https://www.udemy.com/"}}]
 Return ONLY valid JSON."""
 
-                response = self.llm_service.client.chat.completions.create(
-                    model=self.llm_service.model,
-                    messages=[
-                        {"role": "system", "content": "You are a career advisor specializing in tech skills. Return only valid JSON."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    max_tokens=800,
-                    temperature=0.3
+                result = self.llm_service._call_llm(
+                    prompt, 
+                    "You are a career advisor specializing in tech skills. Return only valid JSON.",
+                    max_tokens=800
                 )
                 
-                content = response.choices[0].message.content.strip()
-                # Clean up markdown code block if present
-                if content.startswith('```'):
-                    content = content.split('\n', 1)[1]
-                    content = content.rsplit('```', 1)[0]
-                
-                recs = json.loads(content)
-                if isinstance(recs, list):
-                    return recs
+                if result:
+                    content = result
+                    # Clean up markdown code block if present
+                    if content.startswith('```'):
+                        if '\n' in content:
+                            content = content.split('\n', 1)[1]
+                        if '```' in content:
+                            content = content.rsplit('```', 1)[0]
+                    
+                    recs = json.loads(content.strip())
+                    if isinstance(recs, list):
+                        return recs
             except Exception as e:
                 logger.error(f"Error generating recommendations: {e}")
         
