@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-matching-backend"
+version = "1.0.0"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "gunicorn",
+]
