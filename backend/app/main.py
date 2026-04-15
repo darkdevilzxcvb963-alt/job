@@ -125,18 +125,25 @@ def startup_event():
 
 # Configure CORS
 origins = settings.CORS_ORIGINS
-# Add frontend URL if not present
-if settings.FRONTEND_URL not in origins:
-    origins.append(settings.FRONTEND_URL)
-# Add common local development origins
-origins.extend(["http://localhost:3002", "http://127.0.0.1:3002", "http://localhost:3003", "http://127.0.0.1:3003"])
+# Ensure production URLs are included with various protocols
+prod_urls = [
+    "https://job-steel-psi.vercel.app",
+    "http://job-steel-psi.vercel.app",
+    settings.FRONTEND_URL
+]
+for url in prod_urls:
+    if url and url not in origins:
+        origins.append(url)
+
+logger.info(f"CORS Origins configured: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Add security headers (OWASP best practices)
