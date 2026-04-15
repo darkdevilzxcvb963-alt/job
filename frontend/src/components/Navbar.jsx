@@ -5,7 +5,7 @@ import {
   Bell, MessageCircle, MessageSquare, User, LogOut, LogIn, 
   UserPlus, Menu, X, Settings, Briefcase, BarChart3, Shield, Target, ChevronDown 
 } from 'lucide-react'
-import DarkModeToggle from './DarkModeToggle'
+// Removed DarkModeToggle import
 import { useAuth } from '../contexts/AuthContext'
 import { useNotify } from '../contexts/NotifyContext'
 import { useMessaging } from '../contexts/MessagingContext'
@@ -180,7 +180,7 @@ function Navbar() {
                 )}
               </div>
 
-              {location.pathname !== '/' && <DarkModeToggle />}
+              {/* DarkModeToggle removed */}
               <div className="user-menu">
                 <div className="user-avatar-circle">
                   {user?.profile_picture_url && !imgError ? (
@@ -215,7 +215,7 @@ function Navbar() {
             </>
           ) : (
             <>
-              {!['/', '/login', '/signup'].includes(location.pathname) && <DarkModeToggle />}
+              {/* DarkModeToggle removed */}
               <Link to="/login" className="nav-link icon-anim-item" style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
                 <LogIn className="dropdown-icon" size={16} /> <span>Login</span>
               </Link>
@@ -287,12 +287,7 @@ function Navbar() {
                   <div className="mobile-nav-group">
                     <Link to="/profile" className="mobile-nav-link"><User size={18}/> Profile</Link>
                     <Link to="/settings" className="mobile-nav-link"><Settings size={18}/> Settings</Link>
-                    {location.pathname !== '/' && (
-                      <div className="mobile-nav-link theme-switch-row">
-                        <span>Dark Mode</span>
-                        <DarkModeToggle />
-                      </div>
-                    )}
+                      {/* DarkModeToggle removed */}
                   </div>
 
                   <button onClick={handleLogout} className="mobile-nav-link logout-btn">
