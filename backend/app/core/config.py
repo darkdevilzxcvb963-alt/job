@@ -51,14 +51,14 @@ class Settings(BaseSettings):
 
     # Ollama Configuration
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3"
+    OLLAMA_MODEL: str = "llama3.2"
     
     # File Upload
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB
     UPLOAD_DIR: str = str(BASE_DIR.parent / "uploads")
     
     # CORS
-    CORS_ORIGINS_STR: str = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+    CORS_ORIGINS_STR: str = "http://localhost:3000,http://localhost:5173,https://job-steel-psi.vercel.app,http://127.0.0.1:3000,http://127.0.0.1:5173"
     
     # Environment
     ENVIRONMENT: str = "development"

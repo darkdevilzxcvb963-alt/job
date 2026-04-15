@@ -19,7 +19,10 @@ import {
   AlertCircle,
   Calendar,
   Zap,
-  RefreshCw
+  RefreshCw,
+  TrendingUp,
+  History,
+  CheckCircle
 } from 'lucide-react';
 import { useNotify } from '../contexts/NotifyContext';
 import '../styles/TrainingDashboard.css';
@@ -46,6 +49,14 @@ const TrainingDashboard = () => {
   const [tasksCompleted, setTasksCompleted] = useState([]);
   const [tasksStarted, setTasksStarted] = useState([]);
   const [topicLoadingMap, setTopicLoadingMap] = useState({});
+  const [chatTurn, setChatTurn] = useState(0);
+  const [chatHistory, setChatHistory] = useState([]);
+  
+  useEffect(() => {
+    if (hasStarted && chatHistory.length === 0 && !loading) {
+      fetchTrainingPlan();
+    }
+  }, [hasStarted, chatHistory, loading]);
 
   const startTraining = () => {
     setHasStarted(true);
@@ -56,30 +67,56 @@ const TrainingDashboard = () => {
     try {
       if (!answer) setLoading(true);
       setError(null);
-      const params = { match_id: matchId, roadmap_days: roadmapDays, quiz_type: quizType, _t: Date.now() };
+      
+      const params = { 
+        match_id: matchId, 
+        roadmap_days: roadmapDays, 
+        quiz_type: quizType,
+        chat_turn: chatTurn,
+        _t: Date.now() 
+      };
+      
       if (question) params.question = question;
       if (answer) params.answer = answer;
 
       const response = await api.post('/training/generate', null, { params });
+      const freshData = response.data || {};
       
+      // Update data
+      setTrainingData(freshData);
+      
+      // Handle conversational flow (Single Append)
       if (answer) {
-        setTrainingData(prev => ({
-          ...prev,
-          answer_evaluation: response.data.answer_evaluation || null
-        }));
+        setChatHistory(prev => [
+          ...prev, 
+          { role: 'user', text: answer },
+          { 
+             role: 'coach', 
+             text: freshData.coach_comment || "Analysis processed.", 
+             next: freshData.next_question || null 
+          }
+        ]);
+        setChatTurn(prev => prev + 1);
       } else {
-        const freshData = response.data || {};
-        if (!freshData.skill_analysis) freshData.skill_analysis = { level: 'Advanced', missing_skills: [], strengths: [] };
-        if (!freshData.roadmap) freshData.roadmap = [];
-        
-        setTrainingData(freshData);
-        if (freshData.questions?.length > 0) {
-           setSelectedQuestion(freshData.questions[0]);
-        }
+        // Initial Startup
+        setChatHistory([
+           { 
+              role: 'coach', 
+              text: freshData.coach_comment || "Initializing strategic environment...", 
+              next: freshData.next_question || null 
+           }
+        ]);
       }
       
-      if (answer && response.data.answer_evaluation?.score) {
-          setSessionPoints(prev => prev + response.data.answer_evaluation.score);
+      if (freshData.next_question) {
+        setSelectedQuestion({ 
+          question: freshData.next_question, 
+          quiz_type: 'long_answer' 
+        });
+      }
+
+      if (answer && freshData.answer_evaluation?.score) {
+          setSessionPoints(prev => prev + freshData.answer_evaluation.score);
       }
     } catch (err) {
       console.error('CRITICAL: Training Plan Fetch Error:', err);
@@ -90,90 +127,101 @@ const TrainingDashboard = () => {
   };
 
   const handleEvaluateAnswer = async () => {
-    if ((!answerInput.trim() && selectedQuestion?.quiz_type !== 'mcq') || !selectedQuestion) return;
+    if (!answerInput.trim()) return;
     setEvaluating(true);
-    await fetchTrainingPlan(selectedQuestion.question, answerInput);
+    const currentQ = selectedQuestion?.question;
+    const currentAns = answerInput;
+    setAnswerInput('');
+    await fetchTrainingPlan(currentQ, currentAns);
     setEvaluating(false);
-    setActiveTab('interview');
-  };
-
-  const fetchTopicQuestions = async (topic) => {
-    if (!topic || topicLoadingMap[topic]) return;
-    
-    const hasQuestions = trainingData.questions?.some(q => (q.cat || 'General') === topic);
-    if (hasQuestions && trainingData.questions.filter(q => (q.cat || 'General') === topic).length >= 5) {
-        return;
-    }
-
-    try {
-      setTopicLoadingMap(prev => ({ ...prev, [topic]: true }));
-      const response = await api.post('/training/generate-questions', null, { 
-        params: { 
-          topic: topic, 
-          job_role: trainingData.job_role || 'Job Role' 
-        } 
-      });
-      
-      const newQuestions = response.data.questions || [];
-      if (newQuestions.length > 0) {
-        setTrainingData(prev => ({
-          ...prev,
-          questions: [
-            ...(prev.questions || []).filter(q => (q.cat || 'General') !== topic),
-            ...newQuestions
-          ]
-        }));
-        
-        if (selectedTopic === topic || (selectedTopic === 'All' && !selectedQuestion)) {
-             setSelectedQuestion(newQuestions[0]);
-        }
-      }
-    } catch (err) {
-      console.error(`Failed to fetch questions for ${topic}:`, err);
-    } finally {
-      setTopicLoadingMap(prev => ({ ...prev, [topic]: false }));
-    }
   };
 
   if (!hasStarted) {
     return (
       <div className="training-setup-container animate-fade-in">
-        <div className="card glass">
-          <div className="card-header pb-4 mb-6">
-            <Zap color="#6366f1" size={20} />
-            <h2 className="text-xl font-bold">Configure Your AI Career Coach</h2>
+        <div className="setup-wrapper">
+          <div className="setup-hero-text">
+            <h1 className="premium-gradient-text">Career Intelligence Engine</h1>
+            <p className="subtitle">Adaptive. Data-Driven. Strategic.</p>
           </div>
-          <p className="mb-6 opacity-60">Tailor your custom generated interview and practical roadmap setup.</p>
           
-          <div className="setup-group mb-6">
-            <label className="block font-medium mb-2">Interview Template Pattern</label>
-            <select 
-              value={quizType} 
-              onChange={e => setQuizType(e.target.value)}
-            >
-              <option value="Mixed">Mixed (All Types)</option>
-              <option value="MCQ">Multiple Choice Only</option>
-              <option value="Fill-in-the-Blank">Fill in the Blanks</option>
-              <option value="Long Answer">Long Answer Questions</option>
-            </select>
-          </div>
+          <div className="setup-grid">
+            <div className="card glass premium-border setup-card">
+              <div className="card-header pb-4 mb-6">
+                <Zap color="#6366f1" size={24} />
+                <h2 className="text-xl font-bold">Configure Your Experience</h2>
+              </div>
+              
+              <div className="setup-group mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <MessageSquare size={16} color="#6366f1" />
+                  <label className="font-bold text-sm uppercase tracking-wider opacity-80">Interview Pattern</label>
+                </div>
+                <select 
+                  value={quizType} 
+                  onChange={e => setQuizType(e.target.value)}
+                  className="premium-select"
+                >
+                  <option value="Mixed">Mixed (Human-Like Inquiry)</option>
+                  <option value="MCQ">Technical MCQ Focus</option>
+                  <option value="Fill-in-the-Blank">Concept Validation</option>
+                  <option value="Long Answer">Deep Technical Analysis</option>
+                </select>
+              </div>
 
-          <div className="setup-group mb-8">
-            <label className="block font-medium mb-2">Roadmap Duration (Days)</label>
-            <select 
-              value={roadmapDays} 
-              onChange={e => setRoadmapDays(Number(e.target.value))}
-            >
-              <option value={5}>5 Days (Fast-Track)</option>
-              <option value={10}>10 Days (Standard)</option>
-              <option value={14}>14 Days (Comprehensive)</option>
-              <option value={30}>30 Days (Expert Journey)</option>
-            </select>
-          </div>
+              <div className="setup-group mb-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar size={16} color="#10b981" />
+                  <label className="font-bold text-sm uppercase tracking-wider opacity-80">Evolution Roadmap</label>
+                </div>
+                <select 
+                  value={roadmapDays} 
+                  onChange={e => setRoadmapDays(Number(e.target.value))}
+                  className="premium-select"
+                >
+                  <option value={5}>5 Days (Intensive Sprint)</option>
+                  <option value={10}>10 Days (Balanced Growth)</option>
+                  <option value={14}>14 Days (Expert Transition)</option>
+                  <option value={30}>30 Days (Mastery Journey)</option>
+                </select>
+              </div>
 
-          <button onClick={startTraining} className="primary-btn w-full py-4 text-lg">
-            Start My Pipeline
-          </button>
+              <button onClick={startTraining} className="primary-btn w-full py-4 text-lg font-bold glow-on-hover">
+                Initialize Carrier AI
+              </button>
+            </div>
+
+            <div className="setup-info-panel">
+               <div className="info-feature">
+                  <div className="feature-icon"><Brain size={20} /></div>
+                  <div className="feature-text">
+                     <h4>Adaptive Questioning</h4>
+                     <p>Our engine adapts to your previous answers, digging deeper into your strengths and identifying hidden gaps.</p>
+                  </div>
+               </div>
+               <div className="info-feature">
+                  <div className="feature-icon"><Target size={20} /></div>
+                  <div className="feature-text">
+                     <h4>Job-Centric DNA</h4>
+                     <p>Content is dynamically generated based on your target job description and current resume profile.</p>
+                  </div>
+               </div>
+               <div className="info-feature">
+                  <div className="feature-icon"><Cpu size={20} /></div>
+                  <div className="feature-text">
+                     <h4>Skill Analysis Engine</h4>
+                     <p>Receive a structured confidence profile across key technologies once the session is finalized.</p>
+                  </div>
+               </div>
+               
+               <div className="setup-trust-footer mt-8 pt-6 border-t border-white/5">
+                  <div className="flex items-center gap-2 opacity-60 italic text-sm">
+                     <FileText size={14} />
+                     <span>Processing: {matchId.substring(0,8)}... Matching Logic Active</span>
+                  </div>
+               </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -211,6 +259,7 @@ const TrainingDashboard = () => {
   const questions = Array.isArray(trainingData.questions) ? trainingData.questions : [];
   const tasks = Array.isArray(trainingData.tasks) ? trainingData.tasks : [];
   const roadmap = Array.isArray(trainingData.roadmap) ? trainingData.roadmap : [];
+  const job_role = trainingData.job_role || "Target Role";
 
   return (
     <div className="training-dashboard-container">
@@ -220,8 +269,23 @@ const TrainingDashboard = () => {
           <h1 className="training-main-title">Training & Interview Intelligence</h1>
           <p className="training-subtitle">Personalized preparation for your target job role</p>
         </div>
+
+        <div className="header-coach-insight animate-fade-in">
+          <div className="coach-status-box" style={{ background: 'var(--bg-card)', padding: '16px 32px', borderRadius: '24px', border: '1px solid var(--border-color)', boxShadow: 'var(--glass-shadow)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="coach-icon" style={{ width: '48px', height: '48px', background: 'var(--grad-primary)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}>🤖</div>
+            <div>
+              <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '1px' }}>System Status</p>
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-primary)', fontWeight: 600 }}>
+                {sessionPoints > 50 ? "Strategic Profile Active" : 
+                 sessionPoints > 20 ? "Synchronizing DNA..." : 
+                 "Initializing Career Logic"}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="header-stats">
-          <div className="stat-card premium-stat">
+          <div className="stat-card premium-stat premium-border">
             <div className="stat-icon-wrapper"><Trophy size={18} /></div>
             <span className="label">Points</span>
             <div className="value">
@@ -238,12 +302,12 @@ const TrainingDashboard = () => {
               </div>
             </div>
           </div>
-          <div className="stat-card premium-stat">
+          <div className="stat-card premium-stat premium-border">
             <div className="stat-icon-wrapper"><Brain size={18} /></div>
             <span className="label">Readiness</span>
             <span className="value">{skill_analysis?.level || 'Intermediate'}</span>
           </div>
-          <div className="stat-card premium-stat">
+          <div className="stat-card premium-stat premium-border">
             <div className="stat-icon-wrapper"><Target size={18} /></div>
             <span className="label">Gap Skills</span>
             <span className="value">{skill_analysis?.missing_skills?.length || 0}</span>
@@ -281,387 +345,185 @@ const TrainingDashboard = () => {
       <main className="training-content">
         {activeTab === 'analysis' && (
           <div className="analysis-view animate-fade-in">
-            <div className="grid-2">
-              <section className="card glass">
-                <div className="card-header">
-                  <Target color="#6366f1" />
-                  <h3>Skill Gap Analysis</h3>
+             {!trainingData.is_profile_complete ? (
+                <div className="preliminary-analysis-header glass p-8 rounded-3xl border border-indigo-500/20 mb-8 bg-indigo-500/5">
+                   <div className="flex items-center gap-4 mb-4">
+                      <div className="status-orb pulse-blue"></div>
+                      <h3 className="m-0 text-indigo-400 uppercase tracking-widest text-sm font-bold">Intelligence Engine Active</h3>
+                   </div>
+                   <h2 className="text-2xl font-bold mb-2">Analyzing Your Career Strategy</h2>
+                   <p className="opacity-70 m-0 max-w-2xl">
+                      CAREER AI is currently cross-referencing your experience with the market standards for a {job_role}. 
+                      The Decision Engine will provide your roadmap and job matches below.
+                   </p>
                 </div>
-                <div className="skill-list">
-                  {skill_analysis.missing_skills.map((skill, i) => (
-                    <div key={i} className="skill-item missing">
-                      <AlertCircle size={14} /> {skill}
+             ) : (
+              <>
+                {trainingData.career_insight && (
+                  <section className="card full-width glass premium-border mb-8 highlight-purple-glow">
+                    <div className="card-header">
+                       <TrendingUp color="#a78bfa" />
+                       <h3>Strategic Career Insight</h3>
                     </div>
-                  ))}
-                </div>
-              </section>
+                    <p style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--text-primary)', fontWeight: '500' }}>
+                      {trainingData.career_insight}
+                    </p>
+                  </section>
+                )}
 
-              <section className="card glass">
-                <div className="card-header">
-                  <Trophy color="#10b981" />
-                  <h3>Your Strengths</h3>
-                </div>
-                <div className="skill-list">
-                  {skill_analysis.strengths.map((skill, i) => (
-                    <div key={i} className="skill-item strength">
-                      <CheckCircle2 size={14} /> {skill}
+                <div className="grid-2">
+                  <section className="card glass premium-border">
+                    <div className="card-header">
+                      <Cpu color="#6366f1" />
+                      <h3>Skill DNA Profile</h3>
                     </div>
-                  ))}
-                </div>
-              </section>
-            </div>
+                    <div className="skill-dna-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {trainingData.skill_profile?.map((item, i) => (
+                        <div key={i} className="skill-dna-item">
+                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                              <span className="skill-name font-bold">{item.skill}</span>
+                              <span className="skill-pct font-bold" style={{ color: '#6366f1' }}>{item.confidence}</span>
+                           </div>
+                           <div className="dna-bar-bg" style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+                              <div className="dna-bar-fill" style={{ height: '100%', width: item.confidence, background: 'var(--grad-primary)', borderRadius: '4px' }}></div>
+                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
 
-            <section className="card full-width glass mt-24">
-              <div className="card-header">
-                <Lightbulb color="#f59e0b" />
-                <h3>Strategic Focus Areas</h3>
-              </div>
-              <div className="focus-grid">
-                {skill_analysis.focus_areas.map((area, i) => (
-                  <div key={i} className="focus-card">
-                    <Zap size={20} />
-                    <p>{area}</p>
+                  <section className="card glass premium-border">
+                    <div className="card-header">
+                      <Target color="#10b981" />
+                      <h3>Top Match Intelligence</h3>
+                    </div>
+                    <div className="match-dna-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {trainingData.top_job_matches?.map((match, i) => (
+                        <div key={i} className="match-dna-card p-4 rounded-xl" style={{ border: '1px solid var(--border-color)', background: 'rgba(255,255,255,0.02)' }}>
+                           <div className="flex justify-between items-start mb-2">
+                              <h4 className="m-0 font-bold" style={{ fontSize: '1.1rem' }}>{match.role}</h4>
+                              <span className="badge match-badge" style={{ background: '#10b981', color: 'white' }}>{match.match_score}</span>
+                           </div>
+                           <p className="text-sm opacity-70 m-0">{match.why}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </>
+            )}
+
+            <div className="grid-2 mt-8">
+               <section className="card glass premium-border highlight-amber-glow">
+                  <div className="card-header bulletin-header">
+                     <AlertCircle color="#f59e0b" />
+                     <h3>Targeted Skill Gaps Bulletin</h3>
                   </div>
-                ))}
-              </div>
-            </section>
+                  <div className="bulletin-content">
+                     {skill_analysis.missing_skills?.map((skill, i) => (
+                     <div key={i} className="bulletin-item missing animate-slide-right" style={{ animationDelay: `${i * 0.1}s` }}>
+                        <div className="bullet-indicator"></div>
+                        <div className="item-text">
+                           <span className="skill-title">{skill}</span>
+                           <span className="item-meta">Priority Growth Area</span>
+                        </div>
+                     </div>
+                     ))}
+                     {(!skill_analysis.missing_skills || skill_analysis.missing_skills.length === 0) && (
+                        <p className="text-sm opacity-50 p-4 italic">Awaiting technical synchronization...</p>
+                     )}
+                  </div>
+               </section>
+
+               <section className="card glass premium-border highlight-emerald-glow">
+                  <div className="card-header bulletin-header">
+                     <Trophy color="#10b981" />
+                     <h3>Verified Core Strengths</h3>
+                  </div>
+                  <div className="bulletin-content">
+                     {skill_analysis.strengths?.map((skill, i) => (
+                     <div key={i} className="bulletin-item strength animate-slide-left" style={{ animationDelay: `${i * 0.1}s` }}>
+                        <div className="bullet-indicator success"></div>
+                        <div className="item-text">
+                           <span className="skill-title">{skill}</span>
+                           <span className="item-meta">Validated Proficiency</span>
+                        </div>
+                     </div>
+                     ))}
+                     {(!skill_analysis.strengths || skill_analysis.strengths.length === 0) && (
+                        <p className="text-sm opacity-50 p-4 italic">Awaiting technical verification...</p>
+                     )}
+                  </div>
+                </section>
+             </div>
           </div>
         )}
 
-        {activeTab === 'interview' && (() => {
-          const topics = [...new Set(questions.map(q => q.cat || 'General'))];
-          const actualTopic = selectedTopic === 'All' && topics.length > 0 ? topics[0] : selectedTopic;
-          
-          let currentTopicQuestions = topics.length > 0 ? questions.filter(q => (q.cat || 'General') === actualTopic) : questions;
-          if (selectedQuizTypeFilter !== 'All') {
-             currentTopicQuestions = currentTopicQuestions.filter(q => q.quiz_type === selectedQuizTypeFilter);
-          }
-          
-          const currentQuestionIdx = selectedQuestion ? currentTopicQuestions.findIndex(q => q.id === selectedQuestion.id) : 0;
-          const activeQuestion = currentTopicQuestions[currentQuestionIdx] || currentTopicQuestions[0] || selectedQuestion;
-
-          return (
-            <div className="interview-view animate-fade-in">
-              <div className="interview-layout">
-                <div className="questions-sidebar glass">
-                  <div className="sidebar-title-wrapper">
-                    <Brain color="#6366f1" size={20} />
-                    <h3>Interview Topics</h3>
-                  </div>
-                  {topics.map((t, i) => (
-                    <div key={i}>
-                      <button 
-                        className={`q-item ${actualTopic === t ? 'selected' : ''}`}
-                        onClick={() => {
-                            setSelectedTopic(t);
-                            setSelectedQuizTypeFilter('All');
-                            const topicQs = (trainingData.questions || []).filter(q => (q.cat || 'General') === t);
-                            if (topicQs.length > 0) {
-                              setSelectedQuestion(topicQs[0]);
-                            } else {
-                              setSelectedQuestion(null);
-                              fetchTopicQuestions(t);
-                            }
-                            setAnswerInput('');
-                            if (trainingData.answer_evaluation) {
-                               setTrainingData(prev => ({...prev, answer_evaluation: null}));
-                            }
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <p style={{ fontWeight: actualTopic === t ? 'bold' : 'normal', margin: 0 }}>{t}</p>
-                          {Object.keys(topicAnswers).filter(id => {
-                            const q = questions.find(q => q.id === id);
-                            return q && (q.cat || 'General') === t;
-                          }).length === questions.filter(q => (q.cat || 'General') === t).length && questions.filter(q => (q.cat || 'General') === t).length > 0 && (
-                            <CheckCircle2 size={14} color="#10b981" />
-                          )}
-                        </div>
-                      </button>
-                    </div>
-                  ))}
-                  
-                  <button 
-                    className="reset-all-btn"
-                    onClick={async () => {
-                      const ok = await confirm("Reset all session progress?");
-                      if (ok) { setTopicAnswers({}); setSessionPoints(0); }
-                    }}
-                    style={{ 
-                      marginTop: '2rem', width: '100%', padding: '10px', borderRadius: '8px', 
-                      background: 'rgba(239, 68, 68, 0.08)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)',
-                      fontSize: '11px', fontWeight: 'bold', cursor: 'pointer'
-                    }}
-                  >
-                    Reset Progress
-                  </button>
+        {activeTab === 'interview' && (
+          <div className="interview-view animate-fade-in chat-mode">
+             <div className="chat-container glass premium-border">
+                <div className="chat-header">
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div className="coach-avatar">🤖</div>
+                      <div>
+                        <h3 className="m-0">CAREER AI Coach</h3>
+                        <p className="m-0 text-xs opacity-60">Intelligence Decision Engine</p>
+                      </div>
+                   </div>
+                   <div className="progress-pills" style={{ display: 'flex', gap: '4px' }}>
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className={`pill ${chatTurn > i ? 'complete' : chatTurn === i ? 'active' : ''}`} />
+                      ))}
+                   </div>
                 </div>
 
-                <div className="answer-zone">
-                  {activeQuestion && (
-                    <div className="card glass relative">
-                      <div className="question-filter-bar" style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '2rem', padding: '6px', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        {[
-                          { id: 'All', label: 'All Questions' },
-                          { id: 'mcq', label: 'MCQ' },
-                          { id: 'fill_in_the_blank', label: 'Fill-in-the-Blank' },
-                          { id: 'long_answer', label: 'Long Answer' }
-                        ].map((filter) => (
-                          <button 
-                            key={filter.id}
-                            style={{ 
-                               padding: '8px 16px', fontSize: '13px', fontWeight: '600', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s',
-                               border: 'none',
-                               background: selectedQuizTypeFilter === filter.id ? '#6366f1' : 'transparent', 
-                               color: selectedQuizTypeFilter === filter.id ? '#ffffff' : '#64748b',
-                               boxShadow: selectedQuizTypeFilter === filter.id ? '0 4px 6px -1px rgba(99, 102, 241, 0.2)' : 'none'
-                             }}
-                             onClick={() => {
-                                setSelectedQuizTypeFilter(filter.id);
-                                const qMatch = questions.find(q => (q.cat || 'General') === actualTopic && (filter.id === 'All' || q.quiz_type === filter.id));
-                                if (qMatch) {
-                                  setSelectedQuestion(qMatch);
-                                  setAnswerInput(topicAnswers[qMatch.id]?.answer || '');
-                                }
-                             }}
-                          >
-                             {filter.label}
-                          </button>
-                        ))}
-                      </div>
-                      
-                      <div className="active-question-card">
-                        <div className="question-meta-row">
-                           <span className="badge quiz-type-badge">{activeQuestion.quiz_type?.replace(/_/g, ' ').toUpperCase()}</span>
-                           <span className="question-counter">Question {currentQuestionIdx + 1} of {currentTopicQuestions.length}</span>
-                        </div>
-                        <h4 className="active-question-text">{activeQuestion.question}</h4>
-                        <div className="question-icon-center">
-                          <Cpu size={40} opacity={0.1} />
-                        </div>
-                      </div>
-                      
-                      <div className="input-field-container" style={{ minHeight: '200px' }}>
-                        {topicLoadingMap[actualTopic] ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '200px', gap: '1rem' }}>
-                                <Loader2 className="animate-spin" size={32} color="#6366f1" />
-                                <p style={{ color: '#64748b', fontWeight: '500' }}>Fetching expert questions for {actualTopic}...</p>
-                            </div>
-                        ) : activeQuestion?.quiz_type === 'mcq' ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '1.5rem', width: '100%' }}>
-                            {activeQuestion.options?.map((opt, i) => (
-                              <label key={i} style={{ 
-                                  display: 'flex', alignItems: 'center', width: '100%', padding: '1.25rem', 
-                                  borderRadius: '12px', cursor: topicAnswers[activeQuestion.id] ? 'default' : 'pointer', 
-                                  border: answerInput === opt ? '2px solid var(--accent)' : '1px solid var(--border-color)', 
-                                  background: answerInput === opt ? 'rgba(99, 102, 241, 0.05)' : 'var(--bg-card)',
-                                  transition: 'all 0.2s',
-                                  opacity: topicAnswers[activeQuestion.id] && answerInput !== opt ? 0.6 : 1
-                               }}>
-                                <input 
-                                  type="radio" 
-                                  name="mcq" 
-                                  value={opt} 
-                                  disabled={!!topicAnswers[activeQuestion.id]}
-                                  checked={answerInput === opt} 
-                                  onChange={(e) => setAnswerInput(e.target.value)} 
-                                  style={{ width: '1.2rem', height: '1.2rem', flexShrink: 0, marginRight: '1rem', accentColor: 'var(--accent)' }}
-                                />
-                                <span style={{ display: 'block', flex: 1, fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: answerInput === opt ? '600' : '500' }}>{opt}</span>
-                              </label>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-input-wrapper">
-                            {activeQuestion?.quiz_type === 'fill_in_the_blank' ? (
-                              <input 
-                                type="text"
-                                placeholder="Type your answer here..."
-                                value={answerInput}
-                                disabled={!!topicAnswers[activeQuestion.id]}
-                                onChange={(e) => setAnswerInput(e.target.value)}
-                                style={{ 
-                                  width: '100%', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border-color)',
-                                  fontSize: '1.1rem', outline: 'none', transition: 'border-color 0.2s',
-                                  backgroundColor: topicAnswers[activeQuestion.id] ? 'var(--bg-secondary)' : 'var(--bg-card)'
-                                }}
-                              />
-                            ) : (
-                              <textarea 
-                                placeholder="Provide a detailed professional response..."
-                                value={answerInput}
-                                disabled={!!topicAnswers[activeQuestion.id]}
-                                onChange={(e) => setAnswerInput(e.target.value)}
-                                rows={6}
-                                style={{ 
-                                  width: '100%', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border-color)',
-                                  fontSize: '1.1rem', outline: 'none', transition: 'border-color 0.2s', resize: 'vertical',
-                                  backgroundColor: topicAnswers[activeQuestion.id] ? 'var(--bg-secondary)' : 'var(--bg-card)'
-                                }}
-                              />
+                <div className="chat-messages" id="chat-scroller">
+                   {chatHistory.map((msg, i) => (
+                      <div key={i} className={`chat-message ${msg.role} animate-slide-up`}>
+                         {msg.role === 'coach' && <div className="bubble-avatar assistant-avatar">🤖</div>}
+                         <div className="message-bubble">
+                            {msg.text}
+                            {msg.next && (
+                               <div className="msg-question">
+                                  <strong>Next Inquiry:</strong><br />
+                                  {msg.next}
+                               </div>
                             )}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="action-button-group">
-                          <button 
-                            className="secondary-btn"
-                            onClick={() => {
-                              setAnswerInput('');
-                              if (topicAnswers[activeQuestion.id]) {
-                                const newAnswers = { ...topicAnswers };
-                                const wasCorrect = newAnswers[activeQuestion.id].correct;
-                                delete newAnswers[activeQuestion.id];
-                                setTopicAnswers(newAnswers);
-                                if (wasCorrect) setSessionPoints(p => Math.max(0, p - 2));
-                              }
-                            }}
-                            style={{ padding: '12px', borderRadius: '10px', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontWeight: '700', border: 'none', cursor: 'pointer' }}
-                          >
-                            Reset
-                          </button>
-
-                          {!topicAnswers[activeQuestion.id] ? (
-                            <button 
-                              className="primary-btn"
-                              disabled={!answerInput.trim()}
-                              onClick={() => {
-                                if (!answerInput.trim()) return;
-                                const isMcq = activeQuestion.quiz_type === 'mcq';
-                                let isCorrect = true;
-                                if (activeQuestion.correct_answer) {
-                                    if (isMcq) isCorrect = answerInput === activeQuestion.correct_answer;
-                                    else isCorrect = (answerInput || '').toLowerCase().includes((activeQuestion.correct_answer || '').toLowerCase());
-                                }
-                                setTopicAnswers(prev => ({
-                                    ...prev,
-                                    [activeQuestion.id]: { answer: answerInput, correct: isCorrect, explanation: activeQuestion.explanation }
-                                }));
-                                if (isCorrect) setSessionPoints(prev => prev + 2);
-                              }}
-                              style={{ padding: '12px', borderRadius: '10px', background: '#6366f1', color: 'white', fontWeight: '700', border: 'none', cursor: !answerInput.trim() ? 'not-allowed' : 'pointer', opacity: !answerInput.trim() ? 0.6 : 1 }}
-                            >
-                              Evaluate Answer
-                            </button>
-                          ) : (
-                            <button 
-                              disabled 
-                              style={{ 
-                                 padding: '12px', 
-                                 borderRadius: '10px', 
-                                 background: topicAnswers[activeQuestion.id].correct ? '#10b981' : '#ef4444', 
-                                 color: 'white', 
-                                 fontWeight: '700', 
-                                 border: 'none', 
-                                 cursor: 'default' 
-                              }}
-                            >
-                              {topicAnswers[activeQuestion.id].correct ? 'Correct ✓' : 'Wrong ✗'}
-                            </button>
-                          )}
-
-                          <button 
-                            className="secondary-btn"
-                            disabled={!!topicAnswers[activeQuestion.id]}
-                            onClick={() => {
-                               setTopicAnswers(prev => ({
-                                  ...prev,
-                                  [activeQuestion.id]: { answer: "Skipped", correct: false, explanation: "You skipped this question." }
-                               }));
-                               if (currentQuestionIdx < currentTopicQuestions.length - 1) {
-                                  setSelectedQuestion(currentTopicQuestions[currentQuestionIdx + 1]);
-                                  setAnswerInput(topicAnswers[currentTopicQuestions[currentQuestionIdx + 1].id]?.answer || '');
-                               }
-                            }}
-                            style={{ padding: '12px', borderRadius: '10px', background: 'var(--bg-hover)', color: 'var(--text-muted)', fontWeight: '700', border: 'none', cursor: topicAnswers[activeQuestion.id] ? 'not-allowed' : 'pointer', opacity: topicAnswers[activeQuestion.id] ? 0.5 : 1 }}
-                          >
-                            Skip
-                          </button>
-                      </div>
-
-                      <div className="navigation-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.5rem' }}>
-                        <button 
-                          disabled={currentQuestionIdx <= 0}
-                          onClick={() => {
-                            const prevQ = currentTopicQuestions[currentQuestionIdx - 1];
-                            setSelectedQuestion(prevQ);
-                            setAnswerInput(topicAnswers[prevQ.id]?.answer || '');
-                          }}
-                          style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '600', cursor: currentQuestionIdx <= 0 ? 'default' : 'pointer', opacity: currentQuestionIdx <= 0 ? 0.4 : 1, display: 'flex', alignItems: 'center', gap: '4px' }}
-                        >
-                          <ChevronRight style={{ transform: 'rotate(180deg)' }} size={16} /> Previous
-                        </button>
-                        <button 
-                          disabled={currentQuestionIdx >= currentTopicQuestions.length - 1}
-                          onClick={() => {
-                            const nextQ = currentTopicQuestions[currentQuestionIdx + 1];
-                            setSelectedQuestion(nextQ);
-                            setAnswerInput(topicAnswers[nextQ.id]?.answer || '');
-                          }}
-                          style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '600', cursor: currentQuestionIdx >= currentTopicQuestions.length - 1 ? 'default' : 'pointer', opacity: currentQuestionIdx >= currentTopicQuestions.length - 1 ? 0.4 : 1, display: 'flex', alignItems: 'center', gap: '4px' }}
-                        >
-                          Next <ChevronRight size={16} />
-                        </button>
-                      </div>
-
-                      {topicAnswers[activeQuestion.id] && (
-                        <div className={`evaluation-result animate-slide-up mt-8 border-l-4 ${topicAnswers[activeQuestion.id].correct ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'} p-6 rounded-r-xl`}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                            {topicAnswers[activeQuestion.id].correct ? <CheckCircle2 size={24} color="#10b981" /> : <AlertCircle size={24} color="#ef4444" />}
-                            <h5 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: topicAnswers[activeQuestion.id].correct ? '#166534' : '#991b1b' }}>
-                               {topicAnswers[activeQuestion.id].correct ? 'Spot On!' : 'Room for Improvement'}
-                            </h5>
-                          </div>
-                          <div className="eval-text" style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.6' }}>
-                             {activeQuestion.correct_answer && <p style={{ marginBottom: '8px' }}><span style={{ fontWeight: '700', color: '#10b981' }}>Correct Answer:</span> {activeQuestion.correct_answer}</p>}
-                             <p><span style={{ fontWeight: '700', color: 'var(--text-primary)' }}>Expert Insights:</span> {topicAnswers[activeQuestion.id].explanation || "Great job covering this concept!"}</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {Object.keys(topicAnswers).filter(id => questions.find(q => q.id === id && (q.cat || 'General') === actualTopic)).length === currentTopicQuestions.length && currentTopicQuestions.length > 0 && (
-                         <div className="summary-card-premium mt-12 p-8 rounded-2xl animate-slide-up" style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white', position: 'relative', overflow: 'hidden' }}>
-                            <div style={{ position: 'absolute', top: '-20px', right: '-20px', opacity: 0.1 }}>
-                              <Brain size={120} />
-                            </div>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <Trophy size={28} /> Topic Mastery: {actualTopic}
-                            </h3>
-                            <p style={{ opacity: 0.9, fontSize: '1.1rem', marginBottom: '2rem', maxWidth: '80%' }}>
-                              You've completed all {currentTopicQuestions.length} questions for this module.
-                            </p>
-                            <button 
-                              onClick={() => {
-                                const nextIdx = topics.indexOf(actualTopic) + 1;
-                                if (nextIdx < topics.length) {
-                                  setSelectedTopic(topics[nextIdx]);
-                                  setSelectedQuizTypeFilter('All');
-                                  const firstQ = questions.find(q => (q.cat || 'General') === topics[nextIdx]);
-                                  setSelectedQuestion(firstQ);
-                                  setAnswerInput('');
-                                } else {
-                                  setActiveTab('task');
-                                }
-                              }}
-                              style={{ 
-                                padding: '12px 32px', borderRadius: '100px', 
-                                background: 'white', color: '#6366f1', border: 'none', 
-                                fontWeight: '800', fontSize: '1rem', cursor: 'pointer',
-                                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
-                              }}
-                            >
-                              {topics.indexOf(actualTopic) < topics.length - 1 ? 'Go to Next Topic' : 'Proceed to Practical Tasks'}
-                            </button>
                          </div>
-                      )}
-                    </div>
-                  )}
+                         {msg.role === 'user' && <div className="bubble-avatar user-avatar">👤</div>}
+                      </div>
+                   ))}
+                   {evaluating && (
+                      <div className="chat-message coach">
+                        <div className="message-bubble typing">
+                           <Loader2 className="animate-spin inline mr-2" size={14} /> 
+                           Analyzing response...
+                        </div>
+                      </div>
+                   )}
+                   <div ref={el => { if(el) el.scrollIntoView({ behavior: 'smooth' }) }}></div>
                 </div>
-              </div>
-            </div>
-          );
-        })()}
+
+                <div className="chat-input-zone">
+                     <textarea 
+                       placeholder="Provide your professional insight..."
+                       value={answerInput}
+                       onChange={(e) => setAnswerInput(e.target.value)}
+                       onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                             e.preventDefault();
+                             handleEvaluateAnswer();
+                          }
+                       }}
+                       rows={1}
+                     />
+                     <button onClick={handleEvaluateAnswer} disabled={!answerInput.trim() || evaluating} className="send-btn">
+                        <ChevronRight />
+                     </button>
+                  </div>
+             </div>
+          </div>
+        )}
 
         {activeTab === 'task' && (
           <div className="task-view animate-fade-in">
@@ -743,52 +605,70 @@ const TrainingDashboard = () => {
 
         {activeTab === 'roadmap' && (
           <div className="roadmap-view animate-fade-in">
-            <h2 className="text-xl font-bold mb-6">Your Personalized {roadmapDays}-Day Roadmap</h2>
-            <div className="roadmap-timeline">
-              {roadmap?.map((day, i) => (
-                <div key={i} className="roadmap-item">
-                  <div className="day-circle">Day {day.day}</div>
-                  <div className="roadmap-card glass roadmap-flex-item">
-                    <div className="roadmap-content" style={{ flex: 1 }}>
-                        <div className="mb-2 pb-2 border-b border-white/5">
-                           {day.focus ? (
-                               <h4 className="text-blue-500 font-bold uppercase text-sm tracking-wide m-0" style={{ fontSize: '1rem' }}>Day {day.day}: {day.focus}</h4>
-                           ) : (
-                               <h4 className="text-blue-500 font-bold uppercase text-sm tracking-wide m-0" style={{ fontSize: '1rem' }}>Day {day.day}: Core Concept Focus</h4>
-                           )}
-                        </div>
-                        {roadmapExpanded.includes(i) && (
-                             <div className="text-sm opacity-80 mb-3 bg-black/30 p-4 rounded-xl border border-white/5 animate-slide-up">
-                                 <strong>Learning Focus:</strong> Deep dive into {day.focus || 'modern tech stacks'}. This day covers key patterns, common pitfalls, and architectural insights specific to this skill gap.
-                             </div>
-                        )}
-                        <p className="text-white opacity-90 m-0" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{day.task}</p>
-                    </div>
-
-                    <div className="roadmap-actions right-side">
-                         <button className="roadmap-btn-curved secondary" 
-                           onClick={() => setRoadmapExpanded(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i])}>
-                            {roadmapExpanded.includes(i) ? 'Hide' : 'Details'}
-                         </button>
-                         <button className="roadmap-btn-curved success" 
-                           style={{ 
-                               borderColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.5)',
-                               backgroundColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.1)',
-                               color: roadmapCompleted.includes(i) ? '#ffffff' : '#34d399'
-                           }}
-                           onClick={() => {
-                             if (!roadmapCompleted.includes(i)) {
-                                setRoadmapCompleted([...roadmapCompleted, i]);
-                                setSessionPoints(p => p + 20);
-                             }
-                         }}>
-                            {roadmapCompleted.includes(i) ? 'Done ✓' : 'Finish'}
-                         </button>
-                    </div>
+            {!trainingData.is_profile_complete ? (
+               <div className="card glass premium-border text-center p-12">
+                  <div className="lock-icon mb-6">
+                    <Calendar className="mx-auto" size={48} color="#6366f1" />
                   </div>
+                  <h3>Dynamic Roadmap is Locked</h3>
+                  <p className="opacity-60 max-w-md mx-auto">
+                    Complete your interview session with CAREER AI to unlock a detailed daily plan 
+                    tailored to your identified skill gaps.
+                  </p>
+                  <button onClick={() => setActiveTab('interview')} className="primary-btn mt-6">
+                    Launch AI Chat
+                  </button>
+               </div>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold mb-6">Your Personalized {roadmapDays}-Day Roadmap</h2>
+                <div className="roadmap-timeline">
+                  {roadmap?.map((day, i) => (
+                    <div key={i} className="roadmap-item">
+                      <div className="day-circle">{String(day.day).toLowerCase().includes('day') ? day.day : `Day ${day.day}`}</div>
+                      <div className="roadmap-card glass roadmap-flex-item">
+                        <div className="roadmap-content" style={{ flex: 1 }}>
+                            <div className="mb-2 pb-2 border-b border-white/5">
+                               {day.focus ? (
+                                   <h4 className="text-blue-500 font-bold uppercase text-sm tracking-wide m-0" style={{ fontSize: '1rem' }}>{String(day.day).toLowerCase().includes('day') ? day.day : `Day ${day.day}`}: {day.focus}</h4>
+                               ) : (
+                                   <h4 className="text-blue-500 font-bold uppercase text-sm tracking-wide m-0" style={{ fontSize: '1rem' }}>{String(day.day).toLowerCase().includes('day') ? day.day : `Day ${day.day}`}: Core Concept Focus</h4>
+                               )}
+                            </div>
+                            {roadmapExpanded.includes(i) && (
+                                 <div className="text-sm opacity-80 mb-3 bg-black/30 p-4 rounded-xl border border-white/5 animate-slide-up">
+                                     <strong>Learning Focus:</strong> Deep dive into {day.focus || 'modern tech stacks'}. This day covers key patterns, common pitfalls, and architectural insights specific to this skill gap.
+                                 </div>
+                            )}
+                            <p className="text-white opacity-90 m-0" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{day.task}</p>
+                        </div>
+
+                        <div className="roadmap-actions right-side">
+                             <button className="roadmap-btn-curved secondary" 
+                               onClick={() => setRoadmapExpanded(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i])}>
+                                {roadmapExpanded.includes(i) ? 'Hide' : 'Details'}
+                             </button>
+                             <button className="roadmap-btn-curved success" 
+                               style={{ 
+                                   borderColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.5)',
+                                   backgroundColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.1)',
+                                   color: roadmapCompleted.includes(i) ? '#ffffff' : '#34d399'
+                               }}
+                               onClick={() => {
+                                 if (!roadmapCompleted.includes(i)) {
+                                    setRoadmapCompleted([...roadmapCompleted, i]);
+                                    setSessionPoints(p => p + 20);
+                                 }
+                             }}>
+                                {roadmapCompleted.includes(i) ? 'Done ✓' : 'Finish'}
+                             </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         )}
       </main>

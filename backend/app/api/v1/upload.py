@@ -78,7 +78,7 @@ async def upload_profile_picture(
             shutil.copyfileobj(file.file, buffer)
         
         # Build the public URL (served via /uploads static mount)
-        public_url = f"http://127.0.0.1:8001/uploads/profiles/{unique_filename}"
+        public_url = f"/uploads/profiles/{unique_filename}"
         
         # Immediately persist the URL to the user record
         current_user.profile_picture_url = public_url

@@ -172,7 +172,7 @@ class NotificationService:
             {cover_section}
             <p style="color:#555;">Log in to your recruiter dashboard to review the candidate's profile and resume.</p>
             <div style="text-align:center;margin-top:24px;">
-              <a href="http://localhost:5173/matches"
+              <a href="{settings.FRONTEND_URL}/matches"
                  style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 28px;
                         border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">
                 View Application →
@@ -194,7 +194,7 @@ class NotificationService:
         sms_msg = (
             f"[Resume Match] New Application!\n"
             f"{candidate_name} applied to your '{job_title}' role at {company}.\n"
-            f"Log in to review: http://localhost:5173/matches"
+            f"Log in to review: {settings.FRONTEND_URL}/matches"
         )
         await self.send_sms(to_phone=recruiter_phone, message=sms_msg)
 
@@ -220,7 +220,7 @@ class NotificationService:
             </p>
             <p style="color:#555;">The recruiter has been notified and will review your profile shortly. You can track your application status in your dashboard.</p>
             <div style="text-align:center;margin-top:24px;">
-              <a href="http://localhost:5173/candidate"
+              <a href="{settings.FRONTEND_URL}/candidate"
                  style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:12px 28px;
                         border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">
                 View My Dashboard →

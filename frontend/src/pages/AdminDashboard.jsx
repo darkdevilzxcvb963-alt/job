@@ -348,13 +348,13 @@ const AdminDashboard = () => {
               </div>
             ) : stats ? (
               <div className="stats-grid">
-                <div className="stat-card">
+                <div className="stat-card premium-border">
                   <h3>Total Candidates</h3>
                   <p className="stat-value">{stats.total_candidates}</p>
                   <p className="stat-label">In Match Engine</p>
                 </div>
 
-                <div className="stat-card clickable" onClick={() => { setFilterRole('all'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('all'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Registered Users</h3>
                   <p className="stat-value">{stats.total_users}</p>
                   <div className="card-footer">
@@ -363,13 +363,13 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-card premium-border">
                   <h3>Active Users</h3>
                   <p className="stat-value">{stats.active_users}</p>
                   <p className="stat-label">Currently active</p>
                 </div>
 
-                <div className="stat-card clickable" onClick={() => { setFilterRole('job_seeker'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('job_seeker'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Job Seeker Accounts</h3>
                   <p className="stat-value">{stats.job_seekers}</p>
                   <div className="card-footer">
@@ -378,7 +378,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="stat-card clickable" onClick={() => { setFilterRole('recruiter'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('recruiter'); setActiveTab('users'); fetchUsers(); }}>
                   <h3>Recruiter Accounts</h3>
                   <p className="stat-value">{stats.recruiters}</p>
                   <div className="card-footer">

@@ -308,16 +308,19 @@ const CareerDashboard = () => {
             </div>
           </div>
 
-          <div className="sidebar-section glass-panel dark-gradient">
-            <Zap className="promo-icon" />
-            <h4>AI Resume Scanner</h4>
-            <p>Our intelligence engine detected outdated keywords in your PDF. Update to increase visibility.</p>
-            <button className="btn-action">Scan Recent PDF</button>
+          <div className="sidebar-section glass-panel">
+            <h4><Info size={16} /> Pro Tip #1</h4>
+            <p>Users who complete their "Projects" section see 40% more recruiter outreach on average.</p>
           </div>
 
-          <div className="sidebar-section glass-panel">
-            <h4><Info size={16} /> Pro Tip</h4>
-            <p>Users who complete their "Projects" section see 40% more recruiter outreach on average.</p>
+          <div className="sidebar-section glass-panel highlight-blue-glow">
+            <h4><TrendingUp size={16} /> Pro Tip #2</h4>
+            <p>Tailor your headline to include your most proficient framework (e.g., 'Senior React Developer') for 3x higher search relevancy.</p>
+          </div>
+
+          <div className="sidebar-section glass-panel highlight-purple-glow">
+            <h4><Sparkles size={16} /> Pro Tip #3</h4>
+            <p>Quantify your achievements in the experience section (e.g., 'Reduced latency by 40%') to impress technical recruiters.</p>
           </div>
         </div>
       </div>

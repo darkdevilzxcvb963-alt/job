@@ -155,7 +155,56 @@ def create_match(
     db.refresh(db_match)
     return db_match
 
+
+@router.get("/selection-stats")
+def get_candidate_selection_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Return match/selection stats for the logged-in candidate."""
+    # Find the candidate record linked to this user account
+    candidate = db.query(Candidate).filter(Candidate.email == current_user.email).first()
+    if not candidate:
+        return {
+            "total_matches": 0,
+            "total_applied": 0,
+            "shortlisted": 0,
+            "selected": 0,
+            "recent_activity": []
+        }
+
+    # All matches for this candidate
+    all_matches = db.query(Match).filter(Match.candidate_id == candidate.id).all()
+
+    # Count by status
+    status_counts = {}
+    for m in all_matches:
+        status_counts[m.status] = status_counts.get(m.status, 0) + 1
+
+    # Build recent activity list (last 10, most recent first)
+    recent = sorted(all_matches, key=lambda m: m.created_at, reverse=True)[:10]
+    activity = []
+    for m in recent:
+        job = db.query(Job).filter(Job.id == m.job_id).first()
+        activity.append({
+            "match_id": m.id,
+            "job_title": job.title if job else "Unknown",
+            "company": job.company if job else "Unknown",
+            "match_score": round(m.overall_score * 100, 1),
+            "status": m.status,
+            "date": m.created_at.strftime("%b %d, %Y") if m.created_at else ""
+        })
+
+    return {
+        "total_matches": len(all_matches),
+        "total_applied": status_counts.get("applied", 0),
+        "shortlisted": status_counts.get("shortlisted", 0),
+        "selected": status_counts.get("selected", 0),
+        "recent_activity": activity
+    }
+
 @router.get("/my-matches", response_model=List[MatchWithDetails])
+
 async def get_my_matches(
     min_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Minimum match score filter"),
     max_score: Optional[float] = Query(None, ge=0.0, le=1.0, description="Maximum match score filter"),
@@ -231,9 +280,12 @@ async def get_my_matches(
         # Flatten candidate skills safely (handles dict, list, JSON string, or None)
         c_skills = flatten_skills(candidate.skills)
 
-        # Populate Intelligence
-        intelligence_service = IntelligenceService(db, llm_service)
-        intelligence = intelligence_service.get_match_intelligence(match.id)
+        # Populate Intelligence (graceful degradation)
+        try:
+            intelligence = IntelligenceService(db, llm_service).get_match_intelligence(match.id)
+        except Exception as intel_err:
+            logger.warning(f"Intelligence computation failed for match {match.id}: {intel_err}")
+            intelligence = None
 
         # Recruiter contact info for the candidate
         recruiter_name, recruiter_email, recruiter_phone = None, None, None
@@ -309,9 +361,12 @@ async def get_match_details(
 
     c_skills = flatten_skills(candidate.skills)
 
-    # Populate Intelligence
-    intelligence_service = IntelligenceService(db, llm_service)
-    intelligence = intelligence_service.get_match_intelligence(match.id)
+    # Populate Intelligence (graceful degradation)
+    try:
+        intelligence = IntelligenceService(db, llm_service).get_match_intelligence(match.id)
+    except Exception as intel_err:
+        logger.warning(f"Intelligence computation failed for match {match.id}: {intel_err}")
+        intelligence = None
 
     # Recruiter contact info for the candidate
     recruiter_name, recruiter_email, recruiter_phone = None, None, None
@@ -399,6 +454,13 @@ async def get_candidate_matches(
                 recruiter_email = recruiter_user.email
                 recruiter_phone = recruiter_user.phone
 
+        # Populate Intelligence (graceful degradation)
+        try:
+            _intelligence = IntelligenceService(db, llm_service).get_match_intelligence(match.id)
+        except Exception as intel_err:
+            logger.warning(f"Intelligence failed for match {match.id}: {intel_err}")
+            _intelligence = None
+
         match_dict = {
             "id": match.id,
             "status": match.status,
@@ -420,7 +482,7 @@ async def get_candidate_matches(
             "preferred_skills": job.preferred_skills,
             "experience_required": job.experience_required,
             "education_required": job.education_required,
-            "intelligence": IntelligenceService(db, llm_service).get_match_intelligence(match.id),
+            "intelligence": _intelligence,
             "cover_letter": db.query(Application).filter(Application.match_id == match.id).first().cover_letter if db.query(Application).filter(Application.match_id == match.id).first() else None,
             "candidate_user_id": candidate_user_id,
             "recruiter_id": job.recruiter_id,
@@ -496,6 +558,13 @@ async def get_all_recruiter_matches(
                 recruiter_email = recruiter_user.email
                 recruiter_phone = recruiter_user.phone
 
+        # Populate Intelligence (graceful degradation)
+        try:
+            _intelligence = IntelligenceService(db, llm_service).get_match_intelligence(match.id)
+        except Exception as intel_err:
+            logger.warning(f"Intelligence failed for match {match.id}: {intel_err}")
+            _intelligence = None
+
         match_dict = {
             "id": match.id,
             "status": match.status,
@@ -517,7 +586,7 @@ async def get_all_recruiter_matches(
             "preferred_skills": job.preferred_skills,
             "experience_required": job.experience_required,
             "education_required": job.education_required,
-            "intelligence": IntelligenceService(db, llm_service).get_match_intelligence(match.id),
+            "intelligence": _intelligence,
             "cover_letter": db.query(Application).filter(Application.match_id == match.id).first().cover_letter if db.query(Application).filter(Application.match_id == match.id).first() else None,
             "candidate_user_id": candidate_user_id,
             "recruiter_id": job.recruiter_id,
@@ -580,6 +649,13 @@ async def get_job_matches(
         # Flatten candidate skills safely
         c_skills = flatten_skills(candidate.skills)
 
+        # Populate Intelligence (graceful degradation)
+        try:
+            _intelligence = IntelligenceService(db, llm_service).get_match_intelligence(match.id)
+        except Exception as intel_err:
+            logger.warning(f"Intelligence failed for match {match.id}: {intel_err}")
+            _intelligence = None
+
         result.append({
             "id": match.id,
             "status": match.status,
@@ -601,7 +677,7 @@ async def get_job_matches(
             "preferred_skills": job.preferred_skills,
             "experience_required": job.experience_required,
             "education_required": job.education_required,
-            "intelligence": IntelligenceService(db, llm_service).get_match_intelligence(match.id),
+            "intelligence": _intelligence,
             "cover_letter": cover_letter,
             "candidate_user_id": candidate_user_id
         })
@@ -888,50 +964,3 @@ def generate_matches_for_recruiter(
         
     return {"message": f"Started match generation for {len(jobs)} jobs"}
 
-
-@router.get("/selection-stats")
-def get_candidate_selection_stats(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Return match/selection stats for the logged-in candidate."""
-    # Find the candidate record linked to this user account
-    candidate = db.query(Candidate).filter(Candidate.email == current_user.email).first()
-    if not candidate:
-        return {
-            "total_matches": 0,
-            "total_applied": 0,
-            "shortlisted": 0,
-            "selected": 0,
-            "recent_activity": []
-        }
-
-    # All matches for this candidate
-    all_matches = db.query(Match).filter(Match.candidate_id == candidate.id).all()
-
-    # Count by status
-    status_counts = {}
-    for m in all_matches:
-        status_counts[m.status] = status_counts.get(m.status, 0) + 1
-
-    # Build recent activity list (last 10, most recent first)
-    recent = sorted(all_matches, key=lambda m: m.created_at, reverse=True)[:10]
-    activity = []
-    for m in recent:
-        job = db.query(Job).filter(Job.id == m.job_id).first()
-        activity.append({
-            "match_id": m.id,
-            "job_title": job.title if job else "Unknown",
-            "company": job.company if job else "Unknown",
-            "match_score": round(m.overall_score * 100, 1),
-            "status": m.status,
-            "date": m.created_at.strftime("%b %d, %Y") if m.created_at else ""
-        })
-
-    return {
-        "total_matches": len(all_matches),
-        "total_applied": status_counts.get("applied", 0),
-        "shortlisted": status_counts.get("shortlisted", 0),
-        "selected": status_counts.get("selected", 0),
-        "recent_activity": activity
-    }

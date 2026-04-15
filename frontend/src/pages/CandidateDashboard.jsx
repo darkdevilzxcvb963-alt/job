@@ -6,12 +6,13 @@ import { useAuth } from '../contexts/AuthContext'
 import { useNotify } from '../contexts/NotifyContext'
 import { Link } from 'react-router-dom'
 import { useMessaging } from '../contexts/MessagingContext'
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, ArrowRight } from 'lucide-react'
 import '../styles/CandidateDashboard.css'
 
 function CandidateDashboard() {
   const { user } = useAuth()
   const { openChat } = useMessaging()
+  const { success, error: notifyError, warning } = useNotify()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -233,7 +234,7 @@ function CandidateDashboard() {
 
       {/* CANDIDATE ID CARD */}
       {user && (
-        <div className="candidate-id-card">
+        <div className="candidate-id-card premium-border">
           <div className="id-card-header">
             <div className="id-card-header-info">
               <h2>Profile Identity</h2>
@@ -321,9 +322,9 @@ function CandidateDashboard() {
 
       {/* Recruiter Activity table (full view below) */}
       {user && selectionData?.recent_activity?.length > 0 && (
-        <div className="selection-stats-panel">
+        <div className="selection-stats-panel premium-border">
           <div className="selection-stats-header">
-            <h2>Recruiter Activity</h2>
+            <h2>Candidate Activity</h2>
             <p>Jobs you've been matched or applied to since joining the platform</p>
           </div>
 
@@ -352,7 +353,8 @@ function CandidateDashboard() {
               <span>Company</span>
               <span>Match Score</span>
               <span>Status</span>
-              <span>Date</span>
+              <span style={{ textAlign: 'right' }}>Date</span>
+              <span></span>
             </div>
             {selectionData.recent_activity.map(item => (
               <div key={item.match_id} className="sel-table-row">
@@ -367,6 +369,11 @@ function CandidateDashboard() {
                   </span>
                 </span>
                 <span className="sel-date">{item.date}</span>
+                <span className="sel-action" style={{ textAlign: 'right' }}>
+                  <Link to={`/matches?job_id=${item.job_id}`} style={{ color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>
+                    <ArrowRight size={18} />
+                  </Link>
+                </span>
               </div>
             ))}
           </div>
@@ -447,12 +454,12 @@ function CandidateDashboard() {
 
           <button 
             type="submit" 
-            className="btn-primary" 
+            className={`btn-primary ${uploadResumeMutation.isLoading ? 'btn-loading' : ''}`}
             disabled={createCandidateMutation.isLoading || updateCandidateMutation.isLoading || uploadResumeMutation.isLoading}
           >
             {createCandidateMutation.isLoading || updateCandidateMutation.isLoading || uploadResumeMutation.isLoading
-              ? (uploadResumeMutation.isLoading ? 'AI Analyzing Resume...' : 'Processing...')
-              : existingCandidateId ? 'Update Profile' : 'Create Profile'}
+              ? (uploadResumeMutation.isLoading ? <span>AI Analyzing Resume...</span> : <span>Processing...</span>)
+              : <span>{existingCandidateId ? 'Update Profile' : 'Create Profile'}</span>}
           </button>
           
           {uploadResumeMutation.isLoading && (
@@ -463,7 +470,7 @@ function CandidateDashboard() {
         </form>
 
         <div className="dashboard-stats">
-          <div className="stat-card analysis-card">
+          <div className="stat-card analysis-card premium-border">
             {resumeStats ? (
               <div className="analysis-container">
                 <div className="analysis-header">

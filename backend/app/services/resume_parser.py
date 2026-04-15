@@ -191,7 +191,7 @@ class ResumeParser:
             with open(file_path, "rb") as f:
                 files = {"file": f}
                 data = {"result_type": "markdown"}
-                response = requests.post(url, headers=headers, files=files, data=data)
+                response = requests.post(url, headers=headers, files=files, data=data, timeout=60)
                 
             if response.status_code != 200:
                 logger.error(f"LlamaParse upload failed: {response.text}")
@@ -202,15 +202,15 @@ class ResumeParser:
                 return None
                 
             # Polling for results
-            max_retries = 30 # 30 seconds max
+            max_retries = 60 # 60 seconds max
             for _ in range(max_retries):
                 status_url = f"https://api.cloud.llamaindex.ai/api/parsing/job/{job_id}"
-                status_res = requests.get(status_url, headers=headers)
+                status_res = requests.get(status_url, headers=headers, timeout=10)
                 status_data = status_res.json()
                 
                 if status_data.get("status") == "SUCCESS":
                     result_url = f"https://api.cloud.llamaindex.ai/api/parsing/job/{job_id}/result/markdown"
-                    result_res = requests.get(result_url, headers=headers)
+                    result_res = requests.get(result_url, headers=headers, timeout=30)
                     return result_res.json().get("markdown")
                 elif status_data.get("status") == "ERROR":
                     logger.error(f"LlamaParse job error: {status_data}")
@@ -225,34 +225,66 @@ class ResumeParser:
             return None
     
     def _parse_docx(self, file_path: str) -> Dict[str, any]:
-        """Parse DOCX file including text from tables and paragraphs"""
+        """Parse DOCX file including text from tables, paragraphs, headers, and footers"""
         try:
             doc = Document(file_path)
             text_content = []
             
-            # 1. Extract from paragraphs
+            # 1. Extract from headers
+            for section in doc.sections:
+                header = section.header
+                for p in header.paragraphs:
+                    if p.text.strip():
+                        text_content.append(p.text.strip())
+            
+            # 2. Extract from paragraphs
             for paragraph in doc.paragraphs:
                 if paragraph.text.strip():
-                    text_content.append(paragraph.text)
+                    text_content.append(paragraph.text.strip())
             
-            # 2. Extract from tables (resumes often use tables for layout)
+            # 3. Extract from tables (resumes often use tables for layout)
             for table in doc.tables:
                 for row in table.rows:
+                    row_text = []
                     for cell in row.cells:
-                        # Only add if not empty and not already there (simple dedup for merged cells)
-                        text = cell.text.strip()
-                        if text and text not in text_content:
-                            text_content.append(text)
+                        # Extract nested paragraphs in cells
+                        cell_parts = [p.text.strip() for p in cell.paragraphs if p.text.strip()]
+                        cell_text = " ".join(cell_parts)
+                        if cell_text and cell_text not in row_text:
+                            row_text.append(cell_text)
+                    if row_text:
+                        text_content.append(" | ".join(row_text))
+            
+            # 4. Extract from footers
+            for section in doc.sections:
+                footer = section.footer
+                for p in footer.paragraphs:
+                    if p.text.strip():
+                        text_content.append(p.text.strip())
             
             full_text = "\n".join(text_content)
+            
+            # Fallback if text is still very short
+            if len(full_text.strip()) < 100:
+                 # Check for text boxes or other elements? (Limited support in python-docx)
+                 pass
+
             return {
                 "text": full_text,
                 "file_type": "docx",
                 "paragraphs": len(doc.paragraphs),
-                "tables": len(doc.tables)
+                "tables": len(doc.tables),
+                "sections": len(doc.sections)
             }
         except Exception as e:
             logger.error(f"Error parsing DOCX: {e}")
+            # If it's an old .doc file, python-docx will raise a PackageNotFoundError or similar
+            if "not a Word file" in str(e) or "zip" in str(e).lower():
+                 return {
+                    "text": "",
+                    "file_type": "docx-incompatible",
+                    "error": "Old .doc files are not supported. Please convert to .pdf or .docx"
+                 }
             raise
 
 

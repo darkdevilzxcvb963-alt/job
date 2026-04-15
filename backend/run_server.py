@@ -29,8 +29,8 @@ if __name__ == "__main__":
     print("="*70)
     print(f"Backend directory: {backend_dir}")
     print(f"Database: {backend_dir}/resume_matching.db")
-    print(f"Server will be available at: http://127.0.0.1:8001")
-    print(f"API Docs: http://127.0.0.1:8001/docs")
+    print(f"Server will be available at: http://127.0.0.1:8000")
+    print(f"API Docs: http://127.0.0.1:8000/docs")
     print("="*70 + "\n")
 
     
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         uvicorn.run(
             app,
             host="0.0.0.0",
-            port=8001,
+            port=8000,
             log_level="info",
             access_log=True
         )

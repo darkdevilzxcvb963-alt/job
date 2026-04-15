@@ -52,9 +52,28 @@ class RoadmapDay(BaseModel):
     focus: Optional[str] = ""       # optional focus label shown on the roadmap card
 
 
+class SkillProfileItem(BaseModel):
+    skill: str
+    confidence: str
+
+
+class JobMatch(BaseModel):
+    role: str
+    match_score: str
+    why: str
+
+
 class TrainingResponse(BaseModel):
-    skill_analysis: SkillAnalysis
-    questions: List[InterviewQuestion]
-    answer_evaluation: Optional[AnswerEvaluation] = None
-    tasks: List[RealWorldTask] = Field(default_factory=list)
-    roadmap: List[RoadmapDay]
+    skill_analysis: Optional[Any] = None
+    questions: List[Any] = Field(default_factory=list)
+    answer_evaluation: Optional[Any] = None
+    tasks: List[Any] = Field(default_factory=list)
+    roadmap: List[Any] = Field(default_factory=list)
+    
+    # Conversational Flow additions
+    is_profile_complete: bool = False
+    next_question: Optional[str] = None
+    coach_comment: Optional[str] = None
+    skill_profile: List[Any] = Field(default_factory=list)
+    top_job_matches: List[Any] = Field(default_factory=list)
+    career_insight: Optional[str] = None

@@ -69,8 +69,8 @@ start "Frontend Server" /min cmd /k "cd /d "!FRONTEND_DIR!" && npm run dev"
 :: Open Browser
 echo.
 echo [5/5] Opening application in browser...
-timeout /t 5 /nobreak >nul
-start http://localhost:3000
+timeout /t 8 /nobreak >nul
+start "" "http://localhost:3000"
 
 echo.
 echo ===========================================

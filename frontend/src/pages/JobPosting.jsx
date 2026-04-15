@@ -299,7 +299,7 @@ function JobPosting() {
   }
 
   return (
-    <div className="job-posting page-container">
+    <div className={`job-posting page-container ${isDropdownOpen ? 'dropdown-active' : ''}`}>
       <div className="posting-header">
         <h1>🚀 Post a New Opportunity</h1>
         <p>Choose a category for faster recruiting with pre-defined requirements.</p>

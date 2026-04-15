@@ -176,6 +176,20 @@ function Matches() {
     }
   }, [isRecruiter, recruiterJobs, filters.minScore, filters.maxScore, filters.sortBy])
 
+  // Handle job_id deep linking from Candidate Dashboard
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const jobId = params.get('job_id');
+    if (jobId && recruiterJobs?.data) {
+      setExpandedJob(jobId);
+      // Optional: scroll to it
+      setTimeout(() => {
+        const el = document.getElementById(`job-section-${jobId}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 500);
+    }
+  }, [location.search, recruiterJobs]);
+
   const getMatchColor = (score) => {
     if (score >= 0.8) return '#10b981'
     if (score >= 0.6) return '#f59e0b'
@@ -389,9 +403,9 @@ function Matches() {
                     const isExpanded = expandedJob === job.id;
 
                     return (
-                      <div key={job.id} className="job-section">
+                      <div key={job.id} id={`job-section-${job.id}`} className="job-section">
                         <div
-                          className={`job-header ${isExpanded ? 'expanded' : ''}`}
+                          className={`job-header premium-border ${isExpanded ? 'expanded' : ''}`}
                           onClick={() => setExpandedJob(isExpanded ? null : job.id)}
                         >
                           <div className="job-info">
@@ -416,7 +430,7 @@ function Matches() {
                               const currentProgress = progress(match.status);
 
                               return (
-                                <div key={match.id} className="candidate-match-card">
+                                <div key={match.id} className="candidate-match-card premium-border">
                                   <div className="candidate-card-header">
                                     <div className="candidate-info">
                                       <div className="name-row">
@@ -542,7 +556,7 @@ function Matches() {
           {myMatches?.data?.map((match) => {
             const isDetailsExpanded = expandedDetails === match.id;
             return (
-              <div key={match.id} className={`job-card ${isDetailsExpanded ? 'expanded' : ''}`}>
+              <div key={match.id} className={`job-card premium-border ${isDetailsExpanded ? 'expanded' : ''}`}>
                 <div className="job-card-content">
                   <div className="card-top">
                     <h3>{match.job_title}</h3>

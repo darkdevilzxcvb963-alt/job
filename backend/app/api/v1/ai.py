@@ -113,32 +113,39 @@ async def smart_search(
     
     results = []
     for candidate in candidates:
-        # Calculate cosine similarity
-        cand_embedding = np.array(candidate.resume_embedding)
-        norm_q = np.linalg.norm(query_embedding)
-        norm_c = np.linalg.norm(cand_embedding)
-        
-        if norm_q > 0 and norm_c > 0:
-            score = np.dot(query_embedding, cand_embedding) / (norm_q * norm_c)
-        else:
-            score = 0
+        if not candidate.resume_embedding:
+            continue
             
-        # Ensure skills matches schema (Dict[str, List[str]])
-        candidate_skills = candidate.skills
-        if isinstance(candidate_skills, list):
-            candidate_skills = {"General": candidate_skills}
+        try:
+            # Calculate cosine similarity safely
+            cand_embedding = np.array(candidate.resume_embedding)
+            norm_q = np.linalg.norm(query_embedding)
+            norm_c = np.linalg.norm(cand_embedding)
+            
+            if norm_q > 0 and norm_c > 0:
+                score = np.dot(query_embedding, cand_embedding) / (norm_q * norm_c)
+            else:
+                score = 0
+                
+            # Ensure skills matches schema (Dict[str, List[str]])
+            candidate_skills = candidate.skills or {}
+            if isinstance(candidate_skills, list):
+                candidate_skills = {"General": candidate_skills}
 
-        # We use a lower threshold for "search" vs "matching"
-        if score > 0.3:
-            results.append(SmartSearchCandidate(
-                id=candidate.id,
-                name=candidate.name,
-                email=candidate.email,
-                score=float(score),
-                skills=candidate_skills,
-                experience_years=candidate.experience_years,
-                summary=candidate.resume_summary
-            ))
+            # We use a lower threshold for "search" vs "matching"
+            if float(score) > 0.3:
+                results.append(SmartSearchCandidate(
+                    id=candidate.id,
+                    name=candidate.name,
+                    email=candidate.email,
+                    score=float(score),
+                    skills=candidate_skills,
+                    experience_years=candidate.experience_years,
+                    summary=candidate.resume_summary
+                ))
+        except Exception as e:
+            logger.error(f"Error skipping candidate {candidate.id} embedding check: {e}")
+            continue
             
     # Sort by score
     results.sort(key=lambda x: x.score, reverse=True)

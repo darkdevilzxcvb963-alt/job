@@ -149,7 +149,7 @@ class IntelligenceService:
         summary = candidate.resume_summary or ""
         
         # Use LLM for trajectory if available
-        if self.llm_service and self.llm_service.client:
+        if self.llm_service and self.llm_service.is_available:
              pass # Logic for LLM trajectory could go here
         
         is_tech = any(kw in (summary.lower() or "") for kw in ['engineer', 'developer', 'analyst', 'data'])

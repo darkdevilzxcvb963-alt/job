@@ -14,7 +14,7 @@ const useOneSignal = (user) => {
         }
 
         await window.OneSignal.init({
-          appId: "6b3a9a67-2853-4f09-a0c2-f29dc4ef23ca",
+          appId: import.meta.env.VITE_ONESIGNAL_APP_ID || "6b3a9a67-2853-4f09-a0c2-f29dc4ef23ca",
           allowLocalhostAsSecureOrigin: true,
           notifyButton: {
             enable: true,

@@ -146,6 +146,26 @@ select {
   background: transparent !important;
 }
 
+/* Premium Card Border logic */
+.premium-border {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.premium-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  z-index: 10;
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 * {
   margin: 0;
   padding: 0;

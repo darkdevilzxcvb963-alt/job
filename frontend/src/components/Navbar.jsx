@@ -21,7 +21,13 @@ function Navbar() {
   const [bellOpen, setBellOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const bellRef = useRef(null)
+  const [imgError, setImgError] = useState(false)
   const queryClient = useQueryClient()
+
+  // Reset image error if user object changes
+  useEffect(() => {
+    setImgError(false)
+  }, [user?.profile_picture_url])
 
   // Poll notifications every 30 seconds for recruiters
   const { data: notifData } = useQuery(
@@ -177,8 +183,13 @@ function Navbar() {
               {location.pathname !== '/' && <DarkModeToggle />}
               <div className="user-menu">
                 <div className="user-avatar-circle">
-                  {user?.profile_picture_url ? (
-                    <img src={user.profile_picture_url} alt="Profile" className="user-avatar-img" />
+                  {user?.profile_picture_url && !imgError ? (
+                    <img 
+                      src={user.profile_picture_url} 
+                      alt="" 
+                      className="user-avatar-img" 
+                      onError={() => setImgError(true)} 
+                    />
                   ) : (
                     <span className="user-avatar-initial">{user?.full_name?.charAt(0).toUpperCase()}</span>
                   )}

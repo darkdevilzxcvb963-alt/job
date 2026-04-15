@@ -312,7 +312,14 @@ class NLPProcessor:
             found_skills = []
             for skill in skills:
                 # Use word boundary regex for accurate matching
-                pattern = r'\b' + re.escape(skill.lower()) + r'\b'
+                # Special handling for skills with symbols like C++, .NET, C#
+                safe_skill = re.escape(skill.lower())
+                if re.search(r'[+#.]$', skill):
+                     # If skill ends with a symbol, \b at the end won't work
+                     pattern = r'\b' + safe_skill + r'(?!\w)'
+                else:
+                     pattern = r'\b' + safe_skill + r'\b'
+                     
                 if re.search(pattern, text_lower):
                     # Check for synonyms and normalize
                     canonical_name = SKILL_SYNONYMS.get(skill.lower(), skill)

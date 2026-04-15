@@ -231,6 +231,7 @@ const ProfileSettings = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   // Data state
@@ -394,17 +395,38 @@ const ProfileSettings = () => {
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
     const formData = new FormData();
     formData.append('file', file);
+    
     setLoading(true);
+    setUploadProgress(10);
+    
+    // Simulate progress
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 90) return prev;
+        return prev + 5;
+      });
+    }, 400);
+
     try {
       await uploadResume(formData);
-      flash('success', 'Resume uploaded & processed!');
-      loadStrength();
+      clearInterval(interval);
+      setUploadProgress(100);
+      
+      setTimeout(() => {
+        flash('success', 'Resume uploaded & processed!');
+        loadStrength();
+        setUploadProgress(0);
+        setLoading(false);
+      }, 500);
     } catch (e) {
+      clearInterval(interval);
+      setUploadProgress(0);
+      setLoading(false);
       flash('error', e.response?.data?.detail || 'Upload failed');
     }
-    setLoading(false);
   };
 
   // ── Preferences handler ────────────────────────────────────────────────────
@@ -640,10 +662,37 @@ const ProfileSettings = () => {
             <div className="ps-resume-upload glass-card">
               <h4><Upload size={18} /> Resume</h4>
               <p>Upload your resume (PDF/DOCX) for AI-powered skill extraction and matching.</p>
-              <label className="ps-upload-btn">
-                <Upload size={16} /> Upload Resume
+              <label className="ps-upload-btn" style={{ 
+                opacity: loading ? 0.6 : 1, 
+                pointerEvents: loading ? 'none' : 'auto',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'var(--primary-gradient)',
+                color: '#fff',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontWeight: 600
+              }}>
+                <Upload size={16} /> {loading ? 'Analyzing...' : 'Upload Resume'}
                 <input type="file" accept=".pdf,.docx,.doc" onChange={handleResumeUpload} style={{ display: 'none' }} />
               </label>
+
+              {uploadProgress > 0 && (
+                <div className="ps-upload-progress-container">
+                  <div className="ps-progress-info">
+                    <div className="ps-progress-label">
+                      {uploadProgress < 100 ? <Brain className="animate-pulse" size={16} /> : <Check size={16} />}
+                      <span>{uploadProgress < 100 ? 'AI is extracting skills...' : 'Analysis Complete'}</span>
+                    </div>
+                    <div className="ps-progress-pct">{uploadProgress}%</div>
+                  </div>
+                  <div className="ps-progress-bar">
+                    <div className="ps-progress-fill" style={{ width: `${uploadProgress}%` }} />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Headline */}

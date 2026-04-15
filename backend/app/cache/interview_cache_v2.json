@@ -1,0 +1,889 @@
+{
+  "System Engineer_Technical Analysis, Problem Solving, System Optimization, Analytical Thinking, Design Engineering, Testing & QA_30_False_init": {
+    "coach_comment": "Your career journey as a System Engineer is initializing, focusing on foundational knowledge. We've identified key areas for development to build a robust skill set. This roadmap will guide your initial 30 days of focused learning and practical application.",
+    "is_profile_complete": false,
+    "skill_analysis": {
+      "level": "Entry-Level",
+      "missing_skills": [
+        "Linux Administration",
+        "Networking Fundamentals",
+        "Scripting (Python/Bash)",
+        "Cloud Computing (AWS/Azure/GCP)",
+        "Virtualization",
+        "Monitoring Tools",
+        "CI/CD Principles"
+      ],
+      "strengths": [
+        "Logical Thinking",
+        "Problem-Solving Aptitude",
+        "Foundational IT Concepts Understanding"
+      ],
+      "focus_areas": [
+        "Linux OS",
+        "Networking Protocols",
+        "Cloud Platforms",
+        "Automation Scripting",
+        "Containerization"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Problem Solving",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Logical Thinking",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Basic IT Concepts",
+        "confidence": "40%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "Junior System Engineer",
+        "match_score": "60%",
+        "why": "Directly aligns with your stated interest and provides an entry point into the field."
+      },
+      {
+        "role": "IT Support Specialist",
+        "match_score": "70%",
+        "why": "Excellent starting role to build practical troubleshooting and system interaction skills."
+      },
+      {
+        "role": "NOC Engineer",
+        "match_score": "65%",
+        "why": "Focuses on monitoring and maintaining network and system health, crucial for System Engineers."
+      },
+      {
+        "role": "Cloud Support Associate",
+        "match_score": "55%",
+        "why": "Introduces you to cloud environments and support, a growing area for System Engineers."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Introduction to System Engineering",
+        "task": "Research the core responsibilities and career paths of a System Engineer."
+      },
+      {
+        "day": "2",
+        "focus": "Linux Fundamentals I (CLI)",
+        "task": "Install a Linux distribution (e.g., Ubuntu) in a VM and learn basic commands (ls, cd, pwd, mkdir, rmdir)."
+      },
+      {
+        "day": "3",
+        "focus": "Linux Fundamentals II (File Systems, Permissions)",
+        "task": "Understand Linux file system hierarchy, user/group management, and file permissions (chmod, chown)."
+      },
+      {
+        "day": "4",
+        "focus": "Basic Networking Concepts (OSI Model, TCP/IP)",
+        "task": "Study the OSI model and TCP/IP stack, understanding the function of each layer."
+      },
+      {
+        "day": "5",
+        "focus": "IP Addressing and Subnetting",
+        "task": "Learn about IPv4 addressing, public vs. private IPs, and practice basic subnetting calculations."
+      },
+      {
+        "day": "6",
+        "focus": "Virtualization Basics (VMware/VirtualBox)",
+        "task": "Install VirtualBox or VMware Workstation Player and create your first virtual machine."
+      },
+      {
+        "day": "7",
+        "focus": "Introduction to Cloud Computing",
+        "task": "Explore the concepts of IaaS, PaaS, SaaS, and get an overview of AWS, Azure, and GCP services."
+      },
+      {
+        "day": "8",
+        "focus": "AWS EC2 Fundamentals",
+        "task": "Create a free-tier AWS account and launch an EC2 instance, connecting via SSH."
+      },
+      {
+        "day": "9",
+        "focus": "Azure Virtual Machines",
+        "task": "Create a free-tier Azure account and deploy a Windows or Linux VM."
+      },
+      {
+        "day": "10",
+        "focus": "Basic Scripting with Bash I",
+        "task": "Write simple Bash scripts for file operations (e.g., creating files, moving files, basic loops)."
+      },
+      {
+        "day": "11",
+        "focus": "Basic Scripting with Bash II",
+        "task": "Learn conditional statements (if/else) and user input in Bash scripts."
+      },
+      {
+        "day": "12",
+        "focus": "Python for System Administration I",
+        "task": "Learn Python basics: variables, data types, operators, and basic input/output."
+      },
+      {
+        "day": "13",
+        "focus": "Python for System Administration II",
+        "task": "Practice Python control flow: if/else statements, for/while loops, and functions."
+      },
+      {
+        "day": "14",
+        "focus": "Version Control with Git",
+        "task": "Install Git, initialize a local repository, and practice basic commands (add, commit, push/pull to GitHub/GitLab)."
+      },
+      {
+        "day": "15",
+        "focus": "Introduction to Monitoring Tools",
+        "task": "Research common monitoring tools like Prometheus, Grafana, Nagios, and their use cases."
+      },
+      {
+        "day": "16",
+        "focus": "Basic Troubleshooting Methodologies",
+        "task": "Learn systematic approaches to troubleshooting IT issues (e.g., the scientific method, top-down/bottom-up)."
+      },
+      {
+        "day": "17",
+        "focus": "Understanding DNS and DHCP",
+        "task": "Study how DNS resolves domain names to IP addresses and how DHCP assigns IP addresses."
+      },
+      {
+        "day": "18",
+        "focus": "Storage Concepts",
+        "task": "Understand different storage types: DAS, NAS, SAN, and RAID levels."
+      },
+      {
+        "day": "19",
+        "focus": "Introduction to Containers (Docker basics)",
+        "task": "Install Docker and run your first container (e.g., 'hello-world', Nginx)."
+      },
+      {
+        "day": "20",
+        "focus": "Docker Compose Fundamentals",
+        "task": "Learn to define and run multi-container Docker applications using Docker Compose."
+      },
+      {
+        "day": "21",
+        "focus": "CI/CD Concepts",
+        "task": "Understand Continuous Integration and Continuous Delivery principles and their benefits."
+      },
+      {
+        "day": "22",
+        "focus": "Security Fundamentals",
+        "task": "Learn about firewalls, VPNs, and basic security best practices for systems."
+      },
+      {
+        "day": "23",
+        "focus": "Network Security Best Practices",
+        "task": "Explore concepts like network segmentation, intrusion detection/prevention systems."
+      },
+      {
+        "day": "24",
+        "focus": "Automation Principles (Ansible overview)",
+        "task": "Research Infrastructure as Code (IaC) and get an overview of Ansible's capabilities."
+      },
+      {
+        "day": "25",
+        "focus": "Ansible Playbook Basics",
+        "task": "Install Ansible and write a simple playbook to manage a remote server (e.g., install a package)."
+      },
+      {
+        "day": "26",
+        "focus": "Cloud Networking Fundamentals",
+        "task": "Understand Virtual Private Clouds (VPC in AWS, VNet in Azure) and their components."
+      },
+      {
+        "day": "27",
+        "focus": "Database Fundamentals (SQL basics)",
+        "task": "Learn basic SQL commands (SELECT, INSERT, UPDATE, DELETE) and database concepts."
+      },
+      {
+        "day": "28",
+        "focus": "System Hardening Techniques",
+        "task": "Study methods to secure operating systems and applications against vulnerabilities."
+      },
+      {
+        "day": "29",
+        "focus": "Disaster Recovery and Backup Concepts",
+        "task": "Understand different backup strategies (full, incremental, differential) and DR planning."
+      },
+      {
+        "day": "30",
+        "focus": "Project: Deploy a simple web server",
+        "task": "Deploy a basic Nginx or Apache web server on your Linux VM or an EC2 instance."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up a Linux VM and configure basic network settings.",
+        "difficulty": "Medium",
+        "description": "Successfully install a Linux distribution (e.g., Ubuntu Server) in a virtual machine, configure its IP address, and ensure internet connectivity.",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware)",
+          "Linux ISO image",
+          "Basic Linux CLI commands"
+        ]
+      },
+      {
+        "title": "Write a Bash script to automate a file management task.",
+        "difficulty": "Easy",
+        "description": "Create a Bash script that takes a directory path as input, creates subdirectories for different file types (e.g., 'documents', 'images'), and moves corresponding files into them.",
+        "requirements": [
+          "Basic Bash scripting knowledge",
+          "Linux environment"
+        ]
+      },
+      {
+        "title": "Deploy a simple web application using Docker.",
+        "difficulty": "Medium",
+        "description": "Use Docker to pull an Nginx or Apache image and run a container that serves a static HTML page, accessible from your browser.",
+        "requirements": [
+          "Docker installed",
+          "Basic Docker commands",
+          "A simple HTML file"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Technical Analysis, Problem Solving, System Optimization, Analytical Thinking, Design Engineering, Testing & QA_30_False_what are my strength in my skills?": {
+    "coach_comment": "Your current profile indicates a strong foundational interest in System Engineering principles. Based on industry standards, your strengths lie in logical problem-solving and infrastructure conceptualization. You should focus on validating these skills through hands-on technical certifications.",
+    "is_profile_complete": false,
+    "skill_analysis": {
+      "level": "Entry-level",
+      "missing_skills": [
+        "Linux Administration",
+        "Cloud Computing (AWS/Azure)",
+        "Scripting (Python/Bash)",
+        "Networking (TCP/IP)",
+        "Containerization (Docker/K8s)"
+      ],
+      "strengths": [
+        "Logical Reasoning",
+        "System Architecture",
+        "Technical Documentation"
+      ],
+      "focus_areas": [
+        "Infrastructure Automation",
+        "Cloud Migration",
+        "Site Reliability"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Logical Reasoning",
+        "confidence": "85%"
+      },
+      {
+        "skill": "System Design",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Problem Solving",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Technical Documentation",
+        "confidence": "70%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "Junior System Administrator",
+        "match_score": "85%",
+        "why": "Fits your foundational knowledge of OS and networking."
+      },
+      {
+        "role": "Cloud Support Associate",
+        "match_score": "80%",
+        "why": "Aligns with your interest in cloud infrastructure."
+      },
+      {
+        "role": "DevOps Intern",
+        "match_score": "75%",
+        "why": "Matches your roadmap focus on automation and containers."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Install a Linux distribution like Ubuntu in a virtual machine."
+      },
+      {
+        "day": "2",
+        "focus": "CLI Navigation",
+        "task": "Practice basic commands including cd, ls, pwd, and mkdir."
+      },
+      {
+        "day": "3",
+        "focus": "File Permissions",
+        "task": "Learn to use chmod and chown to manage file access."
+      },
+      {
+        "day": "4",
+        "focus": "User Management",
+        "task": "Create and manage system users and groups via terminal."
+      },
+      {
+        "day": "5",
+        "focus": "Package Management",
+        "task": "Install and update software using apt or yum package managers."
+      },
+      {
+        "day": "6",
+        "focus": "Process Monitoring",
+        "task": "Use top, htop, and ps to monitor system resource usage."
+      },
+      {
+        "day": "7",
+        "focus": "Networking Basics",
+        "task": "Study the OSI model and basic IP addressing/subnetting."
+      },
+      {
+        "day": "8",
+        "focus": "DNS Configuration",
+        "task": "Configure local DNS settings in /etc/hosts and resolv.conf."
+      },
+      {
+        "day": "9",
+        "focus": "SSH Setup",
+        "task": "Configure secure remote access using SSH keys."
+      },
+      {
+        "day": "10",
+        "focus": "Web Servers",
+        "task": "Install and configure a basic Nginx web server."
+      },
+      {
+        "day": "11",
+        "focus": "SSL/TLS",
+        "task": "Implement Let's Encrypt certificates for secure web traffic."
+      },
+      {
+        "day": "12",
+        "focus": "Firewalls",
+        "task": "Configure system firewalls using ufw or iptables."
+      },
+      {
+        "day": "13",
+        "focus": "Bash Scripting",
+        "task": "Write a basic script to automate a simple directory cleanup."
+      },
+      {
+        "day": "14",
+        "focus": "Bash Variables",
+        "task": "Incorporate variables and user arguments into scripts."
+      },
+      {
+        "day": "15",
+        "focus": "Bash Loops",
+        "task": "Write a script that uses loops to process multiple files."
+      },
+      {
+        "day": "16",
+        "focus": "Cron Jobs",
+        "task": "Schedule a recurring backup task using crontab."
+      },
+      {
+        "day": "17",
+        "focus": "Virtualization",
+        "task": "Explore hypervisors and create a multi-VM environment."
+      },
+      {
+        "day": "18",
+        "focus": "Docker Basics",
+        "task": "Install Docker and run a standard hello-world container."
+      },
+      {
+        "day": "19",
+        "focus": "Docker Images",
+        "task": "Create a custom Dockerfile to containerize a static site."
+      },
+      {
+        "day": "20",
+        "focus": "Docker Compose",
+        "task": "Use Docker Compose to link a web server and a database."
+      },
+      {
+        "day": "21",
+        "focus": "Cloud Intro",
+        "task": "Create an AWS Free Tier account and explore the console."
+      },
+      {
+        "day": "22",
+        "focus": "AWS EC2",
+        "task": "Launch and connect to a Linux EC2 instance."
+      },
+      {
+        "day": "23",
+        "focus": "AWS S3",
+        "task": "Create a bucket and manage object storage permissions."
+      },
+      {
+        "day": "24",
+        "focus": "Terraform Intro",
+        "task": "Install Terraform and initialize a local provider."
+      },
+      {
+        "day": "25",
+        "focus": "Terraform Resources",
+        "task": "Write HCL code to deploy a single EC2 instance."
+      },
+      {
+        "day": "26",
+        "focus": "Ansible Intro",
+        "task": "Install Ansible and set up a local inventory file."
+      },
+      {
+        "day": "27",
+        "focus": "Ansible Playbooks",
+        "task": "Write a playbook to automate Nginx installation."
+      },
+      {
+        "day": "28",
+        "focus": "Monitoring",
+        "task": "Install Prometheus and Node Exporter for system metrics."
+      },
+      {
+        "day": "29",
+        "focus": "Log Analysis",
+        "task": "Use journalctl and tail to analyze system logs."
+      },
+      {
+        "day": "30",
+        "focus": "Final Project",
+        "task": "Deploy a load-balanced web application using Docker and AWS."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Deploy a LAMP stack",
+        "difficulty": "Medium",
+        "description": "Install and configure Linux, Apache, MySQL, and PHP on a local VM.",
+        "requirements": [
+          "Functional web server",
+          "Database connectivity"
+        ]
+      },
+      {
+        "title": "Automated Backup Script",
+        "difficulty": "Easy",
+        "description": "Create a Bash script to compress and move logs to a backup directory.",
+        "requirements": [
+          "Use of tar command",
+          "Cron job scheduling"
+        ]
+      },
+      {
+        "title": "Infrastructure as Code Deployment",
+        "difficulty": "Hard",
+        "description": "Provision a VPC and EC2 instance using Terraform on AWS.",
+        "requirements": [
+          "Terraform state file management",
+          "AWS CLI configuration"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_System Optimization, Simulation Tools, Testing & QA, Design Engineering, ISO Standards, Analytical Thinking_10_False_init": {
+    "coach_comment": "Your profile shows strong programming and data skills, providing a solid foundation for a System Engineer role. To align with your interest, focus on core system administration, cloud, and containerization technologies. This targeted development will bridge your current strengths with industry demands for System Engineers.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Linux/Unix Administration",
+        "Cloud Platforms (AWS/Azure/GCP)",
+        "Containerization (Docker/Kubernetes)",
+        "CI/CD Tools",
+        "Networking Fundamentals",
+        "Infrastructure as Code (Terraform/Ansible)"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "JavaScript",
+        "React",
+        "Flask",
+        "MySQL",
+        "Natural Language Processing",
+        "Machine Learning",
+        "R",
+        "CSS",
+        "Figma",
+        "Canva",
+        "SEM"
+      ],
+      "focus_areas": [
+        "Linux OS & Shell Scripting",
+        "Docker & Kubernetes",
+        "AWS/Azure/GCP Services",
+        "CI/CD Pipelines",
+        "Network Protocols"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "85%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "70%"
+      },
+      {
+        "skill": "JavaScript",
+        "confidence": "75%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Machine Learning",
+        "confidence": "60%"
+      },
+      {
+        "skill": "React",
+        "confidence": "70%"
+      },
+      {
+        "skill": "MySQL",
+        "confidence": "65%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Flask",
+        "confidence": "70%"
+      },
+      {
+        "skill": "R",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Figma",
+        "confidence": "40%"
+      },
+      {
+        "skill": "Canva",
+        "confidence": "30%"
+      },
+      {
+        "skill": "SEM",
+        "confidence": "35%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "DevOps Engineer",
+        "match_score": "75%",
+        "why": "Leverages strong programming skills (Python, Java, JavaScript) for automation and scripting in CI/CD pipelines."
+      },
+      {
+        "role": "Backend Engineer",
+        "match_score": "70%",
+        "why": "Strong in Python, Java, JavaScript, Flask, and MySQL, which are core to backend system development."
+      },
+      {
+        "role": "Data Engineer",
+        "match_score": "65%",
+        "why": "Proficiency in Python, R, MySQL, NLP, and ML is valuable for building and maintaining data pipelines and infrastructure."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Set up a Linux virtual machine (e.g., Ubuntu in VirtualBox) and learn basic commands (ls, cd, cp, mv, rm, mkdir, rmdir, man)."
+      },
+      {
+        "day": "2",
+        "focus": "Bash Scripting Basics",
+        "task": "Write simple Bash scripts for file operations, process management, and conditional logic. Understand variables and loops."
+      },
+      {
+        "day": "3",
+        "focus": "Networking Essentials",
+        "task": "Study TCP/IP model, common network protocols (HTTP, DNS, SSH), and use tools like ping, traceroute, netstat."
+      },
+      {
+        "day": "4",
+        "focus": "Introduction to Docker",
+        "task": "Install Docker, understand containers vs. VMs, pull and run basic images (e.g., Nginx, Alpine), and explore Docker Hub."
+      },
+      {
+        "day": "5",
+        "focus": "Dockerizing Applications",
+        "task": "Create a Dockerfile for a simple Python Flask application, build the image, and run it in a container."
+      },
+      {
+        "day": "6",
+        "focus": "Introduction to Kubernetes",
+        "task": "Understand Kubernetes architecture (Master, Nodes, Pods, Deployments, Services) and set up Minikube locally."
+      },
+      {
+        "day": "7",
+        "focus": "Cloud Fundamentals (AWS/Azure/GCP)",
+        "task": "Explore core services of one major cloud provider (e.g., AWS EC2, S3, VPC) and understand their use cases."
+      },
+      {
+        "day": "8",
+        "focus": "CI/CD Concepts",
+        "task": "Learn about Continuous Integration and Continuous Deployment principles. Research tools like Jenkins, GitLab CI, GitHub Actions."
+      },
+      {
+        "day": "9",
+        "focus": "Infrastructure as Code (IaC)",
+        "task": "Get an overview of IaC tools like Terraform or Ansible. Understand how they automate infrastructure provisioning."
+      },
+      {
+        "day": "10",
+        "focus": "Monitoring & Logging",
+        "task": "Research common monitoring tools (Prometheus, Grafana) and logging solutions (ELK stack) used in system engineering."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up and Administer a Linux Server",
+        "difficulty": "Medium",
+        "description": "Install a Linux distribution (e.g., CentOS or Ubuntu Server) in a virtual machine, configure network settings, manage users, and install basic software packages.",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware)",
+          "Linux ISO image",
+          "Basic command-line proficiency"
+        ]
+      },
+      {
+        "title": "Containerize a Flask Application",
+        "difficulty": "Medium",
+        "description": "Develop a simple Flask web application, create a Dockerfile to containerize it, build the Docker image, and run it successfully.",
+        "requirements": [
+          "Python",
+          "Flask",
+          "Docker installed",
+          "Basic understanding of web applications"
+        ]
+      },
+      {
+        "title": "Automate System Backup with Bash Script",
+        "difficulty": "Hard",
+        "description": "Write a Bash script that backs up specified directories, compresses them, timestamps the backup file, and cleans up old backups.",
+        "requirements": [
+          "Linux environment",
+          "Bash scripting knowledge",
+          "Understanding of cron jobs for scheduling"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_System Optimization, Simulation Tools, Testing & QA, Design Engineering, ISO Standards, Analytical Thinking_10_False_what are the roles fits to me?": {
+    "coach_comment": "Your extensive programming background in Python, Java, and JavaScript, coupled with frameworks like React and Flask, provides a strong foundation for system-oriented roles. Given your interest in System Engineering, roles like DevOps Engineer, Site Reliability Engineer, and Cloud Engineer are highly suitable. Focusing on cloud platforms, containerization, and CI/CD practices will significantly enhance your profile for these specialized positions.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Proficient",
+      "missing_skills": [
+        "Cloud Platforms (AWS, Azure, GCP)",
+        "Containerization (Docker, Kubernetes)",
+        "CI/CD Tools (Jenkins, GitLab CI)",
+        "Linux System Administration",
+        "Networking Fundamentals"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "JavaScript",
+        "React",
+        "Flask",
+        "MySQL",
+        "Natural Language Processing"
+      ],
+      "focus_areas": [
+        "AWS/Azure Fundamentals",
+        "Docker & Kubernetes",
+        "CI/CD Pipeline Design",
+        "Infrastructure as Code (Terraform)"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "90%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "85%"
+      },
+      {
+        "skill": "JavaScript",
+        "confidence": "80%"
+      },
+      {
+        "skill": "React",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Flask",
+        "confidence": "75%"
+      },
+      {
+        "skill": "MySQL",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "65%"
+      },
+      {
+        "skill": "R",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Machine Learning",
+        "confidence": "60%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "55%"
+      },
+      {
+        "skill": "Figma",
+        "confidence": "50%"
+      },
+      {
+        "skill": "SEM",
+        "confidence": "45%"
+      },
+      {
+        "skill": "Canva",
+        "confidence": "40%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "DevOps Engineer",
+        "match_score": "85%",
+        "why": "Strong programming skills (Python, Java) are excellent for automation and scripting in a DevOps environment."
+      },
+      {
+        "role": "Site Reliability Engineer (SRE)",
+        "match_score": "80%",
+        "why": "Combines software engineering principles with operations, leveraging your coding and system interest."
+      },
+      {
+        "role": "Cloud Engineer",
+        "match_score": "78%",
+        "why": "Your system interest and programming background are foundational, requiring specific cloud platform knowledge."
+      },
+      {
+        "role": "Backend Developer",
+        "match_score": "90%",
+        "why": "Excellent fit with strong Java, Python, Flask, and MySQL skills for building robust server-side applications."
+      },
+      {
+        "role": "System Engineer",
+        "match_score": "75%",
+        "why": "Directly aligns with your interest, requiring development in Linux, networking, and infrastructure management."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Master essential Linux commands (ls, cd, cp, mv, rm, grep, find, ssh) and file system hierarchy."
+      },
+      {
+        "day": "2",
+        "focus": "Bash Scripting Basics",
+        "task": "Learn to write simple Bash scripts for automation, including variables, loops, and conditional statements."
+      },
+      {
+        "day": "3",
+        "focus": "Docker Introduction",
+        "task": "Understand Docker concepts, build a Dockerfile for a simple Flask application, and run containers."
+      },
+      {
+        "day": "4",
+        "focus": "Kubernetes Core Concepts",
+        "task": "Explore Kubernetes architecture, pods, deployments, and services through online tutorials."
+      },
+      {
+        "day": "5",
+        "focus": "AWS Cloud Fundamentals",
+        "task": "Complete an introductory course on AWS EC2 and S3, understanding basic cloud compute and storage."
+      },
+      {
+        "day": "6",
+        "focus": "CI/CD Principles",
+        "task": "Study the concepts of Continuous Integration and Continuous Delivery, reviewing tools like Jenkins or GitLab CI."
+      },
+      {
+        "day": "7",
+        "focus": "Networking Basics",
+        "task": "Learn about TCP/IP, DNS, HTTP/S, and basic network troubleshooting commands (ping, traceroute, netstat)."
+      },
+      {
+        "day": "8",
+        "focus": "Monitoring & Logging",
+        "task": "Research common monitoring tools like Prometheus/Grafana and logging solutions like ELK stack."
+      },
+      {
+        "day": "9",
+        "focus": "Infrastructure as Code (IaC)",
+        "task": "Get an introduction to Terraform, understanding its purpose and basic resource declaration."
+      },
+      {
+        "day": "10",
+        "focus": "System Design Principles",
+        "task": "Review scalable and resilient system design patterns, focusing on distributed systems and microservices."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Automate Log Analysis with Python",
+        "difficulty": "Medium",
+        "description": "Write a Python script to parse system logs, extract error messages, and generate a summary report.",
+        "requirements": [
+          "Python scripting",
+          "Regular expressions",
+          "File I/O"
+        ]
+      },
+      {
+        "title": "Containerize a Java Spring Boot Application",
+        "difficulty": "Hard",
+        "description": "Create a Dockerfile for a Java Spring Boot application, ensuring it runs efficiently within a container.",
+        "requirements": [
+          "Java",
+          "Spring Boot (basic knowledge)",
+          "Docker"
+        ]
+      },
+      {
+        "title": "Set up a Basic CI/CD Pipeline for a Flask App",
+        "difficulty": "Hard",
+        "description": "Configure a CI/CD pipeline (e.g., using GitHub Actions or GitLab CI) to build, test, and deploy a simple Flask application to a cloud service.",
+        "requirements": [
+          "Flask application",
+          "Git (GitHub/GitLab)",
+          "CI/CD tool (GitHub Actions/GitLab CI)",
+          "Basic cloud deployment knowledge"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  }
+}

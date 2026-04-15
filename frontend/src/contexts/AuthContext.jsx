@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }) => {
       if (!error.response) {
         return {
           success: false,
-          error: 'Network error: Unable to connect to server. Please check if the backend is running on http://127.0.0.1:8001'
+          error: 'Network error: Unable to connect to server. Please check your internet connection or try again later.'
         }
       }
 

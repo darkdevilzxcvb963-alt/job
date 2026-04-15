@@ -43,6 +43,9 @@ echo Test Credentials:
 echo   Recruiter:  recruiter@example.com / Recruiter@1234
 echo   Candidate:  jobseeker@example.com / Jobseeker@1234
 echo.
-echo Close these windows to stop the services.
 echo.
+echo Opening browser...
+timeout /t 8 /nobreak >nul
+start "" "http://localhost:3000"
+
 pause

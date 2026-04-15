@@ -43,6 +43,7 @@ async def generate_training_plan(
     answer: Optional[str] = Query(None, description="Optional candidate answer for evaluation"),
     roadmap_days: Optional[int] = Query(14, description="Preferred duration of roadmap"),
     quiz_type: Optional[str] = Query("Mixed", description="Interview pattern: MCQ, Fill-in-the-Blanks, Big Questions, Mixed"),
+    chat_turn: Optional[int] = Query(0, description="The current turn in the chat conversation"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -91,7 +92,8 @@ async def generate_training_plan(
             question=question,
             answer=answer,
             roadmap_days=roadmap_days,
-            quiz_type=quiz_type
+            quiz_type=quiz_type,
+            chat_turn=chat_turn
         )
 
         # Explicit Pydantic validation before returning — surfaces bad AI output clearly

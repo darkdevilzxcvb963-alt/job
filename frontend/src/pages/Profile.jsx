@@ -22,6 +22,7 @@ const Profile = () => {
     const fileInputRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [imgError, setImgError] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -117,8 +118,13 @@ const Profile = () => {
                 <div className="profile-header">
                     <div className="profile-avatar-container" onClick={() => fileInputRef.current?.click()}>
                         <div className="profile-avatar">
-                            {profilePhoto || user.profile_picture_url ? (
-                                <img src={profilePhoto || user.profile_picture_url} alt="Profile" className="profile-photo-img" />
+                            {(profilePhoto || user.profile_picture_url) && !imgError ? (
+                                <img 
+                                    src={profilePhoto || user.profile_picture_url} 
+                                    alt="" 
+                                    className="profile-photo-img" 
+                                    onError={() => setImgError(true)}
+                                />
                             ) : (
                                 user.full_name?.charAt(0).toUpperCase() || 'U'
                             )}

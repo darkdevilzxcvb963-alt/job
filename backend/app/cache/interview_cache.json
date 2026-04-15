@@ -5777,5 +5777,1000 @@
     ],
     "answer_evaluation": null,
     "job_role": "System Engineer"
+  },
+  "System Engineer_Safety Protocols, Technical Analysis, Analytical Thinking, ISO Standards, Technical Writing, CAD Software_10_False": {
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Safety Protocols",
+        "Technical Analysis",
+        "Analytical Thinking",
+        "ISO Standards",
+        "Technical Writing",
+        "CAD Software"
+      ],
+      "strengths": [
+        "System Integration",
+        "Problem Solving",
+        "Project Management"
+      ],
+      "focus_areas": [
+        "Safety Protocols",
+        "Technical Analysis",
+        "Analytical Thinking",
+        "ISO Standards",
+        "Technical Writing",
+        "CAD Software"
+      ]
+    },
+    "questions": [
+      {
+        "type": "medium",
+        "question": "What does HAZOP stand for in safety engineering?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Hazard and Operability Study",
+          "B. Hazardous Operations Procedure",
+          "C. Hazard Analysis Operating Plan",
+          "D. High-Risk Zone Operating Protocol"
+        ],
+        "correct_answer": "A. Hazard and Operability Study",
+        "explanation": "Systematic hazard identification method.",
+        "id": "q_0_3707"
+      },
+      {
+        "type": "medium",
+        "question": "Which international standard primarily focuses on functional safety of electrical/electronic/programmable electronic safety-related systems?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. ISO 9001",
+          "B. IEC 61508",
+          "C. ISO 14001",
+          "D. OHSAS 18001"
+        ],
+        "correct_answer": "B. IEC 61508",
+        "explanation": "Key standard for functional safety.",
+        "id": "q_1_8539"
+      },
+      {
+        "type": "medium",
+        "question": "What is the primary goal of a Layer of Protection Analysis (LOPA)?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. To identify all potential hazards",
+          "B. To quantify risk and assess protection layers",
+          "C. To develop emergency response plans",
+          "D. To train personnel on safety procedures"
+        ],
+        "correct_answer": "B. To quantify risk and assess protection layers",
+        "explanation": "Evaluates independent protection layers.",
+        "id": "q_2_6385"
+      },
+      {
+        "type": "medium",
+        "question": "Which document typically outlines procedures for responding to accidents or emergencies?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Quality Manual",
+          "B. Project Charter",
+          "C. Emergency Response Plan",
+          "D. Technical Specification"
+        ],
+        "correct_answer": "C. Emergency Response Plan",
+        "explanation": "Guides actions during emergencies.",
+        "id": "q_3_5251"
+      },
+      {
+        "type": "medium",
+        "question": "What is a common contributing factor to industrial accidents?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Excessive automation",
+          "B. Human error",
+          "C. Over-training",
+          "D. Redundant safety systems"
+        ],
+        "correct_answer": "B. Human error",
+        "explanation": "Often a significant factor.",
+        "id": "q_4_5329"
+      },
+      {
+        "type": "medium",
+        "question": "Which safety measure prevents unexpected startup of machinery during maintenance?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Fire suppression",
+          "B. Lockout/Tagout",
+          "C. Personal Protective Equipment",
+          "D. Emergency stop buttons"
+        ],
+        "correct_answer": "B. Lockout/Tagout",
+        "explanation": "Ensures energy isolation.",
+        "id": "q_5_1270"
+      },
+      {
+        "type": "medium",
+        "question": "A ___________ is a systematic process for identifying hazards and evaluating risks.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Identifies and assesses risks.",
+        "id": "q_6_1535",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "The acronym PPE stands for ___________ ___________ ___________.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Protects individuals from hazards.",
+        "id": "q_7_988",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Safety Data Sheets (SDS) provide crucial information on ___________ materials.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Details safe handling of substances.",
+        "id": "q_8_3116",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Regular ___________ are crucial for maintaining safety awareness and competence.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Keeps knowledge current.",
+        "id": "q_9_6550",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Incident investigation aims to determine the ___________ cause of an event.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Finds underlying problem source.",
+        "id": "q_10_1479",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Explain the importance of fostering a strong safety culture within an organization.",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "explanation": "Promotes proactive hazard identification and prevention.",
+        "id": "q_11_6007",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Describe the typical steps involved in responding to a workplace incident.",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "explanation": "Secure scene, aid injured, investigate, report.",
+        "id": "q_12_473",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "How do you ensure ongoing compliance with relevant safety regulations and standards?",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "explanation": "Regular audits, training, documentation, updates.",
+        "id": "q_13_8463",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "What is the primary role and benefit of implementing a Safety Management System (SMS)?",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "explanation": "Systematic approach to managing safety risks.",
+        "id": "q_14_1470",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Which diagramming tool is commonly used to visualize system components and their interactions?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Gantt Chart",
+          "B. PERT Chart",
+          "C. UML Diagram",
+          "D. Flowchart"
+        ],
+        "correct_answer": "C. UML Diagram",
+        "explanation": "Standard for software system modeling.",
+        "id": "q_15_2326"
+      },
+      {
+        "type": "medium",
+        "question": "What is the main purpose of conducting a Root Cause Analysis (RCA)?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. To document system requirements",
+          "B. To identify underlying problems, not just symptoms",
+          "C. To estimate project timelines",
+          "D. To design user interfaces"
+        ],
+        "correct_answer": "B. To identify underlying problems, not just symptoms",
+        "explanation": "Finds fundamental reasons for issues.",
+        "id": "q_16_1683"
+      },
+      {
+        "type": "medium",
+        "question": "Which method helps prioritize requirements based on their importance?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. SWOT Analysis",
+          "B. PESTLE Analysis",
+          "C. MoSCoW Method",
+          "D. Five Whys"
+        ],
+        "correct_answer": "C. MoSCoW Method",
+        "explanation": "Categorizes requirements: Must, Should, Could, Won't.",
+        "id": "q_17_8513"
+      },
+      {
+        "type": "medium",
+        "question": "What does FMEA stand for in the context of technical analysis?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Functional Model and Evaluation Approach",
+          "B. Failure Mode and Effects Analysis",
+          "C. Feature Management and Engineering Assessment",
+          "D. Fault Mitigation and Error Avoidance"
+        ],
+        "correct_answer": "B. Failure Mode and Effects Analysis",
+        "explanation": "Identifies potential failures and impacts.",
+        "id": "q_18_7688"
+      },
+      {
+        "type": "medium",
+        "question": "Which type of analysis focuses on how well a system performs under various conditions?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Cost-Benefit Analysis",
+          "B. Stakeholder Analysis",
+          "C. Performance Analysis",
+          "D. Gap Analysis"
+        ],
+        "correct_answer": "C. Performance Analysis",
+        "explanation": "Evaluates speed, responsiveness, stability.",
+        "id": "q_19_341"
+      },
+      {
+        "type": "medium",
+        "question": "What is a key output document from the requirements gathering phase of a project?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Project Budget",
+          "B. Functional Specifications",
+          "C. Test Cases",
+          "D. User Manual"
+        ],
+        "correct_answer": "B. Functional Specifications",
+        "explanation": "Details what the system must do.",
+        "id": "q_20_6751"
+      },
+      {
+        "type": "medium",
+        "question": "___________ analysis evaluates system behavior under extreme loads or stress conditions.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Tests system limits.",
+        "id": "q_21_7254",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "A ___________ diagram visually represents the sequence of operations or decisions.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Shows process flow.",
+        "id": "q_22_9890",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "___________ testing verifies if the system meets the end-users' needs and expectations.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Confirms user satisfaction.",
+        "id": "q_23_6272",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Technical analysis often involves breaking down complex systems into smaller, manageable ___________.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Simplifies complex systems.",
+        "id": "q_24_2303",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "The goal of ___________ analysis is to optimize the utilization of available resources.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "explanation": "Maximizes efficiency of assets.",
+        "id": "q_25_6325",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Explain the fundamental difference between functional and non-functional requirements.",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "explanation": "Functional: what system does; Non-functional: how well.",
+        "id": "q_26_6350",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "Describe the key steps involved in conducting a comprehensive stakeholder analysis for a new project.",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "explanation": "Identify, categorize, understand influence and needs.",
+        "id": "q_27_3629",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "What are the primary benefits of utilizing modeling tools (e.g., UML) in technical analysis?",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "explanation": "Clarity, consistency, early defect detection.",
+        "id": "q_28_6566",
+        "options": [],
+        "correct_answer": ""
+      },
+      {
+        "type": "medium",
+        "question": "How do you effectively validate technical specifications to ensure accuracy and completeness?",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "explanation": "Reviews, walkthroughs, prototyping, testing.",
+        "id": "q_29_9358",
+        "options": [],
+        "correct_answer": ""
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Safety Protocol Audit & Report",
+        "description": "Conduct a mock safety audit for a hypothetical manufacturing system. Identify potential hazards, non-compliance issues, and propose corrective actions. Document findings in a formal report.",
+        "requirements": [
+          "Research common industrial safety protocols (e.g., OSHA, ISO 45001).",
+          "Define a scope for your hypothetical system.",
+          "Use analytical thinking to identify risks."
+        ],
+        "expected_output": "A comprehensive audit report detailing findings, risk levels, and actionable recommendations for safety improvement.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "System Requirements Document (SRD) Development",
+        "description": "Draft a System Requirements Document (SRD) for a new automated inventory management system. Include functional, non-functional, and interface requirements.",
+        "requirements": [
+          "Research best practices for technical writing and SRD structure.",
+          "Apply technical analysis techniques to define system needs.",
+          "Consider potential user roles and system interactions."
+        ],
+        "expected_output": "A well-structured SRD document (minimum 10 pages) outlining all necessary system requirements.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "CAD Design for a System Component",
+        "description": "Using a CAD software (e.g., FreeCAD, AutoCAD trial), design a simple mechanical component (e.g., a bracket, a housing) that would be part of a larger system. Focus on basic dimensions and tolerances.",
+        "requirements": [
+          "Familiarity with basic CAD software interface and tools.",
+          "Analytical thinking to determine component fit and function.",
+          "Understanding of basic engineering drawing principles."
+        ],
+        "expected_output": "A 3D CAD model file of the designed component and a 2D technical drawing with key dimensions.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "ISO 9001 Compliance Review",
+        "description": "Select a common business process (e.g., 'product development' or 'customer support') and analyze it against the core principles and requirements of ISO 9001:2015. Identify gaps and suggest improvements.",
+        "requirements": [
+          "Access to ISO 9001:2015 standard documentation (or summary).",
+          "Apply analytical thinking to process evaluation.",
+          "Ability to articulate compliance gaps and solutions."
+        ],
+        "expected_output": "A report detailing the process analysis, identified ISO 9001 compliance gaps, and proposed corrective actions.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Failure Mode and Effects Analysis (FMEA)",
+        "description": "Perform an FMEA on a critical function of a hypothetical system (e.g., the 'power supply' of a server rack or the 'braking system' of a vehicle). Identify potential failure modes, their causes, effects, and severity.",
+        "requirements": [
+          "Understanding of FMEA methodology.",
+          "Analytical thinking to foresee failure scenarios.",
+          "Basic knowledge of system components and interactions."
+        ],
+        "expected_output": "A completed FMEA table for the chosen system function, including recommended mitigation strategies.",
+        "difficulty": "Medium"
+      }
+    ],
+    "roadmap": [
+      {
+        "day": 1,
+        "focus": "Safety Protocols - Fundamentals",
+        "task": "Introduction to industrial safety, key regulations (OSHA, IEC 61508 overview), and hazard identification methods (HAZOP)."
+      },
+      {
+        "day": 2,
+        "focus": "Safety Protocols - Risk Management",
+        "task": "Deep dive into risk assessment methodologies, LOPA, incident investigation, and emergency response planning."
+      },
+      {
+        "day": 3,
+        "focus": "Technical Analysis - Requirements",
+        "task": "Understanding requirements elicitation, stakeholder analysis, functional vs. non-functional requirements, and MoSCoW prioritization."
+      },
+      {
+        "day": 4,
+        "focus": "Technical Analysis - Modeling & Failure",
+        "task": "Introduction to system modeling (UML diagrams), Root Cause Analysis (RCA), and Failure Mode and Effects Analysis (FMEA)."
+      },
+      {
+        "day": 5,
+        "focus": "Analytical Thinking & Problem Solving",
+        "task": "Develop critical thinking skills, problem-solving frameworks, data interpretation, and decision-making techniques."
+      },
+      {
+        "day": 6,
+        "focus": "ISO Standards - Quality Management",
+        "task": "Overview of ISO 9001 (Quality Management System), its principles, and application in system engineering."
+      },
+      {
+        "day": 7,
+        "focus": "ISO Standards - Other Relevant Standards",
+        "task": "Introduction to ISO 27001 (Information Security) and ISO 45001 (Occupational Health & Safety) relevant to systems."
+      },
+      {
+        "day": 8,
+        "focus": "Technical Writing - Foundations",
+        "task": "Learn principles of clear, concise technical communication, document structuring, and audience awareness."
+      },
+      {
+        "day": 9,
+        "focus": "Technical Writing - Application",
+        "task": "Practice writing technical specifications, reports, user manuals, and project documentation with clarity."
+      },
+      {
+        "day": 10,
+        "focus": "CAD Software - Basics",
+        "task": "Hands-on introduction to a CAD software (e.g., FreeCAD, Fusion 360) for basic 2D sketching and 3D modeling of components."
+      }
+    ],
+    "answer_evaluation": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Safety Protocols, Technical Analysis, Analytical Thinking, ISO Standards, Technical Writing, CAD Software_5_False": {
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Safety Protocols",
+        "Technical Analysis",
+        "Analytical Thinking",
+        "ISO Standards",
+        "Technical Writing",
+        "CAD Software"
+      ],
+      "strengths": [
+        "System Architecture",
+        "Problem Solving"
+      ],
+      "focus_areas": [
+        "Regulatory Compliance",
+        "Design Validation",
+        "Process Documentation"
+      ]
+    },
+    "questions": [
+      {
+        "type": "medium",
+        "question": "What does LOTO stand for in industrial safety?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Level Of Technical Operation",
+          "B. Lockout Tagout",
+          "C. Load On Thermal Output",
+          "D. Lead On Task Order"
+        ],
+        "correct_answer": "B. Lockout Tagout",
+        "explanation": "Prevents accidental machine startup.",
+        "id": "q_0_6749"
+      },
+      {
+        "type": "medium",
+        "question": "Which control is most effective in the hierarchy of safety?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. PPE",
+          "B. Administrative Controls",
+          "C. Engineering Controls",
+          "D. Elimination"
+        ],
+        "correct_answer": "D. Elimination",
+        "explanation": "Physically removing the hazard is best.",
+        "id": "q_1_8640"
+      },
+      {
+        "type": "medium",
+        "question": "What is the primary purpose of a Safety Data Sheet (SDS)?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Tracking employee hours",
+          "B. Listing chemical properties and hazards",
+          "C. Designing system architecture",
+          "D. Managing project budgets"
+        ],
+        "correct_answer": "B. Listing chemical properties and hazards",
+        "explanation": "Provides critical chemical safety information.",
+        "id": "q_2_8608"
+      },
+      {
+        "type": "medium",
+        "question": "What color is typically used for emergency stop buttons?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Green",
+          "B. Blue",
+          "C. Red",
+          "D. Yellow"
+        ],
+        "correct_answer": "C. Red",
+        "explanation": "Standard color for immediate visibility.",
+        "id": "q_3_663"
+      },
+      {
+        "type": "medium",
+        "question": "What does a 'Safety Factor' of 2.0 imply?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. The system is twice as fast",
+          "B. The system supports double the load",
+          "C. Two people must operate it",
+          "D. It takes two hours to stop"
+        ],
+        "correct_answer": "B. The system supports double the load",
+        "explanation": "Ensures design exceeds expected loads.",
+        "id": "q_4_1552"
+      },
+      {
+        "type": "medium",
+        "question": "Which agency regulates workplace safety in the US?",
+        "cat": "Safety Protocols",
+        "quiz_type": "mcq",
+        "options": [
+          "A. NASA",
+          "B. EPA",
+          "C. OSHA",
+          "D. FDA"
+        ],
+        "correct_answer": "C. OSHA",
+        "explanation": "Regulates US workplace safety standards.",
+        "id": "q_5_1564"
+      },
+      {
+        "type": "medium",
+        "question": "The process of identifying potential hazards before work begins is called a Job ____ Analysis.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Safety",
+        "explanation": "Evaluates risks before starting tasks.",
+        "id": "q_6_9587"
+      },
+      {
+        "type": "medium",
+        "question": "PPE stands for ____ Protective Equipment.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Personal",
+        "explanation": "Protects workers from physical hazards.",
+        "id": "q_7_6432"
+      },
+      {
+        "type": "medium",
+        "question": "FMEA stands for Failure Mode and ____ Analysis.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Effects",
+        "explanation": "Systematic method for identifying failures.",
+        "id": "q_8_6155"
+      },
+      {
+        "type": "medium",
+        "question": "A safety ____ is a device that prevents a machine from operating in dangerous conditions.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "interlock",
+        "explanation": "Prevents operation during danger.",
+        "id": "q_9_6424"
+      },
+      {
+        "type": "medium",
+        "question": "SIL stands for Safety ____ Level.",
+        "cat": "Safety Protocols",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Integrity",
+        "explanation": "Measures safety system performance level.",
+        "id": "q_10_1467"
+      },
+      {
+        "type": "medium",
+        "question": "Explain the importance of a safety audit in a manufacturing plant.",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Verifies compliance with safety rules.",
+        "explanation": "Ensures rules are followed correctly.",
+        "id": "q_11_418"
+      },
+      {
+        "type": "medium",
+        "question": "What is the difference between a hazard and a risk?",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Hazard is potential; risk is likelihood.",
+        "explanation": "Distinguishes source from probability.",
+        "id": "q_12_6843"
+      },
+      {
+        "type": "medium",
+        "question": "Describe the purpose of a 'Near Miss' report.",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Identifies hazards before accidents occur.",
+        "explanation": "Prevents future actual accidents.",
+        "id": "q_13_872"
+      },
+      {
+        "type": "medium",
+        "question": "Why is grounding necessary in electrical systems?",
+        "cat": "Safety Protocols",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Prevents electric shock and fires.",
+        "explanation": "Provides safe path for current.",
+        "id": "q_14_2711"
+      },
+      {
+        "type": "medium",
+        "question": "Which tool is used to visualize the root cause of a problem?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Gantt Chart",
+          "B. Fishbone Diagram",
+          "C. Pie Chart",
+          "D. Line Graph"
+        ],
+        "correct_answer": "B. Fishbone Diagram",
+        "explanation": "Visualizes potential causes of problems.",
+        "id": "q_15_2837"
+      },
+      {
+        "type": "medium",
+        "question": "The Pareto Principle suggests that what percentage of effects come from 20% of causes?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. 50%",
+          "B. 100%",
+          "C. 80%",
+          "D. 20%"
+        ],
+        "correct_answer": "C. 80%",
+        "explanation": "Identifies the most significant factors.",
+        "id": "q_16_1489"
+      },
+      {
+        "type": "medium",
+        "question": "What analysis type tests how sensitive a model is to changes in variables?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Gap Analysis",
+          "B. Sensitivity Analysis",
+          "C. SWOT Analysis",
+          "D. Cost-Benefit Analysis"
+        ],
+        "correct_answer": "B. Sensitivity Analysis",
+        "explanation": "Tests how variables affect outcomes.",
+        "id": "q_17_2691"
+      },
+      {
+        "type": "medium",
+        "question": "What does SWOT stand for?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Systems, Works, Operations, Tools",
+          "B. Strengths, Weaknesses, Opportunities, Threats",
+          "C. Simple, Wide, Open, Technical",
+          "D. Speed, Weight, Output, Time"
+        ],
+        "correct_answer": "B. Strengths, Weaknesses, Opportunities, Threats",
+        "explanation": "Evaluates internal and external factors.",
+        "id": "q_18_5353"
+      },
+      {
+        "type": "medium",
+        "question": "Which method uses random sampling to simulate outcomes?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Linear Regression",
+          "B. Monte Carlo Simulation",
+          "C. Decision Tree",
+          "D. Root Cause Analysis"
+        ],
+        "correct_answer": "B. Monte Carlo Simulation",
+        "explanation": "Uses randomness to predict outcomes.",
+        "id": "q_19_4799"
+      },
+      {
+        "type": "medium",
+        "question": "What is the primary goal of Six Sigma?",
+        "cat": "Technical Analysis",
+        "quiz_type": "mcq",
+        "options": [
+          "A. Increasing speed",
+          "B. Reducing defects",
+          "C. Lowering taxes",
+          "D. Hiring more staff"
+        ],
+        "correct_answer": "B. Reducing defects",
+        "explanation": "Statistical method for process improvement.",
+        "id": "q_20_1124"
+      },
+      {
+        "type": "medium",
+        "question": "KPI stands for Key ____ Indicator.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Performance",
+        "explanation": "Quantifiable measure of performance success.",
+        "id": "q_21_3927"
+      },
+      {
+        "type": "medium",
+        "question": "A ____ is a point in a system that limits the total output.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "bottleneck",
+        "explanation": "Point that limits system throughput.",
+        "id": "q_22_3629"
+      },
+      {
+        "type": "medium",
+        "question": "ROI stands for Return on ____.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Investment",
+        "explanation": "Measures efficiency of an investment.",
+        "id": "q_23_3550"
+      },
+      {
+        "type": "medium",
+        "question": "TCO stands for Total ____ of Ownership.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Cost",
+        "explanation": "Includes all lifecycle acquisition costs.",
+        "id": "q_24_9750"
+      },
+      {
+        "type": "medium",
+        "question": "____ analysis compares actual performance with potential performance.",
+        "cat": "Technical Analysis",
+        "quiz_type": "fill_in_the_blank",
+        "options": [],
+        "correct_answer": "Gap",
+        "explanation": "Compares actual versus desired performance.",
+        "id": "q_25_7569"
+      },
+      {
+        "type": "medium",
+        "question": "Define Trade-off analysis in engineering.",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Balancing competing requirements for optimization.",
+        "explanation": "Optimizing between conflicting design goals.",
+        "id": "q_26_9001"
+      },
+      {
+        "type": "medium",
+        "question": "What is a feasibility study?",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Assessment of project practicality.",
+        "explanation": "Determines if project is viable.",
+        "id": "q_27_7714"
+      },
+      {
+        "type": "medium",
+        "question": "Explain the purpose of data-driven decision making.",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Using evidence to guide choices.",
+        "explanation": "Reduces bias in decision processes.",
+        "id": "q_28_1475"
+      },
+      {
+        "type": "medium",
+        "question": "What is the role of a 'Control Group' in analysis?",
+        "cat": "Technical Analysis",
+        "quiz_type": "short_answer",
+        "options": [],
+        "correct_answer": "Provides a baseline for comparison.",
+        "explanation": "Ensures results are due to variables.",
+        "id": "q_29_7384"
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Safety Protocol Audit",
+        "description": "Perform a comprehensive safety audit of a hypothetical industrial workstation.",
+        "requirements": [
+          "Identify 5 hazards",
+          "Propose mitigation strategies",
+          "Reference OSHA standards"
+        ],
+        "expected_output": "A 2-page safety audit report.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "FMEA Analysis",
+        "description": "Conduct a Failure Mode and Effects Analysis on a mechanical pump system.",
+        "requirements": [
+          "List 10 failure modes",
+          "Calculate RPN scores",
+          "Suggest corrective actions"
+        ],
+        "expected_output": "Completed FMEA spreadsheet.",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "ISO 9001 Mapping",
+        "description": "Map a standard engineering design process to ISO 9001:2015 requirements.",
+        "requirements": [
+          "Identify 3 relevant clauses",
+          "Explain compliance steps"
+        ],
+        "expected_output": "Compliance mapping document.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "CAD Component Design",
+        "description": "Create a 3D model of a mounting bracket using CAD software.",
+        "requirements": [
+          "Include precise dimensions",
+          "Apply material properties",
+          "Export as STEP file"
+        ],
+        "expected_output": "3D CAD file and technical drawing.",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Technical SOP Writing",
+        "description": "Write a Standard Operating Procedure (SOP) for a system startup.",
+        "requirements": [
+          "Clear step-by-step instructions",
+          "Safety warnings included",
+          "Professional formatting"
+        ],
+        "expected_output": "3-page SOP document.",
+        "difficulty": "Easy"
+      }
+    ],
+    "roadmap": [
+      {
+        "day": 1,
+        "focus": "Safety & ISO Standards",
+        "task": "Complete Safety Audit and ISO Mapping tasks."
+      },
+      {
+        "day": 2,
+        "focus": "Technical Analysis",
+        "task": "Perform FMEA Analysis on a complex system."
+      },
+      {
+        "day": 3,
+        "focus": "CAD Software Mastery",
+        "task": "Complete CAD Component Design and stress simulation."
+      },
+      {
+        "day": 4,
+        "focus": "Technical Writing",
+        "task": "Draft the Technical SOP and review for clarity."
+      },
+      {
+        "day": 5,
+        "focus": "Analytical Thinking & Review",
+        "task": "Solve 30 interview questions and finalize portfolio."
+      }
+    ],
+    "answer_evaluation": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Analytical Thinking, Simulation Tools, Safety Consciousness, Design Engineering, System Optimization, Technical Writing_14_False": {
+    "is_profile_complete": false,
+    "next_question": "Considering your experience with Python, Java, and Flask, could you describe a project where you had to design or significantly optimize a system? What was the core challenge, and how did you approach it?",
+    "coach_comment": null,
+    "questions": [],
+    "roadmap": [],
+    "skill_analysis": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Analytical Thinking, Simulation Tools, Safety Consciousness, Design Engineering, System Optimization, Technical Writing_5_False": {
+    "is_profile_complete": false,
+    "next_question": "Given your background in Python, Java, and Flask, I'm curious about your experience with system architecture. Could you share an example of a complex system you've designed or significantly contributed to, and walk me through your approach to ensuring its reliability and scalability?",
+    "coach_comment": null,
+    "questions": [],
+    "roadmap": [],
+    "skill_analysis": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Analytical Thinking, Simulation Tools, Safety Consciousness, Design Engineering, System Optimization, Technical Writing_10_False": {
+    "is_profile_complete": false,
+    "next_question": "Given your experience with various programming languages and tools, could you describe a complex system you've worked on and how you approached optimizing its performance or resource utilization?",
+    "coach_comment": null,
+    "questions": [],
+    "roadmap": [],
+    "skill_analysis": null,
+    "job_role": "System Engineer"
   }
 }

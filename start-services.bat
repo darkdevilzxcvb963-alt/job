@@ -46,8 +46,8 @@ echo Both services are running in separate windows and will continue indefinitel
 echo Close either window to stop that service.
 echo ============================================================================
 echo.
-timeout /t 3 /nobreak >nul
+timeout /t 8 /nobreak >nul
 echo Opening browser to frontend...
-start http://localhost:3000
+start "" "http://localhost:3000"
 
 endlocal

@@ -30,7 +30,7 @@ class LLMService:
         if settings.GEMINI_API_KEY:
             try:
                 genai.configure(api_key=settings.GEMINI_API_KEY)
-                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+                self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
                 logger.info("Gemini client initialized successfully (Primary)")
             except Exception as e:
                 logger.warning(f"Failed to initialize Gemini: {e}")
@@ -45,6 +45,11 @@ class LLMService:
         
         if not self.gemini_model and not self.openai_client:
             logger.warning("No LLM API keys configured. AI features will be limited.")
+    
+    @property
+    def is_available(self) -> bool:
+        """Check if any LLM backend is available"""
+        return bool(self.gemini_model or self.openai_client)
     
     def _call_llm(self, prompt: str, system_instruction: str = "You are a professional assistant.", max_tokens: int = 500) -> Optional[str]:
         """Internal helper to call available LLM (Gemini first, then OpenAI)"""

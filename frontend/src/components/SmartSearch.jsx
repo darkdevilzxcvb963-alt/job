@@ -6,12 +6,20 @@ import './SmartSearch.css';
 const SmartSearch = ({ onCandidateClick }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
+    const [hasSearched, setHasSearched] = useState(false);
 
     const mutation = useMutation(
         (q) => smartSearch({ query: q }),
         {
             onSuccess: (data) => {
                 setResults(data.data.results);
+                setHasSearched(true);
+            },
+            onError: (err) => {
+                setResults([]);
+                setHasSearched(true);
+                console.error("Search error:", err);
+                alert("Error during deep search. Please check your connection and try again.");
             }
         }
     );
@@ -19,6 +27,7 @@ const SmartSearch = ({ onCandidateClick }) => {
     const handleSearch = (e) => {
         e.preventDefault();
         if (query.trim()) {
+            setHasSearched(false);
             mutation.mutate(query);
         }
     };
@@ -38,14 +47,14 @@ const SmartSearch = ({ onCandidateClick }) => {
                 </button>
             </form>
 
-            {results.length > 0 && (
+            {(results.length > 0 || (hasSearched && !mutation.isLoading)) && (
                 <div className="search-results-overlay">
                     <div className="results-list">
                         <div className="results-header">
                             <h4>Matches for "{query}"</h4>
-                            <button className="btn-close-results" onClick={() => setResults([])}>&times;</button>
+                            <button className="btn-close-results" onClick={() => { setResults([]); setHasSearched(false); }}>&times;</button>
                         </div>
-                        {results.map(cand => (
+                        {results.length > 0 ? results.map(cand => (
                             <div key={cand.id} className="search-result-item" onClick={() => onCandidateClick(cand)}>
                                 <div className="result-info">
                                     <span className="result-name">{cand.name}</span>
@@ -55,7 +64,11 @@ const SmartSearch = ({ onCandidateClick }) => {
                                     {(cand.score * 100).toFixed(0)}%
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                                No candidates found matching your criteria. Try adjusting your search.
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

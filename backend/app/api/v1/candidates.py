@@ -271,7 +271,14 @@ def process_resume(
         # File is on disk — parse it normally
         try:
             parsed_data = resume_parser.parse(file_path)
+            if "error" in parsed_data:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=parsed_data["error"]
+                )
             resume_text = parsed_data.get("text", "")
+        except HTTPException:
+            raise
         except Exception as e:
             logger.warning(f"Could not parse file {file_path}: {e}")
             resume_text = ""
@@ -413,6 +420,11 @@ async def upload_and_analyze_resume(
         nlp_processor = get_nlp_processor()
         
         parsed_data = resume_parser.parse(file_path)
+        if "error" in parsed_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=parsed_data["error"]
+            )
         resume_text = parsed_data.get("text", "")
         
         file_size = os.path.getsize(file_path)

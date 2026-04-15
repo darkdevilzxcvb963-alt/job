@@ -16,6 +16,10 @@
   color: var(--text-secondary);
 }
 
+.posting-header {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .job-form {
   max-width: 1000px;
   margin: 0 auto;
@@ -451,8 +455,13 @@
 }
 
 /* Sub-selection Downside */
+.reveal-content-group {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .sub-category-downside {
   animation: slideDownFade 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sub-selection-grid {
@@ -480,10 +489,11 @@
 }
 
 .sub-selection-card:hover {
-  background: rgba(56, 189, 248, 0.1);
-  border-color: #38bdf8;
-  transform: translateY(-2px);
-  color: white;
+  background: var(--primary-gradient);
+  border-color: transparent;
+  transform: translateY(-5px);
+  color: white !important;
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
 }
 
 .sub-selection-card.active {
@@ -492,6 +502,35 @@
   color: white;
   font-weight: 700;
   box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+  transform: scale(1.02);
+}
+
+/* Background Blur when Industry Suite is open */
+.job-posting.dropdown-active .posting-header,
+.job-posting.dropdown-active .reveal-content-group,
+.job-posting.dropdown-active .sub-category-downside,
+.job-posting.dropdown-active .section-title,
+.job-posting.dropdown-active .section-subtitle {
+  filter: blur(10px) brightness(0.6);
+  opacity: 0.4;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.job-posting.dropdown-active .custom-select-wrapper {
+  z-index: 1001; /* Ensure dropdown is above the blurred elements */
+}
+
+/* Fix for Light Theme Visibility */
+[data-theme="light"] .sub-selection-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+
+[data-theme="light"] .sub-selection-card:hover {
+  background: var(--primary-gradient);
+  color: #ffffff !important;
 }
 
 /* Stable Add Field Input */
