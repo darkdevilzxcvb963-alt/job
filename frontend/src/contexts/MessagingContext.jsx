@@ -49,9 +49,9 @@ export const MessagingProvider = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       const token = localStorage.getItem('access_token');
-      // Use window.location.hostname to be more dynamic
-      const host = window.location.hostname || '127.0.0.1';
-      const wsUrl = `ws://${host}:8000/ws/${user.id}?token=${token}`;
+      let apiBase = import.meta.env.VITE_API_URL || window.location.origin;
+      let wsBase = apiBase.replace(/^http/, 'ws').replace(/\/api\/v1\/?$/, '');
+      const wsUrl = `${wsBase}/ws/${user.id}?token=${token}`;
       
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
