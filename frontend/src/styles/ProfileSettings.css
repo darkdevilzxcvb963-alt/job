@@ -1142,6 +1142,8 @@
 
   .ps-crud-item-actions {
     width: 100%;
+  }
+}
 
 /* ── Progress Bar ───────────────────────────────────────────────────────── */
 .ps-upload-progress-container {
