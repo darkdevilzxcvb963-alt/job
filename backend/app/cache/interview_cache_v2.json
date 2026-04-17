@@ -885,5 +885,335 @@
     "questions": [],
     "next_question": null,
     "job_role": "System Engineer"
+  },
+  "System Engineer_CAD Software, Safety Consciousness, Safety Protocols, Testing & QA, System Optimization, Technical Writing_14_False_init": {
+    "coach_comment": "Your career intelligence profile for System Engineer is being initialized. To enhance future recommendations, consider updating your current skills and experience. This initial analysis provides a foundational roadmap to begin your journey in system engineering.",
+    "is_profile_complete": false,
+    "skill_analysis": {
+      "level": "Foundational",
+      "missing_skills": [
+        "Operating Systems (Linux/Windows)",
+        "Networking (TCP/IP)",
+        "Scripting (Python/Bash)",
+        "Cloud Platforms (AWS/Azure)",
+        "Virtualization (VMware/Docker)",
+        "Monitoring Tools (Prometheus/Grafana)"
+      ],
+      "strengths": [
+        "Analytical Thinking",
+        "Problem-Solving Aptitude",
+        "Interest in Infrastructure",
+        "Logical Reasoning"
+      ],
+      "focus_areas": [
+        "Linux Administration",
+        "Network Fundamentals",
+        "Cloud Computing Basics",
+        "Scripting for Automation",
+        "Containerization Technologies"
+      ]
+    },
+    "skill_profile": [],
+    "top_job_matches": [
+      {
+        "role": "Junior System Administrator",
+        "match_score": "70%",
+        "why": "Focuses on foundational system maintenance and operational support."
+      },
+      {
+        "role": "IT Support Specialist",
+        "match_score": "65%",
+        "why": "Provides entry-level exposure to system troubleshooting and user support."
+      },
+      {
+        "role": "DevOps Intern",
+        "match_score": "60%",
+        "why": "Offers exposure to automation and infrastructure as code, key for modern systems."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Introduction to System Engineering",
+        "task": "Research the core responsibilities and career paths within system engineering."
+      },
+      {
+        "day": "2",
+        "focus": "Linux Fundamentals: CLI",
+        "task": "Learn basic Linux commands (ls, cd, pwd, mkdir, rm, cp, mv) and file navigation."
+      },
+      {
+        "day": "3",
+        "focus": "Linux File System & Permissions",
+        "task": "Understand the Linux File System Hierarchy Standard (FHS) and practice chmod/chown commands."
+      },
+      {
+        "day": "4",
+        "focus": "Networking Basics: OSI Model & TCP/IP",
+        "task": "Study the OSI model and TCP/IP stack, focusing on layers and protocols."
+      },
+      {
+        "day": "5",
+        "focus": "Basic Network Configuration & Troubleshooting",
+        "task": "Practice using network commands like ping, ip a, netstat, and route on a Linux system."
+      },
+      {
+        "day": "6",
+        "focus": "Introduction to Scripting: Bash",
+        "task": "Write simple Bash scripts for automating repetitive tasks, including variables and loops."
+      },
+      {
+        "day": "7",
+        "focus": "Python for System Automation",
+        "task": "Learn Python basics: data types, control flow, and writing a simple 'hello world' script."
+      },
+      {
+        "day": "8",
+        "focus": "Version Control with Git",
+        "task": "Understand Git fundamentals: init, add, commit, push, pull, and creating a local repository."
+      },
+      {
+        "day": "9",
+        "focus": "Virtualization Concepts",
+        "task": "Explore the concepts of VMs, hypervisors, and the benefits of virtualization; introduce Docker."
+      },
+      {
+        "day": "10",
+        "focus": "Docker Fundamentals",
+        "task": "Learn Docker commands: run, build, pull, push, and manage containers and images."
+      },
+      {
+        "day": "11",
+        "focus": "Cloud Computing Overview",
+        "task": "Research IaaS, PaaS, SaaS models and get an introduction to major cloud providers like AWS or Azure."
+      },
+      {
+        "day": "12",
+        "focus": "AWS EC2 Basics",
+        "task": "Create a free-tier AWS account and launch a basic EC2 instance, then connect via SSH."
+      },
+      {
+        "day": "13",
+        "focus": "Monitoring Concepts",
+        "task": "Understand the importance of system monitoring and research common tools like Prometheus or Nagios."
+      },
+      {
+        "day": "14",
+        "focus": "Project Day: Basic Web Server",
+        "task": "Set up a simple Nginx web server on your Linux VM or Docker container to serve a static HTML page."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up a Linux Virtual Machine",
+        "difficulty": "Medium",
+        "description": "Successfully install and configure a Linux distribution (e.g., Ubuntu Server) in a virtualized environment (e.g., VirtualBox).",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware Workstation)",
+          "Linux ISO image",
+          "Basic OS installation knowledge"
+        ]
+      },
+      {
+        "title": "Automate a File Backup Script",
+        "difficulty": "Easy",
+        "description": "Write a Bash or Python script to copy specific files from one directory to another, timestamping the backup.",
+        "requirements": [
+          "Text editor",
+          "Bash or Python interpreter",
+          "Basic scripting syntax knowledge"
+        ]
+      },
+      {
+        "title": "Deploy a Simple Web Server with Docker",
+        "difficulty": "Hard",
+        "description": "Create a Dockerfile to build an Nginx image and run a container serving a static HTML page.",
+        "requirements": [
+          "Docker installed",
+          "Basic Dockerfile syntax",
+          "HTML knowledge"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_CAD Software, Safety Consciousness, Safety Protocols, Testing & QA, System Optimization, Technical Writing_14_False_what are the job roles suitable to me ? listit all": {
+    "coach_comment": "Based on your interest in System Engineering, several roles align with this career path. These roles typically involve designing, implementing, and maintaining complex systems. Developing foundational skills in operating systems, networking, and cloud platforms will be crucial for your success.",
+    "is_profile_complete": false,
+    "skill_analysis": {
+      "level": "Beginner",
+      "missing_skills": [
+        "Linux Administration",
+        "Network Protocols (TCP/IP)",
+        "Scripting (Python/Bash)",
+        "Cloud Platforms (AWS/Azure/GCP)",
+        "Virtualization (VMware/Hyper-V)",
+        "System Monitoring Tools",
+        "Configuration Management (Ansible/Puppet)"
+      ],
+      "strengths": [
+        "Problem-Solving Aptitude",
+        "Logical Thinking",
+        "Interest in Technology",
+        "Analytical Mindset"
+      ],
+      "focus_areas": [
+        "Operating Systems Fundamentals",
+        "Network Infrastructure",
+        "Cloud Computing Basics",
+        "Automation Scripting",
+        "Cybersecurity Principles"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Basic Computer Literacy",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Logical Reasoning",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Problem Identification",
+        "confidence": "65%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "Junior System Administrator",
+        "match_score": "75%",
+        "why": "This role involves daily system operations, user support, and basic troubleshooting, aligning with foundational system engineering interests."
+      },
+      {
+        "role": "IT Support Specialist",
+        "match_score": "70%",
+        "why": "An excellent entry-point for understanding system issues, user interaction, and basic infrastructure management."
+      },
+      {
+        "role": "NOC Engineer (Network Operations Center)",
+        "match_score": "68%",
+        "why": "Focuses on monitoring system health, responding to alerts, and initial incident resolution for network and server infrastructure."
+      },
+      {
+        "role": "Cloud Support Associate",
+        "match_score": "65%",
+        "why": "Entry-level position focused on assisting users with cloud platform issues and understanding cloud service models."
+      },
+      {
+        "role": "DevOps Junior Engineer",
+        "match_score": "60%",
+        "why": "Involves learning automation, CI/CD pipelines, and infrastructure as code, which are advanced system engineering practices."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Operating System Fundamentals",
+        "task": "Understand the basics of Linux distributions, kernel, shell, and file system hierarchy."
+      },
+      {
+        "day": "2",
+        "focus": "Linux Command Line Basics",
+        "task": "Practice essential commands: `ls`, `cd`, `pwd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `less`, `grep`."
+      },
+      {
+        "day": "3",
+        "focus": "File Systems and Permissions",
+        "task": "Learn about file ownership, groups, and `chmod`, `chown` commands. Understand SUID/SGID/Sticky bit."
+      },
+      {
+        "day": "4",
+        "focus": "Networking Fundamentals",
+        "task": "Study TCP/IP model, IP addressing (IPv4/IPv6), subnets, and basic network utilities like `ping`, `ip`, `netstat`."
+      },
+      {
+        "day": "5",
+        "focus": "Network Services",
+        "task": "Explore DNS, DHCP, SSH, and HTTP/HTTPS protocols. Understand their roles in a network."
+      },
+      {
+        "day": "6",
+        "focus": "Introduction to Scripting (Bash)",
+        "task": "Write simple Bash scripts for automating repetitive tasks, including variables, loops, and conditionals."
+      },
+      {
+        "day": "7",
+        "focus": "Basic System Monitoring",
+        "task": "Learn to use `top`, `htop`, `df`, `du`, `free` to monitor system resources (CPU, memory, disk)."
+      },
+      {
+        "day": "8",
+        "focus": "Virtualization Concepts",
+        "task": "Understand hypervisors (Type 1 & 2), virtual machines, and containers (Docker basics)."
+      },
+      {
+        "day": "9",
+        "focus": "Introduction to Cloud Computing",
+        "task": "Research major cloud providers (AWS, Azure, GCP) and their core services (compute, storage, networking)."
+      },
+      {
+        "day": "10",
+        "focus": "Cloud Service Models",
+        "task": "Differentiate between IaaS, PaaS, SaaS, and understand their use cases and benefits."
+      },
+      {
+        "day": "11",
+        "focus": "Basic Cybersecurity Principles",
+        "task": "Learn about common threats, firewalls, user authentication, and best practices for system hardening."
+      },
+      {
+        "day": "12",
+        "focus": "Introduction to Configuration Management",
+        "task": "Explore the concept of Infrastructure as Code and get familiar with Ansible basics (playbooks, modules)."
+      },
+      {
+        "day": "13",
+        "focus": "Troubleshooting Methodologies",
+        "task": "Study systematic approaches to diagnose and resolve system and network issues (e.g., OSI model troubleshooting)."
+      },
+      {
+        "day": "14",
+        "focus": "Project: Basic Web Server Setup",
+        "task": "Set up a simple Apache or Nginx web server on a Linux VM, configure a basic HTML page, and ensure it's accessible."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up a Virtual Linux Environment",
+        "difficulty": "Easy",
+        "description": "Install VirtualBox or VMware Workstation Player and deploy an Ubuntu or CentOS virtual machine.",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware)",
+          "Linux ISO image",
+          "Basic computer hardware"
+        ]
+      },
+      {
+        "title": "Automate System Information Collection",
+        "difficulty": "Medium",
+        "description": "Write a Bash script that collects system information (CPU, memory, disk usage, running processes) and saves it to a log file.",
+        "requirements": [
+          "Linux environment",
+          "Bash scripting knowledge",
+          "Text editor"
+        ]
+      },
+      {
+        "title": "Deploy a Basic Web Application to Cloud",
+        "difficulty": "Hard",
+        "description": "Utilize a free tier account (AWS EC2, Azure VM, GCP Compute Engine) to launch a Linux instance and deploy a simple 'Hello World' web page using Nginx or Apache.",
+        "requirements": [
+          "Cloud provider account",
+          "Basic Linux administration",
+          "Web server configuration"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
   }
 }

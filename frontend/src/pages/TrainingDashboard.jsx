@@ -635,12 +635,16 @@ const TrainingDashboard = () => {
                                    <h4 className="text-blue-500 font-bold uppercase text-sm tracking-wide m-0" style={{ fontSize: '1rem' }}>{String(day.day).toLowerCase().includes('day') ? day.day : `Day ${day.day}`}: Core Concept Focus</h4>
                                )}
                             </div>
-                            {roadmapExpanded.includes(i) && (
-                                 <div className="text-sm opacity-80 mb-3 bg-black/30 p-4 rounded-xl border border-white/5 animate-slide-up">
-                                     <strong>Learning Focus:</strong> Deep dive into {day.focus || 'modern tech stacks'}. This day covers key patterns, common pitfalls, and architectural insights specific to this skill gap.
+                            {roadmapExpanded.includes(i) ? (
+                                 <div className="text-sm opacity-90 mt-3 bg-black/40 p-4 rounded-xl border border-white/10 animate-slide-up shadow-inner shadow-black/50">
+                                     <strong style={{color: '#6366f1'}}>AI Assignment:</strong>
+                                     <p className="mt-2 text-white m-0" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{day.task}</p>
                                  </div>
+                            ) : (
+                                 <p className="text-white opacity-60 m-0 mt-2 line-clamp-1" style={{ fontSize: '0.9rem' }}>
+                                     {day.task}
+                                 </p>
                             )}
-                            <p className="text-white opacity-90 m-0" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{day.task}</p>
                         </div>
 
                         <div className="roadmap-actions right-side">
@@ -650,9 +654,10 @@ const TrainingDashboard = () => {
                              </button>
                              <button className="roadmap-btn-curved success" 
                                style={{ 
-                                   borderColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.5)',
-                                   backgroundColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.1)',
-                                   color: roadmapCompleted.includes(i) ? '#ffffff' : '#34d399'
+                                   borderColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.4)',
+                                   backgroundColor: roadmapCompleted.includes(i) ? '#10b981' : 'rgba(16, 185, 129, 0.05)',
+                                   color: roadmapCompleted.includes(i) ? '#ffffff' : '#10b981',
+                                   fontWeight: 700
                                }}
                                onClick={() => {
                                  if (!roadmapCompleted.includes(i)) {
@@ -660,7 +665,7 @@ const TrainingDashboard = () => {
                                     setSessionPoints(p => p + 20);
                                  }
                              }}>
-                                {roadmapCompleted.includes(i) ? 'Done ✓' : 'Finish'}
+                                {roadmapCompleted.includes(i) ? 'Completed ✓' : 'Mark Done'}
                              </button>
                         </div>
                       </div>

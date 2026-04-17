@@ -1,6 +1,6 @@
 .home-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+  background: var(--midnight-aurora);
 }
 
 .hero {
@@ -17,7 +17,7 @@
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.5rem;
-  color: #f8fafc; /* Force light text for dark hero */
+  color: var(--text-primary);
   letter-spacing: -2px;
 }
 
@@ -30,7 +30,7 @@
 
 .hero-subtitle {
   font-size: 1.4rem;
-  color: #94a3b8; /* Force muted text for dark hero */
+  color: var(--text-secondary);
   margin-bottom: 3rem;
   line-height: 1.6;
   max-width: 800px;

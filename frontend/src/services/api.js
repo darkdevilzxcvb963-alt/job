@@ -1,7 +1,15 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_URL || (window.location.origin + '/api/v1')
 console.log('Using API_BASE_URL:', API_BASE_URL);
+
+if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+  console.warn('%c WARNING: VITE_API_URL is not set in production. Falling back to relative path, which may fail if backend is on a different domain.', 'color: orange; font-weight: bold; font-size: 1.2em;');
+}
+
+if (window.location.protocol === 'https:' && API_BASE_URL.startsWith('http:')) {
+  console.warn('%c CRITICAL: HTTPS frontend is trying to connect to HTTP backend. This will likely fail with a Network Error (CORS/Mixed Content).', 'color: red; font-weight: bold; font-size: 1.2em;');
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,6 +18,14 @@ const api = axios.create({
     'Content-Type': 'application/json'
   }
 })
+
+// Quick health check on load to diagnose deployment issues
+if (import.meta.env.PROD) {
+  fetch(`${API_BASE_URL}/health`)
+    .then(r => r.json())
+    .then(data => console.log('DEBUG: Backend Health Check:', data))
+    .catch(err => console.error('DEBUG: Backend Health Check Failed. Please check VITE_API_URL. Status:', err.message));
+}
 
 // Add request interceptor to include auth token
 api.interceptors.request.use(
@@ -34,10 +50,17 @@ api.interceptors.response.use(
     if (error.response) {
       console.log(`API Error: ${error.response.status} ${originalRequest.url}`, error.response.data);
     } else {
-      console.error('API Network Error:', error.message);
+      console.error('API Network/Connection Error:', {
+        message: error.message,
+        url: originalRequest.url,
+        baseURL: API_BASE_URL,
+        method: originalRequest.method,
+        code: error.code // Axios error code like ECONNABORTED
+      });
       // Return a more user-friendly error for network issues
       return Promise.reject({
         message: 'Unable to reach the server. Please check your internet connection or ensure the backend server is running.',
+        url: `${API_BASE_URL}${originalRequest.url}`,
         originalError: error
       })
     }
@@ -109,6 +132,7 @@ export const rejectUser = (userId, reason) => api.post(`/admin/users/${userId}/r
 export const deleteUser = (userId) => api.delete(`/admin/users/${userId}`)
 export const getUserDetails = (userId) => api.get(`/admin/users/${userId}`)
 export const getAdminStats = () => api.get('/admin/stats/overview')
+export const getAdminTrends = (days = 30) => api.get('/admin/stats/trends', { params: { days } })
 export const getRecruiters = (params) => api.get('/admin/recruiters', { params })
 export const verifyRecruiter = (recruiterId) => api.post(`/admin/recruiters/${recruiterId}/verify`)
 

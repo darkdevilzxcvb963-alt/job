@@ -9,8 +9,8 @@ from fastapi import HTTPException, status
 from app.core.config import settings
 import secrets
 
-# Password hashing context - use argon2 instead of bcrypt due to Windows compatibility issues
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+# Password hashing context - support both bcrypt and argon2 (existing users use argon2)
+pwd_context = CryptContext(schemes=["bcrypt", "argon2"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""

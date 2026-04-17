@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Eye, X, Shield, User, Mail, Phone, MapPin, Calendar, Clock, Check, Ban, Key, Trash2,
-  FileText, Briefcase, BookOpen
+  Eye, X, Shield, User, Users, Mail, Phone, MapPin, Calendar, Clock, Check, Ban, Key, Trash2,
+  FileText, Briefcase, BookOpen, TrendingUp, Server, Zap, Cloud
 } from 'lucide-react';
 import {
   adminResetPassword,
@@ -348,43 +348,30 @@ const AdminDashboard = () => {
               </div>
             ) : stats ? (
               <div className="stats-grid">
-                <div className="stat-card premium-border">
+                <div className="stat-card">
                   <h3>Total Candidates</h3>
                   <p className="stat-value">{stats.total_candidates}</p>
-                  <p className="stat-label">In Match Engine</p>
+                  <p className="stat-label">System wide resumes</p>
                 </div>
-
-                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('all'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card">
                   <h3>Registered Users</h3>
                   <p className="stat-value">{stats.total_users}</p>
-                  <div className="card-footer">
-                    <span className="stat-label">Verified & Pending</span>
-                    <button className="btn-card-view"><Eye size={14} /> View</button>
-                  </div>
+                  <p className="stat-label">Total platform accounts</p>
                 </div>
-
-                <div className="stat-card premium-border">
+                <div className="stat-card">
                   <h3>Active Users</h3>
                   <p className="stat-value">{stats.active_users}</p>
-                  <p className="stat-label">Currently active</p>
+                  <p className="stat-label">Email verified users</p>
                 </div>
-
-                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('job_seeker'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card">
                   <h3>Job Seeker Accounts</h3>
                   <p className="stat-value">{stats.job_seekers}</p>
-                  <div className="card-footer">
-                    <span className="stat-label">Registered Candidates</span>
-                    <button className="btn-card-view"><Eye size={14} /> View</button>
-                  </div>
+                  <p className="stat-label">Candidate profiles</p>
                 </div>
-
-                <div className="stat-card premium-border clickable" onClick={() => { setFilterRole('recruiter'); setActiveTab('users'); fetchUsers(); }}>
+                <div className="stat-card">
                   <h3>Recruiter Accounts</h3>
                   <p className="stat-value">{stats.recruiters}</p>
-                  <div className="card-footer">
-                    <span className="stat-label">Indiv. Recruiters</span>
-                    <button className="btn-card-view"><Eye size={14} /> View</button>
-                  </div>
+                  <p className="stat-label">Company profiles</p>
                 </div>
               </div>
             ) : (

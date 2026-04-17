@@ -123,7 +123,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userResponse.data))
       return { success: true, user: userResponse.data }
     } catch (error) {
-      console.error('Google Auth error:', error)
+      console.error('Google Auth error details:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        url: error.url // custom url from my api.js change
+      })
       const errorMessage = error.response?.data?.detail || error.message || 'Google authentication failed.'
       return {
         success: false,

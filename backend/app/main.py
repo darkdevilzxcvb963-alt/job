@@ -10,7 +10,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from loguru import logger
 
-# Trigger reload 4
+# Admin Analytics Hotfix
 from app.core.config import settings
 from app.core.database import Base, engine
 from app.api.v1 import api_router
@@ -123,25 +123,17 @@ def startup_event():
 # app.state.limiter = limiter
 # app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Configure CORS
+# Configure CORS - Production-ready but permissive for troubleshooting
 origins = settings.CORS_ORIGINS
-# Ensure production URLs are included with various protocols
-prod_urls = [
-    "https://job-steel-psi.vercel.app",
-    "http://job-steel-psi.vercel.app",
-    settings.FRONTEND_URL
-]
-for url in prod_urls:
+for url in ["https://job-steel-psi.vercel.app", settings.FRONTEND_URL]:
     if url and url not in origins:
         origins.append(url)
 
-logger.info(f"CORS Origins configured: {origins}")
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*", "OPTIONS"],
+    allow_origins=["*"], # TEMPORARY: Prove connection is NOT blocked by path/port
+    allow_credentials=False, # Must be False if origins is "*"
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )

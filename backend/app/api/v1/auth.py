@@ -340,11 +340,18 @@ async def google_auth(
             )
 
         # 2. Verify the ID token
-        idinfo = id_token.verify_oauth2_token(
-            auth_data.id_token, 
-            requests.Request(), 
-            settings.GOOGLE_CLIENT_ID
-        )
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                auth_data.id_token, 
+                requests.Request(), 
+                settings.GOOGLE_CLIENT_ID
+            )
+        except Exception as verify_err:
+            logger.error(f"Google Token Verification Failed: {str(verify_err)}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Google token verification failed: {str(verify_err)}"
+            )
 
         # 3. Extract and validate user info
         email = idinfo['email'].lower().strip()

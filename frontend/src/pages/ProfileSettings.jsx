@@ -197,12 +197,12 @@ const ChipsInput = ({ value = [], onChange, placeholder }) => {
    TOGGLE SWITCH
 ══════════════════════════════════════════════════════════════════════════════ */
 const Toggle = ({ checked, onChange, label }) => (
-  <label className="ps-toggle-row">
+  <div className="ps-toggle-row" onClick={() => onChange(!checked)}>
     <span>{label}</span>
-    <div className={`ps-toggle ${checked ? 'active' : ''}`} onClick={() => onChange(!checked)}>
+    <div className={`ps-toggle ${checked ? 'active' : ''}`}>
       <div className="ps-toggle-thumb" />
     </div>
-  </label>
+  </div>
 );
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -261,7 +261,11 @@ const ProfileSettings = () => {
   const [profilePhoto, setProfilePhoto] = useState(null);
 
   // Theme
-  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    return document.documentElement.getAttribute('data-theme') || 'dark';
+  });
 
   const flash = useCallback((type, text) => {
     setMessage({ type, text });

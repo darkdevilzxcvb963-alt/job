@@ -286,6 +286,55 @@ class AITrainerService:
             logger.error(f"Network error calling OpenRouter: {e}")
             return ""
 
+    # ------------------------------------------------------------------
+    # Groq API Configuration (Fastest)
+    # ------------------------------------------------------------------
+    async def _call_groq(self, prompt: str) -> str:
+        """
+        Fastest fallback using Groq API (LLaMA models). 
+        """
+        groq_key = os.getenv("GROQ_API_KEY", "")
+        if not groq_key:
+            return ""
+
+        logger.info("Calling Groq API for rapid inference.")
+        headers = {
+            "Authorization": f"Bearer {groq_key}",
+            "Content-Type": "application/json"
+        }
+        
+        # We append a JSON strictly hint if missing
+        local_prompt = prompt
+        
+        payload = {
+            "model": "llama3-70b-8192", 
+            "messages": [
+                {"role": "system", "content": "You are a highly capable AI. Return purely JSON without any markdown formatting. NO PREFACE. NO APPENDICES."},
+                {"role": "user", "content": local_prompt}
+            ],
+            "temperature": 0.3,
+            "response_format": {"type": "json_object"}
+        }
+
+        try:
+            async with httpx.AsyncClient() as client:
+                res = await client.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=30.0
+                )
+                if res.status_code == 200:
+                    data = res.json()
+                    logger.info("Groq API call successful.")
+                    return data["choices"][0]["message"]["content"]
+                else:
+                    logger.error(f"Groq API Error: {res.status_code} - {res.text[:200]}")
+                    return ""
+        except Exception as e:
+            logger.error(f"Network error calling Groq: {e}")
+            return ""
+
 
     async def _call_ollama(self, prompt: str) -> str:
         """
@@ -511,8 +560,12 @@ class AITrainerService:
         3. Do NOT use markdown. Return raw JSON.
         """
         
+        # Try ultra-fast Groq First
+        raw = await self._call_groq(prompt)
+        
         # Try best Gemini model first (1 model only for speed)
-        raw = await self._call_gemini(prompt, max_models=1)
+        if not raw:
+            raw = await self._call_gemini(prompt, max_models=1)
         # Ollama is LOCAL and fast — try before exhausting all remote APIs
         if not raw:
             raw = await self._call_ollama(prompt)
@@ -663,14 +716,18 @@ NEXT_QUESTION RULE: Always set "next_question": null. Never ask follow-ups.
 CRITICAL: Return ONLY raw JSON. No markdown fences. Ensure precision and utility.
 """
 
-        # Try best Gemini model first (1 model only for speed)
-        raw = await self._call_gemini(prompt, max_models=1)
+        # 1. Try ultra-fast Groq API first
+        raw = await self._call_groq(prompt)
 
-        # Ollama is LOCAL and fast — try before exhausting all remote APIs
+        # 2. Try best Gemini model first (1 model only for speed)
+        if not raw:
+            raw = await self._call_gemini(prompt, max_models=1)
+
+        # 3. Ollama is LOCAL and fast — try before exhausting all remote APIs
         if not raw:
             raw = await self._call_ollama(prompt)
 
-        # If local Ollama also fails, try remaining Gemini models
+        # 4. If local Ollama also fails, try remaining Gemini models
         if not raw:
             raw = await self._call_gemini(prompt)
 
@@ -739,7 +796,17 @@ CRITICAL: Return ONLY raw JSON. No markdown fences. Ensure precision and utility
                 {"title": "System Scalability Audit", "description": "Conduct a performance audit on your latest project.", "requirements": ["Define metrics", "Identify bottlenecks"], "expected_output": "Audit Report", "difficulty": "Hard"}
             ],
             "roadmap": [
-                {"day": str(d), "focus": top_skills[d % len(top_skills)], "task": f"Practical deep dive and execution of {top_skills[d % len(top_skills)]} principles."}
+                {
+                    "day": str(d), 
+                    "focus": top_skills[d % len(top_skills)], 
+                    "task": [
+                        f"Set up and configure a sandbox environment exclusively designed for testing {top_skills[d % len(top_skills)]} principles.",
+                        f"Run a structural analysis of an open-source repository utilizing {top_skills[d % len(top_skills)]}.",
+                        f"Implement a small-scale prototype focusing heavily on {top_skills[d % len(top_skills)]} architectural bounds.",
+                        f"Refactor a legacy application module adopting modern {top_skills[d % len(top_skills)]} design standards.",
+                        f"Deploy the initial microservice highlighting optimized {top_skills[d % len(top_skills)]} protocols."
+                    ][d % 5]
+                }
                 for d in range(1, roadmap_days + 1)
             ],
             "answer_evaluation": {"score": 10, "feedback": "Direct and strategic alignment.", "correct": True},
