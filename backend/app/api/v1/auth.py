@@ -50,6 +50,37 @@ from typing import Optional
 
 router = APIRouter()
 
+@router.get("/emergency-fix-admin")
+async def emergency_fix_admin(db: Session = Depends(get_db)):
+    """Emergency route to fix admin access on Free Tier hosting"""
+    try:
+        email = "admin@example.com"
+        password = "Admin@1234"
+        admin = db.query(User).filter(User.email == email).first()
+        if admin:
+            admin.hashed_password = get_password_hash(password)
+            admin.is_active = True
+            admin.is_verified = True
+            admin.role = "admin"
+            admin.mfa_enabled = False
+            db.commit()
+            return {"status": "success", "message": "Admin account updated"}
+        else:
+            new_admin = User(
+                full_name="Admin",
+                email=email,
+                hashed_password=get_password_hash(password),
+                role="admin",
+                is_verified=True,
+                is_active=True,
+                mfa_enabled=False
+            )
+            db.add(new_admin)
+            db.commit()
+            return {"status": "success", "message": "Admin account created"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 async def signup(
     user_data: UserSignup,
