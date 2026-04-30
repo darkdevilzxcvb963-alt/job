@@ -55,22 +55,32 @@ async def _send_email_common(email: str, subject: str, html_body: str, plain_bod
     if fm:
         try:
             logger.info(f"Attempting to send email via SMTP to {email}")
+            
+            # Gmail safety: If sending via Gmail, the From address MUST match the username
+            from_email = settings.MAIL_FROM
+            if "gmail.com" in settings.MAIL_SERVER.lower():
+                from_email = settings.MAIL_USERNAME
+                
             message = MessageSchema(
                 subject=subject,
                 recipients=[email],
                 body=html_body if html_body else plain_body,
-                subtype=MessageType.html if html_body else MessageType.plain
+                subtype=MessageType.html if html_body else MessageType.plain,
+                from_address=from_email
             )
             await fm.send_message(message)
             return True
         except Exception as e:
             logger.error(f"SMTP email delivery failed for {email}: {str(e)}")
-    else:
-        logger.warning(f"No email providers available. Mocking email to {email}")
-        if settings.DEBUG:
-            logger.info(f"MOCK EMAIL CONTENT:\nSubject: {subject}\nTo: {email}\nBody: {plain_body or 'HTML Content'}")
-        return True # Return true in dev/mock mode
+    
+    # 3. Handle Mocking / Failure
+    if settings.DEBUG:
+        logger.warning(f"No email providers available. MOCKING email to {email} (Check logs for code)")
+        if plain_body:
+            logger.info(f"MOCK CONTENT: {plain_body}")
+        return True # Allow progress in local dev
         
+    logger.error(f"CRITICAL: Email delivery failed for {email} - No providers configured or all failed.")
     return False
 
 async def send_verification_email(email: str, token: str, name: str) -> bool:
