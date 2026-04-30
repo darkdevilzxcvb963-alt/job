@@ -40,9 +40,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }
 
-  const handleLogin = async (email, password) => {
+  const handleLogin = async (identifier, password) => {
     try {
-      const response = await login({ email, password })
+      const response = await login({ identifier, password })
       // Handle MFA requirement
       if (response.data.mfa_required) {
         return { 
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
         // If getCurrentUser fails, still allow login with token
         console.warn('Could not fetch user info:', userError)
         setIsAuthenticated(true)
-        return { success: true, user: { email } }
+        return { success: true, user: { identifier } }
       }
     } catch (error) {
       console.error('Login error detail:', {

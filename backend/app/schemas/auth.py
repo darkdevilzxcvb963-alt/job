@@ -10,13 +10,26 @@ class UserSignup(BaseModel):
     """Schema for user registration with comprehensive validation"""
     full_name: str = Field(..., min_length=2, max_length=255, description="User's full name")
     email: EmailStr = Field(..., description="Valid email address (unique)")
+    username: str = Field(..., min_length=3, max_length=50, description="Unique username")
     phone: Optional[str] = Field(None, min_length=10, max_length=50, description="Optional phone number")
-    password: str = Field(..., min_length=8, max_length=100, description="Secure password with letters and numbers")
+    password: str = Field(..., min_length=8, max_length=100, description="Secure password with letters, numbers and symbols")
     role: UserRole = Field(default=UserRole.JOB_SEEKER, description="User role: job_seeker or recruiter")
     
     # Optional for recruiters
     company_name: Optional[str] = Field(None, max_length=255, description="Company name for recruiters")
     
+    @validator('username', pre=True)
+    def validate_username(cls, v):
+        """Validate and clean username"""
+        if not v or not isinstance(v, str):
+            raise ValueError('Username is required')
+        v = v.strip().lower()
+        if len(v) < 3:
+            raise ValueError('Username must be at least 3 characters long')
+        if not v.isalnum() and '_' not in v:
+            raise ValueError('Username can only contain letters, numbers, and underscores')
+        return v
+
     @validator('full_name', pre=True)
     def validate_full_name(cls, v):
         """Validate and clean full name"""
@@ -62,8 +75,8 @@ class UserSignup(BaseModel):
             raise ValueError('Password must contain at least one digit (0-9)')
         if not any(char.isalpha() for char in v):
             raise ValueError('Password must contain at least one letter (a-z or A-Z)')
-        if not any(c.isalnum() or c in '!@#$%^&*' for c in v):
-            raise ValueError('Password contains invalid characters')
+        if not any(c in '!@#$%^&*()_+-=[]{}|;:,.<>?' for c in v):
+            raise ValueError('Password must contain at least one special character (!@#$%^&*)')
         return v
     
     @validator('email', pre=True)
@@ -80,8 +93,8 @@ class UserSignup(BaseModel):
         description = "User signup request with all validation rules"
 
 class UserLogin(BaseModel):
-    """Schema for user login"""
-    email: EmailStr
+    """Schema for user login with email or username"""
+    identifier: str = Field(..., description="Email or Username")
     password: str
 
 class GoogleAuth(BaseModel):
@@ -94,6 +107,7 @@ class UserResponse(BaseModel):
     id: str
     full_name: str
     email: str
+    username: Optional[str]
     phone: Optional[str]
     role: UserRole
     is_verified: bool

@@ -11,6 +11,11 @@ from app.api.v1 import (
 
 api_router = APIRouter()
 
+@api_router.get("/health", tags=["system"])
+async def health_check_v1():
+    """v1 Health check"""
+    return {"status": "healthy", "version": "1.0.0"}
+
 api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
 api_router.include_router(auth_simple.router, tags=["authentication-simple"])
 api_router.include_router(profiles.router, tags=["profiles"])

@@ -1215,5 +1215,194 @@
     "questions": [],
     "next_question": null,
     "job_role": "System Engineer"
+  },
+  "System Engineer_CAD Software, ISO Standards, Safety Protocols, Analytical Thinking, Safety Consciousness, MATLAB_10_False_init": {
+    "coach_comment": "Your current profile exhibits strong capabilities in data science, machine learning, and data visualization tools. To align with your interest in System Engineering, a dedicated focus on foundational system administration and DevOps practices is crucial. Your existing Python and GCP skills provide a valuable starting point for this career pivot.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Intermediate (Data Science/ML) / Beginner (System Engineering)",
+      "missing_skills": [
+        "Linux OS Administration",
+        "Network Protocols (TCP/IP, DNS)",
+        "Shell Scripting (Bash)",
+        "Containerization (Docker, Kubernetes)",
+        "CI/CD Tools (Jenkins, GitLab CI)",
+        "Configuration Management (Ansible, Terraform)",
+        "Cloud-specific services (AWS/Azure beyond basic GCP)"
+      ],
+      "strengths": [
+        "Python (general scripting and automation potential)",
+        "SQL (database interaction and management)",
+        "GCP (cloud platform familiarity)",
+        "GitHub (version control best practices)"
+      ],
+      "focus_areas": [
+        "Linux System Administration",
+        "Network Fundamentals",
+        "DevOps Tooling (Docker, Kubernetes, CI/CD)",
+        "Infrastructure as Code (IaC)",
+        "Advanced Python for System Automation"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "90%"
+      },
+      {
+        "skill": "SQL",
+        "confidence": "85%"
+      },
+      {
+        "skill": "Tableau",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Power BI",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Machine Learning",
+        "confidence": "85%"
+      },
+      {
+        "skill": "Deep Learning",
+        "confidence": "75%"
+      },
+      {
+        "skill": "GCP",
+        "confidence": "70%"
+      },
+      {
+        "skill": "GitHub",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Predictive Modeling",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Data Visualization",
+        "confidence": "85%"
+      },
+      {
+        "skill": "Statistical Analysis",
+        "confidence": "75%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "Data Scientist",
+        "match_score": "95%",
+        "why": "Skills in Python, ML, DL, SQL, and statistical analysis are a direct fit for this role."
+      },
+      {
+        "role": "Machine Learning Engineer",
+        "match_score": "90%",
+        "why": "Strong foundation in Python, ML, DL, and GCP aligns well with ML model development and deployment."
+      },
+      {
+        "role": "Data Engineer",
+        "match_score": "75%",
+        "why": "Leverages Python, SQL, and GCP, but requires more focus on data pipeline and infrastructure."
+      },
+      {
+        "role": "MLOps Engineer",
+        "match_score": "60%",
+        "why": "Combines ML knowledge with system operations, requiring significant upskilling in DevOps and infrastructure."
+      },
+      {
+        "role": "System Engineer",
+        "match_score": "30%",
+        "why": "Directly matches interest, but current skills require substantial development in core system administration and networking."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Set up a Linux VM (Ubuntu/CentOS) and learn basic commands (ls, cd, mkdir, rm, cp, mv, man, sudo)."
+      },
+      {
+        "day": "2",
+        "focus": "Advanced Linux Commands & File Permissions",
+        "task": "Explore file permissions (chmod, chown), process management (ps, top, kill), and package management (apt/yum)."
+      },
+      {
+        "day": "3",
+        "focus": "Shell Scripting Basics",
+        "task": "Write simple Bash scripts for automating file operations, user management, and system checks."
+      },
+      {
+        "day": "4",
+        "focus": "Networking Essentials",
+        "task": "Understand TCP/IP, DNS, common network commands (ping, ip, netstat, curl), and basic firewall concepts."
+      },
+      {
+        "day": "5",
+        "focus": "Introduction to Docker",
+        "task": "Install Docker, pull and run basic containers, understand Dockerfile structure, and build a simple custom image."
+      },
+      {
+        "day": "6",
+        "focus": "Container Orchestration Concepts",
+        "task": "Learn about Docker Compose for multi-container applications and explore the basics of Kubernetes architecture."
+      },
+      {
+        "day": "7",
+        "focus": "Python for System Automation",
+        "task": "Use Python libraries (os, subprocess, paramiko) to interact with the file system, run shell commands, and automate SSH tasks."
+      },
+      {
+        "day": "8",
+        "focus": "Cloud Infrastructure Basics (AWS/Azure)",
+        "task": "Explore core compute (EC2/VMs) and networking (VPC/VNet) services in a new cloud provider (e.g., AWS Free Tier)."
+      },
+      {
+        "day": "9",
+        "focus": "Version Control & Collaboration",
+        "task": "Deepen GitHub knowledge with branching strategies, pull requests, and collaborative workflows for infrastructure code."
+      },
+      {
+        "day": "10",
+        "focus": "Monitoring & Logging Introduction",
+        "task": "Research basic concepts of system monitoring (Prometheus, Grafana) and centralized logging (ELK stack, Splunk)."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up and Configure a Linux Server",
+        "difficulty": "Medium",
+        "description": "Install a Linux distribution (e.g., Ubuntu Server) in a virtual machine or cloud instance, configure network settings, and secure SSH access.",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware) or cloud account (GCP/AWS)",
+          "Basic Linux command-line proficiency",
+          "Understanding of SSH keys"
+        ]
+      },
+      {
+        "title": "Automate a System Health Check with Python/Bash",
+        "difficulty": "Medium",
+        "description": "Write a script that checks disk usage, CPU load, and memory usage, then logs the output or sends an alert if thresholds are exceeded.",
+        "requirements": [
+          "Proficiency in Python or Bash scripting",
+          "Knowledge of system monitoring commands (e.g., df, top, free)",
+          "Ability to write to log files or send email alerts"
+        ]
+      },
+      {
+        "title": "Deploy a Containerized Web Application",
+        "difficulty": "Hard",
+        "description": "Containerize a simple web application (e.g., Flask/Node.js) using Docker, create a Docker Compose file for multi-service deployment, and deploy it on a Linux host.",
+        "requirements": [
+          "Familiarity with Docker and Dockerfiles",
+          "Basic understanding of web application architecture",
+          "Linux environment for deployment"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
   }
 }

@@ -68,6 +68,18 @@ async def signup(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered. Please use a different email or login."
             )
+            
+        # Input validation: username
+        existing_username = db.query(User).filter(
+            User.username == user_data.username.lower().strip()
+        ).first()
+        
+        if existing_username:
+            logger.warning(f"Signup attempt with existing username: {user_data.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already taken. Please choose another one."
+            )
         
         # Input validation: phone (if provided)
         if user_data.phone and user_data.phone.strip():
@@ -111,6 +123,7 @@ async def signup(
         new_user = User(
             full_name=full_name,
             email=user_data.email.lower().strip(),
+            username=user_data.username.lower().strip(),
             phone=user_data.phone.strip() if user_data.phone and user_data.phone.strip() else None,
             hashed_password=hashed_password,
             role=user_data.role,
@@ -190,28 +203,31 @@ async def login(
     db: Session = Depends(get_db)
 ):
     """Authenticate user with production security (lockout, session tracking, HTTP-only cookies)"""
-    email = user_data.email.lower().strip()
-    
     # 1. Check for account lockout before anything else
     ip_address = request.client.host
-    if await AuthService.is_locked_out(db, email):
-        logger.warning(f"Login blocked due to lockout: {email}")
+    identifier = user_data.identifier.lower().strip()
+    
+    if await AuthService.is_locked_out(db, identifier):
+        logger.warning(f"Login blocked due to lockout: {identifier}")
         raise HTTPException(
             status_code=423,
             detail="Account temporarily locked due to too many failed attempts. Please try again in 15 minutes."
         )
 
-    user = db.query(User).filter(User.email == email).first()
+    # Search by email OR username
+    user = db.query(User).filter(
+        (User.email == identifier) | (User.username == identifier)
+    ).first()
     
     if not user or not verify_password(user_data.password, user.hashed_password):
-        await AuthService.track_login_attempt(db, email, ip_address, False)
+        await AuthService.track_login_attempt(db, identifier, ip_address, False)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            detail="Incorrect email/username or password"
         )
     
     # 2. Record successful login attempt
-    await AuthService.track_login_attempt(db, email, ip_address, True)
+    await AuthService.track_login_attempt(db, identifier, ip_address, True)
 
     if not user.is_active:
         raise HTTPException(
@@ -453,11 +469,20 @@ async def google_auth(
         # Re-raise HTTP exceptions (like 403 denied)
         raise
     except ValueError as e:
-        # Invalid token
-        logger.warning(f"Invalid Google ID token: {str(e)}")
+        # Check if this is a hashing error misreported as a ValueError (like bcrypt 72-byte limit)
+        error_msg = str(e)
+        if "72 bytes" in error_msg:
+            logger.error(f"Internal Hashing failure during Google Auth: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Account creation failed due to internal hashing constraints. Please try a different login method."
+            )
+            
+        # Invalid Google token
+        logger.warning(f"Invalid Google ID token: {error_msg}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid Google token: {str(e)}"
+            detail=f"Invalid Google token: {error_msg}"
         )
     except Exception as e:
         logger.error(f"Error during Google Auth: {str(e)}")

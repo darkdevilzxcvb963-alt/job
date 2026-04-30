@@ -9,16 +9,22 @@ from fastapi import HTTPException, status
 from app.core.config import settings
 import secrets
 
-# Password hashing context - support both bcrypt and argon2 (existing users use argon2)
-pwd_context = CryptContext(schemes=["bcrypt", "argon2"], deprecated="auto")
+# Password hashing context - support both argon2 and bcrypt (argon2 is preferred for new hashes)
+pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception as e:
+        from loguru import logger
+        logger.error(f"Password verification failed: {str(e)}")
+        return False
 
 def get_password_hash(password: str) -> str:
-    """Hash a password"""
-    return pwd_context.hash(password)
+    """Hash a password with 72-byte truncation for bcrypt compatibility"""
+    # Bcrypt has a 72-byte limit; argon2 does not, but we truncate for safety/consistency
+    return pwd_context.hash(password[:72])
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Create a JWT access token"""

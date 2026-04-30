@@ -10,6 +10,7 @@ function Signup() {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
+    username: '',
     phone: '',
     password: '',
     confirm_password: '',
@@ -50,6 +51,15 @@ function Signup() {
       newErrors.email = 'Please enter a valid email address'
     }
 
+    // Username validation
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required'
+    } else if (formData.username.trim().length < 3) {
+      newErrors.username = 'Username must be at least 3 characters'
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username.trim())) {
+      newErrors.username = 'Username can only contain letters, numbers, and underscores'
+    }
+
     // Phone validation (optional but if provided must be valid)
     if (formData.phone.trim()) {
       if (formData.phone.trim().length < 10) {
@@ -61,7 +71,7 @@ function Signup() {
       }
     }
 
-    // Password validation
+    // Password validation (Strong)
     if (!formData.password) {
       newErrors.password = 'Password is required'
     } else if (formData.password.length < 8) {
@@ -72,6 +82,8 @@ function Signup() {
       newErrors.password = 'Password must contain at least one digit (0-9)'
     } else if (!/[a-zA-Z]/.test(formData.password)) {
       newErrors.password = 'Password must contain at least one letter'
+    } else if (!/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one special character (!@#$%^&*)'
     }
 
     // Confirm password validation
@@ -87,6 +99,23 @@ function Signup() {
     }
 
     return newErrors
+  }
+
+  const calculatePasswordStrength = (password) => {
+    let score = 0
+    if (password.length >= 8) score++
+    if (password.length >= 12) score++
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++
+    if (/\d/.test(password)) score++
+    if (/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(password)) score++
+    return score
+  }
+
+  const getStrengthLabel = (score) => {
+    if (score <= 1) return { label: 'Weak', color: '#f87171' }
+    if (score <= 2) return { label: 'Fair', color: '#fbbf24' }
+    if (score <= 4) return { label: 'Good', color: '#38bdf8' }
+    return { label: 'Strong', color: '#4ade80' }
   }
 
   const handleChange = (e) => {
@@ -121,6 +150,7 @@ function Signup() {
     const signupData = {
       full_name: formData.full_name.trim(),
       email: formData.email.trim(),
+      username: formData.username.trim(),
       phone: formData.phone.trim() || null,
       password: formData.password,
       role: formData.role
@@ -219,8 +249,12 @@ function Signup() {
   }
 
   return (
-    <div className="signup-container">
-      <div className="signup-card">
+    <div className="signup-container premium-page">
+      <div className="decorative-blobs">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+      </div>
+      <div className="signup-card glass-panel premium-border">
         <h2>Create Your Account</h2>
         <p className="subtitle">Join our resume matching platform</p>
 
@@ -255,6 +289,20 @@ function Signup() {
               className={errors.email ? 'input-error' : ''}
             />
             {errors.email && <span className="field-error">{errors.email}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="username">Username *</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="e.g., johndoe_123"
+              required
+              className={errors.username ? 'input-error' : ''}
+            />
+            {errors.username && <span className="field-error">{errors.username}</span>}
           </div>
 
           <div className="form-group">
@@ -294,7 +342,8 @@ function Signup() {
               </button>
             </div>
             {errors.password && <span className="field-error">{errors.password}</span>}
-            <small>Must contain letters and numbers</small>
+            
+
           </div>
 
           <div className="form-group">
@@ -355,7 +404,7 @@ function Signup() {
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
                   text="signup_with"
-                  useOneTap
+
                   theme="outline"
                   size="large"
                   width="100%"

@@ -6,7 +6,7 @@ import { verifyMFA } from '../services/api'
 import '../styles/Login.css'
 
 function Login() {
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [mfaCode, setMfaCode] = useState('')
   const [showMfa, setShowMfa] = useState(false)
@@ -34,7 +34,7 @@ function Login() {
     setError('')
     setLoading(true)
     try {
-      const result = await login(email, password)
+      const result = await login(identifier, password)
       if (result.success) {
         if (result.mfa_required) {
           setShowMfa(true)
@@ -79,8 +79,12 @@ function Login() {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-card glass-panel">
+    <div className="login-container premium-page">
+      <div className="decorative-blobs">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+      </div>
+      <div className="login-card glass-panel premium-border">
         <div className="login-header">
           <h2>{showMfa ? 'Second Factor' : 'Welcome Back'}</h2>
           <p>{showMfa ? 'Verify your identity to continue' : 'Login to your Career Intelligence Hub'}</p>
@@ -93,15 +97,15 @@ function Login() {
           /* PASSWORD LOGIN */
           <form onSubmit={handlePasswordLogin}>
             <div className="form-group">
-              <label><Mail size={16} /> Email</label>
+              <label><Mail size={16} /> Email or Username</label>
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="identifier"
                 autoComplete="username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                placeholder="name@example.com"
+                placeholder="email@example.com or username"
               />
             </div>
 
