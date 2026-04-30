@@ -42,29 +42,37 @@ def _migrate_missing_columns():
     migrations = [
         # CandidateProfile additions
         "ALTER TABLE candidate_profiles ADD COLUMN linkedin_url VARCHAR(512)",
-        "ALTER TABLE candidate_profiles ADD COLUMN is_discoverable BOOLEAN DEFAULT 1 NOT NULL",
+        "ALTER TABLE candidate_profiles ADD COLUMN is_discoverable BOOLEAN DEFAULT TRUE",
+        
         # Candidate additions
         "ALTER TABLE candidates ADD COLUMN seniority_level VARCHAR(50)",
+        
         # Job additions
-        "ALTER TABLE jobs ADD COLUMN remote_ok BOOLEAN DEFAULT 0",
-        "ALTER TABLE jobs ADD COLUMN application_deadline DATETIME",
+        "ALTER TABLE jobs ADD COLUMN remote_ok BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE jobs ADD COLUMN application_deadline TIMESTAMP",
         "ALTER TABLE jobs ADD COLUMN views_count INTEGER DEFAULT 0",
+        
         # Match additions
         "ALTER TABLE matches ADD COLUMN location_score FLOAT",
         "ALTER TABLE matches ADD COLUMN salary_score FLOAT",
         "ALTER TABLE matches ADD COLUMN seniority_score FLOAT",
-        # User MFA additions
-        "ALTER TABLE users ADD COLUMN mfa_enabled BOOLEAN DEFAULT 0 NOT NULL",
+        
+        # User additions (CRITICAL FOR AUTH)
+        "ALTER TABLE users ADD COLUMN username VARCHAR(50)",
+        "ALTER TABLE users ADD COLUMN auth_provider VARCHAR(50) DEFAULT 'local'",
+        "ALTER TABLE users ADD COLUMN auth_provider_id VARCHAR(255)",
+        "ALTER TABLE users ADD COLUMN mfa_enabled BOOLEAN DEFAULT FALSE",
         "ALTER TABLE users ADD COLUMN mfa_secret VARCHAR(255)",
         "ALTER TABLE users ADD COLUMN mfa_type VARCHAR(50)",
         "ALTER TABLE users ADD COLUMN mfa_backup_codes JSON",
+        "ALTER TABLE users ADD COLUMN deletion_requested_at TIMESTAMP",
+
         # CandidateProfile extended preferences
         "ALTER TABLE candidate_profiles ADD COLUMN preferred_roles TEXT",
         "ALTER TABLE candidate_profiles ADD COLUMN work_mode VARCHAR(20)",
         "ALTER TABLE candidate_profiles ADD COLUMN industry VARCHAR(255)",
         "ALTER TABLE candidate_profiles ADD COLUMN notice_period VARCHAR(50)",
-        "ALTER TABLE candidate_profiles ADD COLUMN open_to_work BOOLEAN DEFAULT 1 NOT NULL",
-        "ALTER TABLE users ADD COLUMN deletion_requested_at DATETIME",
+        "ALTER TABLE candidate_profiles ADD COLUMN open_to_work BOOLEAN DEFAULT TRUE",
     ]
 
     db = SessionLocal()
