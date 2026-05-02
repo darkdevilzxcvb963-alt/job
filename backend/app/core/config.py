@@ -86,6 +86,10 @@ class Settings(BaseSettings):
     ONESIGNAL_APP_ID: str = ""
     ONESIGNAL_REST_API_KEY: str = ""
 
+    # Mailjet Configuration (Primary No-Domain Solution)
+    MAILJET_API_KEY: str = ""
+    MAILJET_SECRET_KEY: str = ""
+
     # Resend Configuration
     RESEND_API_KEY: str = ""
 
