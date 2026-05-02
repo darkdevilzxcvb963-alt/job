@@ -17,7 +17,7 @@ async def test_notifications():
     
     ns = NotificationService()
     
-    test_email = "srihariharan26ias@gmail.com"
+    test_email = "appleballcatdog54321@gmail.com"
     
     print(f"\n1. Testing Email Delivery Flow...")
     print("This will try OneSignal -> Resend -> SMTP in order.")

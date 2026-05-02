@@ -92,8 +92,49 @@ class NotificationService:
     # ─── Email ────────────────────────────────────────────────────────────────
 
     async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
-        """Send an HTML email via OneSignal (preferred) or SMTP fallback."""
-        # Try OneSignal first
+        """Send an HTML email via SMTP (primary free) or Resend/OneSignal fallbacks."""
+        
+        # 1. Try SMTP first (Best for sending to everyone for free without a domain)
+        if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = subject
+                msg["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
+                msg["To"] = to_email
+                msg.attach(MIMEText(html_body, "html"))
+
+                import asyncio
+                import functools
+
+                def sync_send():
+                    # Check if we should use SSL (Port 465) or TLS (Port 587)
+                    if settings.MAIL_PORT == 465 or settings.MAIL_SSL:
+                        server_class = smtplib.SMTP_SSL
+                    else:
+                        server_class = smtplib.SMTP
+                    
+                    with server_class(settings.MAIL_SERVER, settings.MAIL_PORT, timeout=10) as server:
+                        if settings.MAIL_PORT == 587 or settings.MAIL_TLS:
+                            server.ehlo()
+                            server.starttls()
+                            server.ehlo()
+                        server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
+                        server.sendmail(settings.MAIL_FROM, to_email, msg.as_string())
+
+                loop = asyncio.get_event_loop()
+                await loop.run_in_executor(None, sync_send)
+                
+                logger.info(f"Email sent via SMTP to {to_email}: {subject}")
+                return True
+            except Exception as e:
+                logger.error(f"SMTP failed for {to_email}: {e}. Trying fallback providers...")
+
+        # 2. Try Resend second (Reliable production alternative)
+        if settings.RESEND_API_KEY:
+            if await self._send_resend_email(to_email, subject, html_body):
+                return True
+
+        # 3. Try OneSignal third
         if settings.ONESIGNAL_APP_ID and settings.ONESIGNAL_REST_API_KEY:
             payload = {
                 "target_channel": "email",
@@ -104,41 +145,7 @@ class NotificationService:
             if await self._send_onesignal_request(payload):
                 return True
 
-        # Try Resend second (Reliable production alternative)
-        if settings.RESEND_API_KEY:
-            if await self._send_resend_email(to_email, subject, html_body):
-                return True
-
-        # Fallback to SMTP
-        if not settings.MAIL_USERNAME or not settings.MAIL_PASSWORD:
-            logger.warning("Email fallback not configured. Skipping email.")
-            return False
-        try:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = subject
-            msg["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
-            msg["To"] = to_email
-            msg.attach(MIMEText(html_body, "html"))
-
-            import asyncio
-            import functools
-
-            def sync_send():
-                with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT, timeout=10) as server:
-                    server.ehlo()
-                    if settings.MAIL_TLS:
-                        server.starttls()
-                    server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
-                    server.sendmail(settings.MAIL_FROM, to_email, msg.as_string())
-
-            loop = asyncio.get_event_loop()
-            await loop.run_in_executor(None, sync_send)
-            
-            logger.info(f"Email sent via SMTP fallback to {to_email}: {subject}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to send email to {to_email}: {e}")
-            return False
+        return False
 
     async def send_sms(self, to_phone: str, message: str) -> bool:
         """Send an SMS via OneSignal (preferred) or Twilio fallback."""

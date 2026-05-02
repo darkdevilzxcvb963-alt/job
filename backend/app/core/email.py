@@ -42,17 +42,7 @@ except Exception as e:
 
 async def _send_email_common(email: str, subject: str, html_body: str, plain_body: str = None) -> bool:
     """Internal helper to send email with OneSignal -> FastMail fallback"""
-    # 1. Try Unified Notification Service (OneSignal/Resend)
-    if onesignal:
-        try:
-            logger.info(f"Attempting to send email via Unified Service to {email}")
-            if await onesignal.send_email(email, subject, html_body):
-                return True
-            logger.warning(f"Unified Service failed for {email}. Falling back to direct SMTP.")
-        except Exception as e:
-            logger.warning(f"Unified Service error for {email}: {str(e)}. Falling back to direct SMTP.")
-    
-    # 2. Try FastMail/SMTP if configured
+    # 1. Try FastMail/SMTP first (Primary free choice)
     if fm:
         try:
             logger.info(f"Attempting to send email via SMTP to {email}")
@@ -73,6 +63,15 @@ async def _send_email_common(email: str, subject: str, html_body: str, plain_bod
             return True
         except Exception as e:
             logger.error(f"SMTP email delivery failed for {email}: {str(e)}")
+    
+    # 2. Try Unified Notification Service (OneSignal/Resend) as fallback
+    if onesignal:
+        try:
+            logger.info(f"Attempting to send email via Unified Service to {email}")
+            if await onesignal.send_email(email, subject, html_body):
+                return True
+        except Exception as e:
+            logger.warning(f"Unified Service failed for {email}: {str(e)}")
     
     # 3. Handle Mocking / Failure
     if settings.DEBUG:
