@@ -34,10 +34,50 @@ class NotificationService:
                 if response.status_code >= 400:
                     logger.error(f"OneSignal Error {response.status_code}: {response.text}")
                     return False
-                logger.info(f"OneSignal notification sent: {response.json()}")
+                resp_json = response.json()
+                if "errors" in resp_json and resp_json["errors"]:
+                    logger.error(f"OneSignal Business Logic Error: {resp_json['errors']}")
+                    return False
+                logger.info(f"OneSignal notification sent: {resp_json}")
                 return True
         except Exception as e:
             logger.error(f"OneSignal API request failed: {e}")
+            return False
+
+    async def _send_resend_email(self, to_email: str, subject: str, html_body: str) -> bool:
+        """Internal helper to send email via Resend HTTP API."""
+        if not settings.RESEND_API_KEY:
+            return False
+
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "from": f"{settings.MAIL_FROM_NAME} <onboarding@resend.dev>" if "gmail.com" in settings.MAIL_FROM else f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_body
+        }
+        
+        # Note: If they have a verified domain, they should use their own email in 'from'.
+        # For now, we use a smart default or the configured MAIL_FROM.
+        if "resend.dev" not in payload["from"] and settings.RESEND_API_KEY.startswith("re_"):
+            # If using a standard API key, they might need a verified domain.
+            # But onboarding@resend.dev works for testing to the account owner.
+            pass
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=payload, timeout=10.0)
+                if response.status_code >= 400:
+                    logger.error(f"Resend Error {response.status_code}: {response.text}")
+                    return False
+                logger.info(f"Email sent via Resend to {to_email}")
+                return True
+        except Exception as e:
+            logger.error(f"Resend API request failed: {e}")
             return False
 
     async def send_push_notification(self, user_id: str, title: str, message: str) -> bool:
@@ -62,6 +102,11 @@ class NotificationService:
                 "email_body": html_body
             }
             if await self._send_onesignal_request(payload):
+                return True
+
+        # Try Resend second (Reliable production alternative)
+        if settings.RESEND_API_KEY:
+            if await self._send_resend_email(to_email, subject, html_body):
                 return True
 
         # Fallback to SMTP

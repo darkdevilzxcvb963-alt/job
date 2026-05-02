@@ -86,6 +86,9 @@ class Settings(BaseSettings):
     ONESIGNAL_APP_ID: str = ""
     ONESIGNAL_REST_API_KEY: str = ""
 
+    # Resend Configuration
+    RESEND_API_KEY: str = ""
+
     
     # Google OAuth
     GOOGLE_CLIENT_ID: str = "YOUR_GOOGLE_CLIENT_ID"
