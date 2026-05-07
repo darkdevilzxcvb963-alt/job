@@ -26,7 +26,7 @@ import MessageSidebar from './components/MessageSidebar'
 import { MessagingProvider } from './contexts/MessagingContext'
  import { NotifyProvider } from './contexts/NotifyContext'
 import { useAuth } from './contexts/AuthContext'
-import useOneSignal from './hooks/useOneSignal'
+
 import './styles/App.css'
 import './styles/Features.css'
 
@@ -34,11 +34,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 
 const queryClient = new QueryClient()
 
-function OneSignalInitializer() {
-  const { user } = useAuth()
-  useOneSignal(user)
-  return null
-}
+
 
 function App() {
   return (
@@ -46,7 +42,7 @@ function App() {
       <ErrorBoundary>
         <AuthProvider>
           <NotifyProvider>
-            <OneSignalInitializer />
+
             <MessagingProvider>
               <Router>
               <div className="App">

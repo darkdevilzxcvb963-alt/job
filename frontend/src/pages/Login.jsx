@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, Zap, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ShieldCheck } from 'lucide-react'
+import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../contexts/AuthContext'
 import { verifyMFA } from '../services/api'
 import '../styles/Login.css'
@@ -16,7 +17,7 @@ function Login() {
   const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
   
-  const { login, login: authLogin } = useAuth()
+  const { login, login: authLogin, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
   const handleRoleRedirect = (user) => {
@@ -183,6 +184,45 @@ function Login() {
               </button>
             </div>
           </form>
+        )}
+
+        {!showMfa && (
+          <>
+            <div className="divider"><span>or</span></div>
+            <div className="google-btn-wrapper">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  setError('')
+                  setLoading(true)
+                  try {
+                    const result = await loginWithGoogle(credentialResponse.credential, 'job_seeker')
+                    if (result?.success) {
+                      if (result.mfa_required) {
+                        setShowMfa(true)
+                        setMfaToken(result.mfa_token)
+                        setInfo('Verification code sent to your email.')
+                      } else {
+                        handleRoleRedirect(result.user)
+                      }
+                    } else {
+                      setError(result?.error || 'Google sign-in failed. Please try again.')
+                    }
+                  } catch {
+                    setError('Google sign-in failed. Please try again.')
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+                onError={() => setError('Google sign-in failed. Please try again.')}
+                useOneTap={false}
+                theme="filled_black"
+                shape="rectangular"
+                size="large"
+                width="100%"
+                text="signin_with"
+              />
+            </div>
+          </>
         )}
 
         <p className="signup-link">

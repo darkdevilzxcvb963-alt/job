@@ -65,7 +65,14 @@ api.interceptors.response.use(
       })
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Skip token refresh for auth endpoints — they handle their own auth
+    const isAuthEndpoint = originalRequest.url?.includes('/auth/login') || 
+                           originalRequest.url?.includes('/auth/signup') ||
+                           originalRequest.url?.includes('/auth/mfa/') ||
+                           originalRequest.url?.includes('/auth/google-auth') ||
+                           originalRequest.url?.includes('/auth/refresh');
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       console.log('401 Unauthorized detected, attempting token refresh...');
       originalRequest._retry = true
 

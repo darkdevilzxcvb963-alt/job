@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { verifyMFA } from '../services/api'
+import { verifyMFA, sendOTP } from '../services/api'
 import '../styles/Signup.css'
 
 function Signup() {
@@ -25,6 +25,7 @@ function Signup() {
   const [mfaToken, setMfaToken] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
   const { signup, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
@@ -200,6 +201,24 @@ function Signup() {
       setErrors({ mfa: err.response?.data?.detail || 'Invalid or expired verification code.' })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResendOTP = async () => {
+    if (resendCooldown > 0) return
+    try {
+      await sendOTP({ email: formData.email, type: 'email', purpose: 'mfa' })
+      setResendCooldown(60)
+      const timer = setInterval(() => {
+        setResendCooldown(prev => {
+          if (prev <= 1) { clearInterval(timer); return 0 }
+          return prev - 1
+        })
+      }, 1000)
+      setErrors({ ...errors, mfa: '' })
+      setSuccessMessage('A new OTP has been sent to your email.')
+    } catch (err) {
+      setErrors({ mfa: 'Failed to resend OTP. Please try again.' })
     }
   }
 
@@ -451,7 +470,16 @@ function Signup() {
               <button 
                 type="button" 
                 className="btn-link-small" 
-                style={{ marginTop: '1rem', width: '100%' }}
+                style={{ marginTop: '0.75rem', width: '100%' }}
+                onClick={handleResendOTP}
+                disabled={resendCooldown > 0}
+              >
+                {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : "Didn't receive code? Resend OTP"}
+              </button>
+              <button 
+                type="button" 
+                className="btn-link-small" 
+                style={{ marginTop: '0.5rem', width: '100%' }}
                 onClick={() => setShowMfa(false)}
               >
                 Back to signup

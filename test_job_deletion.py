@@ -2,7 +2,7 @@ import requests
 import json
 import uuid
 
-BASE_URL = "http://localhost:8001/api/v1"
+BASE_URL = "http://localhost:8000/api/v1"
 
 def test_delete_job():
     # 1. Login as recruiter
@@ -13,8 +13,8 @@ def test_delete_job():
     # srihariharan26ias@gmail.com was mentioned in previous conversations as a user
     
     login_data = {
-        "email": "srihariharan26ias@gmail.com",
-        "password": "Password123" # Common test password
+        "identifier": "srihariharan26ias@gmail.com",
+        "password": "Password@123" # Correct test password
     }
     
     try:

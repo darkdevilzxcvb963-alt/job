@@ -62,44 +62,43 @@ class NotificationService:
     # ─── Email Dispatcher ─────────────────────────────────────────────────────
 
     async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
-        """Send an HTML email via Mailjet (Primary) or SMTP (Fallback)."""
+        """Send an HTML email via Gmail SMTP (Primary) → Mailjet (Fallback)."""
         
-        # 1. Try Mailjet (HTTP API - Best for Production)
-        if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
-            if await self._send_mailjet_email(to_email, subject, html_body):
-                return True
-
-        # 2. Try SMTP Fallback (Gmail/FastMail)
+        # 1. Try Gmail SMTP (Most reliable for @gmail.com senders)
         if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:
             try:
                 msg = MIMEMultipart("alternative")
                 msg["Subject"] = subject
-                msg["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
+                # Gmail requires From to match the authenticated username
+                from_addr = settings.MAIL_USERNAME if "gmail" in settings.MAIL_SERVER.lower() else settings.MAIL_FROM
+                msg["From"] = f"{settings.MAIL_FROM_NAME} <{from_addr}>"
                 msg["To"] = to_email
                 msg.attach(MIMEText(html_body, "html"))
 
                 def sync_send():
-                    if settings.MAIL_PORT == 465 or settings.MAIL_SSL:
-                        server_class = smtplib.SMTP_SSL
-                    else:
-                        server_class = smtplib.SMTP
-                    
-                    with server_class(settings.MAIL_SERVER, settings.MAIL_PORT, timeout=10) as server:
+                    server_class = smtplib.SMTP_SSL if (settings.MAIL_PORT == 465 or settings.MAIL_SSL) else smtplib.SMTP
+                    with server_class(settings.MAIL_SERVER, settings.MAIL_PORT, timeout=15) as server:
                         if settings.MAIL_PORT == 587 or settings.MAIL_TLS:
                             server.ehlo()
                             server.starttls()
                             server.ehlo()
                         server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
-                        server.sendmail(settings.MAIL_FROM, to_email, msg.as_string())
+                        server.sendmail(from_addr, to_email, msg.as_string())
 
                 import asyncio
                 loop = asyncio.get_event_loop()
                 await loop.run_in_executor(None, sync_send)
-                logger.info(f"Email sent via SMTP to {to_email}")
+                logger.info(f"✅ Email delivered via Gmail SMTP to {to_email}")
                 return True
             except Exception as e:
-                logger.error(f"SMTP Fallback failed: {e}")
+                logger.error(f"❌ Gmail SMTP failed: {e}. Trying Mailjet fallback...")
 
+        # 2. Try Mailjet (Fallback - likely to fail if suspended)
+        if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
+            if await self._send_mailjet_email(to_email, subject, html_body):
+                return True
+
+        logger.error(f"❌ ALL email providers failed for {to_email}")
         return False
 
     # ─── SMS (Twilio) ─────────────────────────────────────────────────────────

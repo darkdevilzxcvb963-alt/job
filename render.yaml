@@ -15,9 +15,15 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: CORS_ORIGINS_STR
-        value: https://your-frontend-url.vercel.app  # UPDATE THIS
+        value: https://job-matching-frontend-6457.onrender.com,https://job-steel-psi.vercel.app,http://localhost:5173,http://localhost:3000
       - key: FRONTEND_URL
-        value: https://your-frontend-url.vercel.app  # UPDATE THIS
+        value: https://job-matching-frontend-6457.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        value: 747262601374-jqqsardv3q7lfg57a0e1jjup0i7shlvg.apps.googleusercontent.com
+      - key: GOOGLE_AUTH_ENABLED
+        value: true
+      - key: GOOGLE_AUTO_VERIFY
+        value: true
       - key: GEMINI_API_KEY
         sync: false  # Add this in Render Dashboard
       - key: OPENAI_API_KEY

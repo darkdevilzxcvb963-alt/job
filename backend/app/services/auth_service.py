@@ -129,7 +129,7 @@ class AuthService:
         otp_record = db.query(OTPToken).filter(
             OTPToken.user_id == user_id,
             OTPToken.purpose == purpose
-        ).first()
+        ).order_by(OTPToken.id.desc()).first()
         
         if not otp_record:
             return False
@@ -158,16 +158,16 @@ class AuthService:
         """Generate and send OTP to Email only (Mobile SMS disabled as per request)"""
         otp_code = await AuthService.generate_otp(db, user.id, type="email", purpose="mfa")
         
-        from app.services.notification_service import NotificationService
-        ns = NotificationService()
-
-        # Send via Email (using OneSignal if configured)
+        # Send via Email (Mailjet → Resend → SMTP → Mock)
         from app.core.email import send_mfa_email
         try:
-            await send_mfa_email(user.email, otp_code, user.full_name)
-            logger.info(f"Verification Email sent to {user.email}")
+            email_sent = await send_mfa_email(user.email, otp_code, user.full_name)
+            if email_sent:
+                logger.info(f"✅ Verification Email sent successfully to {user.email}")
+            else:
+                logger.error(f"❌ ALL email providers failed to send OTP to {user.email}. OTP code: {otp_code}")
         except Exception as e:
-            logger.error(f"Failed to send verification email to {user.email}: {str(e)}")
+            logger.error(f"❌ Exception sending verification email to {user.email}: {str(e)}. OTP code: {otp_code}")
             
         return otp_code
 

@@ -32,23 +32,22 @@ except Exception as e:
 
 
 async def _send_email_common(email: str, subject: str, html_body: str, plain_body: str = None) -> bool:
-    """Unified internal helper: Mailjet -> SMTP Fallback"""
+    """Unified internal helper: Mailjet → Gmail SMTP (2-tier, no mocking)"""
     
-    # 1. Try Mailjet (via NotificationService)
+    # 1. Try via NotificationService (Mailjet → Gmail SMTP)
     try:
-        if await notification_service.send_email(email, subject, html_body):
+        result = await notification_service.send_email(email, subject, html_body)
+        if result:
+            logger.info(f"✅ Email delivered to {email} via NotificationService")
             return True
+        logger.warning(f"NotificationService returned False for {email}")
     except Exception as e:
-        logger.error(f"Notification Service error: {str(e)}")
+        logger.error(f"NotificationService exception for {email}: {str(e)}")
 
-    # 2. Try Direct SMTP (fastapi-mail)
+    # 2. Last resort: Try fastapi-mail direct SMTP
     if fm:
         try:
-            # Gmail safety: If sending via Gmail, the From address MUST match the username
-            from_email = settings.MAIL_FROM
-            if "gmail.com" in settings.MAIL_SERVER.lower():
-                from_email = settings.MAIL_USERNAME
-                
+            from_email = settings.MAIL_USERNAME if "gmail.com" in settings.MAIL_SERVER.lower() else settings.MAIL_FROM
             message = MessageSchema(
                 subject=subject,
                 recipients=[email],
@@ -57,15 +56,13 @@ async def _send_email_common(email: str, subject: str, html_body: str, plain_bod
                 from_address=from_email
             )
             await fm.send_message(message)
+            logger.info(f"✅ Email delivered to {email} via fastapi-mail")
             return True
         except Exception as e:
-            logger.error(f"Direct SMTP failed: {str(e)}")
+            logger.error(f"❌ fastapi-mail SMTP also failed for {email}: {str(e)}")
     
-    # 3. Development Mocking
-    if settings.DEBUG:
-        logger.warning(f"MOCKING email to {email}")
-        return True
-        
+    # NO MOCK — if we get here, email genuinely failed
+    logger.error(f"❌ CRITICAL: All email delivery methods failed for {email} (subject: {subject})")
     return False
 
 async def send_verification_email(email: str, token: str, name: str) -> bool:
