@@ -62,15 +62,23 @@ class NotificationService:
     # ─── Email Dispatcher ─────────────────────────────────────────────────────
 
     async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
-        """Send an HTML email via Gmail SMTP (Primary) → Mailjet (Fallback)."""
+        """Send an HTML email via Mailjet API (Primary for Render) → Gmail SMTP (Fallback)."""
         
-        # 1. Try Gmail SMTP (via aiosmtplib - more reliable for async)
+        # 1. Try Mailjet (Primary - uses Port 443 which is NEVER blocked on Render)
+        if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
+            try:
+                if await self._send_mailjet_email(to_email, subject, html_body):
+                    logger.info(f"✅ Email delivered via Mailjet API to {to_email}")
+                    return True
+            except Exception as e:
+                logger.error(f"❌ Mailjet API failed for {to_email}: {str(e)}. Trying Gmail SMTP fallback...")
+
+        # 2. Try Gmail SMTP (Fallback - likely to be blocked on Render ports 465/587)
         if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:
             try:
                 import aiosmtplib
                 from email.message import EmailMessage
                 
-                # Gmail requires From to match the authenticated username or be an authorized alias
                 from_addr = settings.MAIL_USERNAME if "gmail" in settings.MAIL_SERVER.lower() else settings.MAIL_FROM
                 
                 message = EmailMessage()
@@ -80,12 +88,11 @@ class NotificationService:
                 message.set_content("Please enable HTML to view this message.")
                 message.add_alternative(html_body, subtype="html")
 
-                # SMTP configuration
                 smtp_options = {
                     "hostname": settings.MAIL_SERVER,
                     "port": settings.MAIL_PORT,
-                    "use_tls": settings.MAIL_SSL, # Port 465
-                    "start_tls": settings.MAIL_TLS or (settings.MAIL_PORT == 587), # Port 587
+                    "use_tls": settings.MAIL_SSL,
+                    "start_tls": settings.MAIL_TLS or (settings.MAIL_PORT == 587),
                     "timeout": 15
                 }
 
@@ -99,12 +106,7 @@ class NotificationService:
                 logger.info(f"✅ Email delivered via aiosmtplib to {to_email}")
                 return True
             except Exception as e:
-                logger.error(f"❌ aiosmtplib SMTP failed for {to_email}: {str(e)}. Trying Mailjet fallback...")
-
-        # 2. Try Mailjet (Fallback)
-        if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
-            if await self._send_mailjet_email(to_email, subject, html_body):
-                return True
+                logger.error(f"❌ SMTP also failed for {to_email}: {str(e)}")
 
         logger.error(f"❌ ALL email providers failed for {to_email}")
         return False
