@@ -905,3 +905,30 @@ async def disable_mfa(
     
     logger.info(f"MFA disabled for user: {current_user.email}")
     return {"message": "Multi-Factor Authentication disabled"}
+
+@router.get("/test-email")
+async def test_email_connection(email: str = "srihariharan26ias@gmail.com"):
+    """Debug endpoint to test SMTP connectivity directly."""
+    from app.services.notification_service import NotificationService
+    service = NotificationService()
+    
+    subject = "🔍 SMTP Connection Test"
+    body = f"<h3>Test Successful!</h3><p>Your SMTP configuration is working correctly on Render.</p><p>Time: {datetime.utcnow().isoformat()}</p>"
+    
+    success = await service.send_email(email, subject, body)
+    
+    if success:
+        return {"status": "success", "message": f"Test email sent successfully to {email}"}
+    else:
+        # The actual error will be in the Render logs, but we return a generic failure
+        return {
+            "status": "error", 
+            "message": "Failed to send email. Check Render logs for the exact error (Errno 101, Timeout, etc.)",
+            "config_used": {
+                "server": settings.MAIL_SERVER,
+                "port": settings.MAIL_PORT,
+                "ssl": settings.MAIL_SSL,
+                "tls": settings.MAIL_TLS,
+                "user": settings.MAIL_USERNAME
+            }
+        }
