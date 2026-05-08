@@ -28,6 +28,30 @@ services:
         sync: false  # Add this in Render Dashboard
       - key: OPENAI_API_KEY
         sync: false  # Add this in Render Dashboard
+      
+      # Email Configuration (Gmail SMTP)
+      - key: MAIL_SERVER
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "465"
+      - key: MAIL_TLS
+        value: "false"
+      - key: MAIL_SSL
+        value: "true"
+      - key: MAIL_USERNAME
+        sync: false  # IMPORTANT: Add your Gmail in Render Dashboard
+      - key: MAIL_PASSWORD
+        sync: false  # IMPORTANT: Add your Gmail App Password in Render Dashboard
+      - key: MAIL_FROM
+        sync: false  # IMPORTANT: Add your Gmail in Render Dashboard
+      - key: MAIL_FROM_NAME
+        value: "Job Matching Platform"
+      
+      # Mailjet Fallback (Optional)
+      - key: MAILJET_API_KEY
+        sync: false
+      - key: MAILJET_SECRET_KEY
+        sync: false
 
 databases:
   - name: resume-matching-db
