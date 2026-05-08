@@ -1,10 +1,10 @@
 services:
   # Python Backend Service
   - type: web
-    name: resume-matching-backend
+    name: job
     env: python
     buildCommand: "pip install -r backend/requirements.txt"
-    startCommand: "cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT"
+    startCommand: "cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:${PORT:-8000}"
     envVars:
       - key: ENVIRONMENT
         value: production
