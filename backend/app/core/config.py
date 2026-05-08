@@ -2,7 +2,7 @@
 Application Configuration
 """
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -84,8 +84,8 @@ class Settings(BaseSettings):
 
     # Mailjet Configuration (Primary No-Domain Solution)
     MAILJET_API_KEY: str = ""
-    MAILJET_SECRET_KEY: str = ""
-
+    MAILJET_SECRET_KEY: Optional[str] = None
+    BREVO_API_KEY: Optional[str] = None
     
     # Google OAuth
     GOOGLE_CLIENT_ID: str = "YOUR_GOOGLE_CLIENT_ID"

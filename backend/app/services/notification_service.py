@@ -16,6 +16,45 @@ class NotificationService:
 
     # ─── Mailjet (Primary No-Domain Solution) ──────────────────────────────────
 
+    async def _send_brevo_email(self, to_email: str, subject: str, html_body: str) -> bool:
+        """Internal helper to send email via Brevo (Sendinblue) HTTP API."""
+        if not settings.BREVO_API_KEY:
+            return False
+
+        url = "https://api.brevo.com/v3/smtp/email"
+        
+        payload = {
+            "sender": {
+                "name": settings.MAIL_FROM_NAME,
+                "email": settings.MAIL_FROM
+            },
+            "to": [
+                {
+                    "email": to_email
+                }
+            ],
+            "subject": subject,
+            "htmlContent": html_body
+        }
+
+        try:
+            headers = {
+                "api-key": settings.BREVO_API_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=payload, timeout=10.0)
+                if response.status_code >= 400:
+                    logger.error(f"Brevo Error {response.status_code}: {response.text}")
+                    return False
+                logger.info(f"Email sent via Brevo to {to_email}")
+                return True
+        except Exception as e:
+            logger.error(f"Brevo API request failed: {e}")
+            return False
+
     async def _send_mailjet_email(self, to_email: str, subject: str, html_body: str) -> bool:
         """Internal helper to send email via Mailjet HTTP API."""
         if not settings.MAILJET_API_KEY or not settings.MAILJET_SECRET_KEY:
@@ -62,18 +101,25 @@ class NotificationService:
     # ─── Email Dispatcher ─────────────────────────────────────────────────────
 
     async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
-        """Send an HTML email via Mailjet API (Primary for Render) → Gmail SMTP (Fallback)."""
+        """Send an HTML email via Brevo API (1st) → Mailjet API (2nd) → Gmail SMTP (3rd)."""
         
-        # 1. Try Mailjet (Primary - uses Port 443 which is NEVER blocked on Render)
+        # 1. Try Brevo (Most reliable for new accounts)
+        if settings.BREVO_API_KEY:
+            try:
+                if await self._send_brevo_email(to_email, subject, html_body):
+                    return True
+            except Exception as e:
+                logger.error(f"❌ Brevo API failed for {to_email}: {str(e)}")
+
+        # 2. Try Mailjet (2nd choice)
         if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
             try:
                 if await self._send_mailjet_email(to_email, subject, html_body):
-                    logger.info(f"✅ Email delivered via Mailjet API to {to_email}")
                     return True
             except Exception as e:
-                logger.error(f"❌ Mailjet API failed for {to_email}: {str(e)}. Trying Gmail SMTP fallback...")
+                logger.error(f"❌ Mailjet API failed for {to_email}: {str(e)}")
 
-        # 2. Try Gmail SMTP (Fallback - likely to be blocked on Render ports 465/587)
+        # 3. Try Gmail SMTP (Fallback - likely to be blocked on Render)
         if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:
             try:
                 import aiosmtplib
