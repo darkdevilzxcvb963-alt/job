@@ -102,25 +102,35 @@ class NotificationService:
 
     async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
         """Send an HTML email via Brevo API (1st) → Mailjet API (2nd) → Gmail SMTP (3rd)."""
+        logger.info(f"📧 Attempting to send email to {to_email} (Subject: {subject})")
         
         # 1. Try Brevo (Most reliable for new accounts)
         if settings.BREVO_API_KEY:
+            logger.info("📡 Attempting Brevo API...")
             try:
                 if await self._send_brevo_email(to_email, subject, html_body):
+                    logger.info(f"✅ Email delivered via Brevo API to {to_email}")
                     return True
             except Exception as e:
-                logger.error(f"❌ Brevo API failed for {to_email}: {str(e)}")
+                logger.error(f"❌ Brevo API failed: {str(e)}")
+        else:
+            logger.warning("⚠️ Brevo API Key not configured.")
 
         # 2. Try Mailjet (2nd choice)
         if settings.MAILJET_API_KEY and settings.MAILJET_SECRET_KEY:
+            logger.info("📡 Attempting Mailjet API...")
             try:
                 if await self._send_mailjet_email(to_email, subject, html_body):
+                    logger.info(f"✅ Email delivered via Mailjet API to {to_email}")
                     return True
             except Exception as e:
-                logger.error(f"❌ Mailjet API failed for {to_email}: {str(e)}")
+                logger.error(f"❌ Mailjet API failed: {str(e)}")
+        else:
+            logger.warning("⚠️ Mailjet credentials not configured.")
 
         # 3. Try Gmail SMTP (Fallback - likely to be blocked on Render)
         if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:
+            logger.info(f"📡 Attempting Gmail SMTP (Port: {settings.MAIL_PORT}, SSL: {settings.MAIL_SSL})...")
             try:
                 import aiosmtplib
                 from email.message import EmailMessage
