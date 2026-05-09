@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
@@ -35,6 +35,12 @@ function Signup() {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     return () => observer.disconnect()
   }, [])
+
+  // Use a ref to keep track of the latest role without causing stale closures in GoogleLogin
+  const roleRef = useRef(formData.role)
+  useEffect(() => {
+    roleRef.current = formData.role
+  }, [formData.role])
 
   const { signup, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -251,7 +257,7 @@ function Signup() {
     setLoading(true)
     setErrors({})
 
-    const result = await loginWithGoogle(credentialResponse.credential, formData.role)
+    const result = await loginWithGoogle(credentialResponse.credential, roleRef.current)
 
     if (result.success) {
       // Check if MFA is required (for new Google signups)
