@@ -408,13 +408,13 @@ async def google_auth(
         full_name = idinfo.get('name', '')
         google_id = idinfo.get('sub') # Unique Google ID
         
-        # 4. Domain restriction check
-        if settings.ALLOWED_GOOGLE_DOMAINS and domain not in settings.ALLOWED_GOOGLE_DOMAINS:
-            logger.warning(f"Google Auth denied: Domain {domain} not in allowed list")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Sign-up with Google is restricted to certain domains. Domain '{domain}' is not allowed."
-            )
+        # 4. Domain restriction check - TEMPORARILY DISABLED for all categories
+        # if settings.ALLOWED_GOOGLE_DOMAINS and domain not in settings.ALLOWED_GOOGLE_DOMAINS:
+        #     logger.warning(f"Google Auth denied: Domain {domain} not in allowed list")
+        #     raise HTTPException(
+        #         status_code=status.HTTP_403_FORBIDDEN,
+        #         detail=f"Sign-up with Google is restricted to certain domains. Domain '{domain}' is not allowed."
+        #     )
 
         # 5. Check if user exists
         user = db.query(User).filter(User.email == email).first()
