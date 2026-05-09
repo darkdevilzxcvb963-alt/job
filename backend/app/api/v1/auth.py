@@ -163,7 +163,8 @@ async def signup(
             verification_token_expires=datetime.utcnow() + timedelta(
                 hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS
             ),
-            is_verified=is_verified,
+            is_verified=True, # TEMPORARY: Auto-verify new users
+            mfa_enabled=False, # TEMPORARY: Disable MFA for new users
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow()
         )
@@ -194,25 +195,26 @@ async def signup(
             # Don't fail the whole signup if profile creation fails, but it's a serious issue
             db.rollback()
         
-        # 7. Generate MFA token and send OTP instead of direct success
-        mfa_token = create_access_token(
-            data={"sub": new_user.id, "type": "mfa_pending", "purpose": "signup_verification"},
-            expires_delta=timedelta(minutes=10)
-        )
+        # 7. Temporarily Bypass MFA (Direct Login)
+        user_role = new_user.role.value if hasattr(new_user.role, 'value') else new_user.role
+        access_token = create_access_token(data={"sub": new_user.id, "role": user_role})
+        refresh_token = create_refresh_token(data={"sub": new_user.id})
         
-        # Generate and send dual MFA (Email + SMS)
-        otp_code = await AuthService.send_dual_mfa(db, new_user)
-        
-        logger.info(f"New user registered, MFA verification required: {new_user.email}")
+        logger.info(f"New user registered (OTP bypassed): {new_user.email}")
         
         return {
-            "id": new_user.id,
-            "email": new_user.email,
-            "full_name": new_user.full_name,
-            "role": new_user.role,
-            "mfa_required": True,
-            "mfa_token": mfa_token,
-            "session_id": otp_code if settings.DEBUG else None
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "user": {
+                "id": new_user.id,
+                "email": new_user.email,
+                "full_name": new_user.full_name,
+                "role": new_user.role,
+                "is_verified": new_user.is_verified,
+            },
+            "success": True,
+            "mfa_required": False
         }
     
     except HTTPException:

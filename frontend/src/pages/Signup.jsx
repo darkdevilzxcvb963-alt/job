@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
@@ -26,6 +26,16 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
+  const [appTheme, setAppTheme] = useState(() => document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'dark')
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setAppTheme(document.documentElement.getAttribute('data-theme') || 'dark')
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
+
   const { signup, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
@@ -165,6 +175,21 @@ function Signup() {
         setMfaToken(respData.mfa_token)
         setShowMfa(true)
         setSuccessMessage('Account created! Please verify your identity with the OTP sent to your email.')
+      } else if (respData.access_token) {
+        // TEMPORARY OTP BYPASS: Directly log the user in
+        localStorage.setItem('access_token', respData.access_token)
+        localStorage.setItem('refresh_token', respData.refresh_token)
+        localStorage.setItem('user', JSON.stringify(respData.user))
+        
+        setSuccess(true)
+        setSuccessMessage(`Welcome! Your account has been created successfully. Redirecting to your dashboard...`)
+        
+        setTimeout(() => {
+          if (respData.user.role === 'admin') navigate('/admin')
+          else if (respData.user.role === 'recruiter') navigate('/jobs')
+          else navigate('/candidate')
+          window.location.reload()
+        }, 2000)
       } else {
         setSuccess(true)
         setSuccessMessage(`Welcome! Your account has been created successfully. Redirecting to login...`)
@@ -423,8 +448,7 @@ function Signup() {
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
                   text="signup_with"
-
-                  theme="outline"
+                  theme={appTheme === 'light' ? 'outline' : 'filled_black'}
                   size="large"
                   width="100%"
                 />
