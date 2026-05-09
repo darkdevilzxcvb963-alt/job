@@ -466,19 +466,12 @@ async def google_auth(
             db.commit()
             db.refresh(user)
         elif is_first_login:
-            # Traditional flow: Require MFA for first login if mail is available
-            mfa_token = create_access_token(
-                data={"sub": user.id, "type": "mfa_pending", "purpose": "signup_verification"},
-                expires_delta=timedelta(minutes=10)
-            )
-            otp_code = await AuthService.send_dual_mfa(db, user)
-            
-            return TokenResponse(
-                mfa_required=True,
-                mfa_token=mfa_token,
-                user=UserResponse.from_orm(user),
-                session_id=otp_code if settings.DEBUG else None
-            )
+            # Traditional flow: Normally require MFA here, but bypassing temporarily
+            user.is_verified = True
+            user.last_login = datetime.utcnow()
+            db.commit()
+            db.refresh(user)
+            logger.info(f"Google auth OTP bypassed for: {email}")
 
         # Update last login for existing users
         user.last_login = datetime.utcnow()
