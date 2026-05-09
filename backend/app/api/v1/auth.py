@@ -437,6 +437,19 @@ async def google_auth(
             db.commit()
             db.refresh(user)
             logger.info(f"New user created via Google Auth: {email}")
+            
+            # Create associated profile
+            try:
+                if user.role == UserRole.JOB_SEEKER or user.role == "job_seeker":
+                    profile = CandidateProfile(user_id=user.id)
+                    db.add(profile)
+                elif user.role == UserRole.RECRUITER or user.role == "recruiter":
+                    profile = RecruiterProfile(user_id=user.id, company_name="My Company")
+                    db.add(profile)
+                db.commit()
+            except Exception as profile_err:
+                logger.error(f"Failed to create profile for Google user {user.email}: {str(profile_err)}")
+                db.rollback()
         else:
             # Update existing user tracking if not already set
             if user.auth_provider != "google":
@@ -445,9 +458,31 @@ async def google_auth(
                 # If they were already verified, keep it, otherwise update based on settings
                 if settings.GOOGLE_AUTO_VERIFY:
                     user.is_verified = True
-                db.commit()
-                db.refresh(user)
-                logger.info(f"Linked existing user to Google Auth: {email}")
+            
+            # Update user role to match the one they selected if they already exist
+            requested_role = auth_data.role.value if hasattr(auth_data.role, 'value') else auth_data.role
+            current_role = user.role.value if hasattr(user.role, 'value') else user.role
+            
+            if current_role != requested_role:
+                user.role = requested_role
+                logger.info(f"Updated user role from {current_role} to {requested_role} for {email}")
+                
+                # Check if profile exists for new role
+                try:
+                    if requested_role == "job_seeker":
+                        existing_profile = db.query(CandidateProfile).filter(CandidateProfile.user_id == user.id).first()
+                        if not existing_profile:
+                            db.add(CandidateProfile(user_id=user.id))
+                    elif requested_role == "recruiter":
+                        existing_profile = db.query(RecruiterProfile).filter(RecruiterProfile.user_id == user.id).first()
+                        if not existing_profile:
+                            db.add(RecruiterProfile(user_id=user.id, company_name="My Company"))
+                except Exception as profile_err:
+                    logger.error(f"Failed to create new profile for existing Google user {email}: {str(profile_err)}")
+                    
+            db.commit()
+            db.refresh(user)
+            logger.info(f"Linked existing user to Google Auth: {email}")
         
         # 6. Check if account is active
         if not user.is_active:
