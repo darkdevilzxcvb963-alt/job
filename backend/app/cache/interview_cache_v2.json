@@ -1404,5 +1404,702 @@
     "questions": [],
     "next_question": null,
     "job_role": "System Engineer"
+  },
+  "System Engineer_Design Engineering, Safety Consciousness, Technical Analysis, Safety Protocols, Analytical Thinking, CAD Software_10_False_init": {
+    "coach_comment": "Your profile shows strong foundational programming skills in Python and Java, alongside valuable soft skills for collaboration and strategic planning. To align with a System Engineer interest, focus on deepening your knowledge in operating systems, networking, and cloud technologies. This roadmap will guide you through essential areas to bridge current skills with industry demands.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Developing Professional",
+      "missing_skills": [
+        "Linux/Unix Administration",
+        "Cloud Platforms (AWS/Azure/GCP)",
+        "Networking Protocols",
+        "Containerization (Docker/Kubernetes)",
+        "Infrastructure as Code (Terraform/Ansible)",
+        "Monitoring & Logging Tools"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "Natural Language Processing",
+        "Collaboration",
+        "Decision Making",
+        "Strategic Planning",
+        "English"
+      ],
+      "focus_areas": [
+        "Linux Administration",
+        "Cloud Computing Fundamentals",
+        "Network Protocols",
+        "Automation Scripting (Bash/Python)",
+        "Container Orchestration"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "90%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "80%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Collaboration",
+        "confidence": "75%"
+      },
+      {
+        "skill": "Decision Making",
+        "confidence": "70%"
+      },
+      {
+        "skill": "English",
+        "confidence": "95%"
+      },
+      {
+        "skill": "Strategic Planning",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Mentoring",
+        "confidence": "60%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "System Engineer",
+        "match_score": "75%",
+        "why": "Your programming skills and interest directly align, requiring further development in core system administration and cloud."
+      },
+      {
+        "role": "DevOps Engineer",
+        "match_score": "70%",
+        "why": "Strong Python/Java skills are excellent for automation, needing focus on CI/CD, cloud, and container technologies."
+      },
+      {
+        "role": "Site Reliability Engineer (SRE)",
+        "match_score": "65%",
+        "why": "Combines system engineering with software development, leveraging your programming background for reliability and scalability."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Learn basic Linux commands (ls, cd, cp, mv, rm), file system hierarchy, and user/group management. Practice in a virtual machine."
+      },
+      {
+        "day": "2",
+        "focus": "Networking Basics",
+        "task": "Understand TCP/IP model, common protocols (HTTP, DNS, SSH), IP addressing, and subnetting. Explore `ping`, `traceroute`, `netstat`."
+      },
+      {
+        "day": "3",
+        "focus": "Python Scripting for Automation",
+        "task": "Write Python scripts to automate system tasks like file manipulation, process management, and basic data parsing. Utilize `os` and `subprocess` modules."
+      },
+      {
+        "day": "4",
+        "focus": "Introduction to Cloud Computing",
+        "task": "Explore core concepts of AWS/Azure/GCP (compute, storage, networking). Set up a free-tier EC2 instance or equivalent VM."
+      },
+      {
+        "day": "5",
+        "focus": "Version Control with Git",
+        "task": "Master Git commands (clone, add, commit, push, pull, branch, merge). Practice collaborative workflows on GitHub/GitLab."
+      },
+      {
+        "day": "6",
+        "focus": "Docker Fundamentals",
+        "task": "Learn Docker concepts (images, containers, Dockerfile, Docker Compose). Containerize a simple Python or Java application."
+      },
+      {
+        "day": "7",
+        "focus": "Infrastructure as Code (IaC)",
+        "task": "Introduction to Terraform: write a basic Terraform configuration to provision a cloud resource (e.g., a virtual machine)."
+      },
+      {
+        "day": "8",
+        "focus": "Monitoring & Logging",
+        "task": "Understand principles of system monitoring and logging. Research tools like Prometheus, Grafana, ELK stack."
+      },
+      {
+        "day": "9",
+        "focus": "System Design Principles",
+        "task": "Study concepts like scalability, high availability, load balancing, and fault tolerance. Analyze common system architectures."
+      },
+      {
+        "day": "10",
+        "focus": "Project: Simple Automation",
+        "task": "Develop a Python script to monitor a web service's availability and log its status, then containerize it with Docker."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Mastering Linux File System Navigation",
+        "difficulty": "Easy",
+        "description": "Navigate through various directories, create/delete files and folders, and understand file permissions using command-line tools.",
+        "requirements": [
+          "Access to a Linux environment (VM or WSL)",
+          "Basic understanding of `cd`, `ls`, `mkdir`, `rm`, `chmod`"
+        ]
+      },
+      {
+        "title": "Automating System Health Checks with Python",
+        "difficulty": "Medium",
+        "description": "Write a Python script that checks CPU usage, memory usage, and disk space, then logs the results to a file.",
+        "requirements": [
+          "Python 3 installed",
+          "Knowledge of `psutil` library (or similar for system info)",
+          "File I/O in Python"
+        ]
+      },
+      {
+        "title": "Containerizing a Java Web Application with Docker",
+        "difficulty": "Hard",
+        "description": "Create a Dockerfile to package a simple Java web application (e.g., Spring Boot app) into a Docker image and run it.",
+        "requirements": [
+          "Docker installed",
+          "Basic Java application (e.g., a 'Hello World' web service)",
+          "Understanding of Dockerfile instructions"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_Design Engineering, Safety Consciousness, Technical Analysis, Safety Protocols, Analytical Thinking, CAD Software_10_False_my fittest job roles": {
+    "coach_comment": "Based on your skills in Python, Java, and NLP, combined with your interest in System Engineering, your profile is well-suited for roles focused on automation and infrastructure. To excel in System Engineering, a strong foundation in Linux, cloud platforms, and containerization is crucial. Your collaboration and strategic planning skills will be highly valuable in these complex environments.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Linux/Unix Administration",
+        "Networking (TCP/IP, DNS)",
+        "Cloud Platforms (AWS/Azure/GCP)",
+        "Containerization (Docker, Kubernetes)",
+        "Infrastructure as Code (Terraform, Ansible)",
+        "CI/CD Tools (Jenkins, GitLab CI)",
+        "Monitoring & Logging (Prometheus, Grafana)"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "Natural Language Processing",
+        "Collaboration",
+        "Decision Making",
+        "Strategic Planning"
+      ],
+      "focus_areas": [
+        "Linux OS",
+        "AWS/Azure Fundamentals",
+        "Docker & Kubernetes",
+        "Terraform"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "90%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "85%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "75%"
+      },
+      {
+        "skill": "Collaboration",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Decision Making",
+        "confidence": "70%"
+      },
+      {
+        "skill": "English",
+        "confidence": "95%"
+      },
+      {
+        "skill": "Strategic Planning",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Mentoring",
+        "confidence": "60%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "System Engineer",
+        "match_score": "90%",
+        "why": "Directly aligns with your stated interest and leverages Python/Java for scripting and automation, supported by strong soft skills."
+      },
+      {
+        "role": "DevOps Engineer",
+        "match_score": "85%",
+        "why": "Your Python/Java skills are excellent for automation, and collaboration is key for CI/CD pipeline development and maintenance."
+      },
+      {
+        "role": "Site Reliability Engineer (SRE)",
+        "match_score": "80%",
+        "why": "Requires strong system understanding, automation capabilities (Python/Java), and problem-solving, aligning with your decision-making and strategic planning skills."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Complete an introductory course on Linux command line interface (CLI) and file system navigation."
+      },
+      {
+        "day": "2",
+        "focus": "Networking Essentials",
+        "task": "Study TCP/IP, DNS, HTTP/HTTPS, and common network protocols relevant to system operations."
+      },
+      {
+        "day": "3",
+        "focus": "Python for System Automation",
+        "task": "Practice writing Python scripts for file operations, process management, and basic system monitoring."
+      },
+      {
+        "day": "4",
+        "focus": "Introduction to Cloud Computing",
+        "task": "Explore AWS or Azure fundamentals, understanding IaaS, PaaS, SaaS concepts and core services like EC2/VMs, S3/Blob Storage."
+      },
+      {
+        "day": "5",
+        "focus": "Docker Containerization",
+        "task": "Learn Docker basics: creating images, running containers, using Dockerfiles, and managing containers with Docker Compose."
+      },
+      {
+        "day": "6",
+        "focus": "Kubernetes Orchestration",
+        "task": "Understand Kubernetes architecture, deploy basic pods and deployments, and interact with a cluster using kubectl."
+      },
+      {
+        "day": "7",
+        "focus": "Infrastructure as Code (IaC)",
+        "task": "Get started with Terraform: define simple infrastructure resources (e.g., a VM) and deploy them to a cloud provider."
+      },
+      {
+        "day": "8",
+        "focus": "CI/CD Pipelines",
+        "task": "Learn the concepts of Continuous Integration and Continuous Delivery, exploring tools like Jenkins or GitLab CI."
+      },
+      {
+        "day": "9",
+        "focus": "Monitoring & Logging",
+        "task": "Research common monitoring tools (Prometheus, Grafana) and logging solutions (ELK stack) for system health."
+      },
+      {
+        "day": "10",
+        "focus": "System Security Fundamentals",
+        "task": "Study basic security principles: firewalls, access control, secure coding practices, and vulnerability management."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up a Linux Virtual Machine",
+        "difficulty": "Easy",
+        "description": "Install a Linux distribution (e.g., Ubuntu Server) in a virtual machine (VirtualBox/VMware) and configure SSH access.",
+        "requirements": [
+          "Virtualization software",
+          "Linux ISO image",
+          "Basic networking knowledge"
+        ]
+      },
+      {
+        "title": "Automate Disk Usage Monitoring",
+        "difficulty": "Medium",
+        "description": "Write a Python script that checks disk usage on a Linux system and sends an email alert if it exceeds 80%.",
+        "requirements": [
+          "Python scripting skills",
+          "Linux command line access",
+          "SMTP configuration for email"
+        ]
+      },
+      {
+        "title": "Deploy a Containerized Web Application",
+        "difficulty": "Hard",
+        "description": "Use Docker Compose to deploy a multi-container web application (e.g., Nginx + Python Flask app + PostgreSQL database) and ensure inter-container communication.",
+        "requirements": [
+          "Docker & Docker Compose knowledge",
+          "Basic web application understanding",
+          "Linux environment"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_System Optimization, Testing & QA, ISO Standards, Safety Consciousness, Problem Solving, Analytical Thinking_10_False_init": {
+    "coach_comment": "Your profile shows strong programming foundations in Python and Java, alongside specialized NLP skills and valuable soft skills. To align with a System Engineer role, focus on core infrastructure technologies and automation. This roadmap will guide you through essential system administration and cloud competencies.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Linux System Administration",
+        "Networking Protocols (TCP/IP, DNS)",
+        "Cloud Platforms (AWS, Azure, GCP)",
+        "Containerization (Docker, Kubernetes)",
+        "CI/CD Tools (Jenkins, GitLab CI)",
+        "Infrastructure as Code (Terraform, Ansible)",
+        "Monitoring Tools (Prometheus, Grafana)"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "Natural Language Processing",
+        "Collaboration",
+        "Decision Making",
+        "Strategic Planning",
+        "Mentoring",
+        "English"
+      ],
+      "focus_areas": [
+        "Linux OS Fundamentals",
+        "Docker & Containerization",
+        "Kubernetes Orchestration",
+        "AWS/Azure Cloud Services",
+        "Bash Scripting",
+        "CI/CD Pipeline Implementation"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "90%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "85%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "80%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "50%"
+      },
+      {
+        "skill": "Collaboration",
+        "confidence": "75%"
+      },
+      {
+        "skill": "Decision Making",
+        "confidence": "75%"
+      },
+      {
+        "skill": "English",
+        "confidence": "95%"
+      },
+      {
+        "skill": "Strategic Planning",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Mentoring",
+        "confidence": "70%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "System Engineer",
+        "match_score": "75%",
+        "why": "Directly aligns with your stated interest and leverages your strong programming background for automation."
+      },
+      {
+        "role": "DevOps Engineer",
+        "match_score": "70%",
+        "why": "Your Python/Java skills are highly valuable for scripting and automating CI/CD pipelines in a DevOps context."
+      },
+      {
+        "role": "Cloud Engineer",
+        "match_score": "65%",
+        "why": "Your analytical and programming skills provide a strong foundation for learning and managing cloud infrastructure."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Set up a Linux virtual machine (e.g., Ubuntu) and learn basic commands (ls, cd, mkdir, rm, cp, mv, ssh)."
+      },
+      {
+        "day": "2",
+        "focus": "Networking Basics",
+        "task": "Understand TCP/IP, DNS, HTTP/HTTPS. Explore network commands like ping, ip, netstat, curl."
+      },
+      {
+        "day": "3",
+        "focus": "Bash Scripting",
+        "task": "Write simple Bash scripts for file manipulation, process management, and basic system monitoring."
+      },
+      {
+        "day": "4",
+        "focus": "Docker Introduction",
+        "task": "Install Docker, pull and run basic images, understand Dockerfiles, and containerize a simple Python application."
+      },
+      {
+        "day": "5",
+        "focus": "Kubernetes Basics",
+        "task": "Learn core Kubernetes concepts (Pods, Deployments, Services) and deploy a simple application using Minikube or Kind."
+      },
+      {
+        "day": "6",
+        "focus": "Cloud Computing (AWS/Azure)",
+        "task": "Create a free-tier account on AWS or Azure, launch a virtual machine, and understand basic services like EC2/VMs, S3/Blob Storage."
+      },
+      {
+        "day": "7",
+        "focus": "CI/CD Concepts",
+        "task": "Research Continuous Integration/Continuous Deployment principles and explore tools like Jenkins or GitLab CI."
+      },
+      {
+        "day": "8",
+        "focus": "Monitoring & Logging",
+        "task": "Understand the importance of system monitoring and logging. Explore tools like Prometheus, Grafana, ELK stack concepts."
+      },
+      {
+        "day": "9",
+        "focus": "Infrastructure as Code (IaC)",
+        "task": "Learn the basics of Terraform or Ansible for automating infrastructure provisioning and configuration."
+      },
+      {
+        "day": "10",
+        "focus": "Project Application",
+        "task": "Build a small project: Deploy a web application (e.g., a Python Flask app) using Docker, and potentially Kubernetes, on a cloud VM."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set up a Linux Development Environment",
+        "difficulty": "Medium",
+        "description": "Install a Linux distribution (e.g., Ubuntu) in a virtual machine or dual-boot, configure SSH access, and install essential development tools.",
+        "requirements": [
+          "Virtualization software (VirtualBox/VMware)",
+          "Linux ISO image",
+          "Basic command-line proficiency"
+        ]
+      },
+      {
+        "title": "Automate System Health Check with Python/Bash",
+        "difficulty": "Medium",
+        "description": "Write a script that checks CPU usage, memory usage, disk space, and running services, then logs the output or sends an alert.",
+        "requirements": [
+          "Python or Bash scripting knowledge",
+          "Access to a Linux system",
+          "Understanding of system metrics"
+        ]
+      },
+      {
+        "title": "Containerize and Deploy a Simple Web Application",
+        "difficulty": "Hard",
+        "description": "Take a basic web application (e.g., a Python Flask app or Java Spring Boot app), create a Dockerfile, build an image, and run it as a container.",
+        "requirements": [
+          "Familiarity with a web framework (Python/Java)",
+          "Docker installed",
+          "Basic understanding of containerization"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
+  },
+  "System Engineer_System Optimization, Testing & QA, ISO Standards, Safety Consciousness, Problem Solving, Analytical Thinking_10_False_which job is fits to me?": {
+    "coach_comment": "Based on your strong programming skills in Python and Java, coupled with expertise in Natural Language Processing and an interest in System Engineering, roles like Machine Learning Engineer or Backend Developer are excellent fits. To fully align with a System Engineer path, focusing on cloud infrastructure, containerization, and CI/CD practices will be crucial. Your current profile provides a robust foundation for these advanced technical roles.",
+    "is_profile_complete": true,
+    "skill_analysis": {
+      "level": "Intermediate",
+      "missing_skills": [
+        "Cloud Platforms (AWS/Azure/GCP)",
+        "Containerization (Docker, Kubernetes)",
+        "CI/CD Tools (Jenkins, GitLab CI)",
+        "Linux Administration",
+        "Networking Protocols",
+        "System Design Patterns"
+      ],
+      "strengths": [
+        "Python",
+        "Java",
+        "Natural Language Processing",
+        "Collaboration",
+        "Decision Making",
+        "Strategic Planning"
+      ],
+      "focus_areas": [
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "Azure",
+        "GCP",
+        "Jenkins",
+        "GitLab CI",
+        "Linux"
+      ]
+    },
+    "skill_profile": [
+      {
+        "skill": "Python",
+        "confidence": "100%"
+      },
+      {
+        "skill": "Java",
+        "confidence": "90%"
+      },
+      {
+        "skill": "Natural Language Processing",
+        "confidence": "85%"
+      },
+      {
+        "skill": "CSS",
+        "confidence": "60%"
+      },
+      {
+        "skill": "Collaboration",
+        "confidence": "75%"
+      },
+      {
+        "skill": "Decision Making",
+        "confidence": "75%"
+      },
+      {
+        "skill": "English",
+        "confidence": "80%"
+      },
+      {
+        "skill": "Strategic Planning",
+        "confidence": "70%"
+      },
+      {
+        "skill": "Mentoring",
+        "confidence": "65%"
+      }
+    ],
+    "top_job_matches": [
+      {
+        "role": "Machine Learning Engineer",
+        "match_score": "88%",
+        "why": "Leverages strong Python and Natural Language Processing skills for developing intelligent systems."
+      },
+      {
+        "role": "Backend Developer",
+        "match_score": "85%",
+        "why": "Strong proficiency in Python and Java makes you well-suited for building robust server-side applications."
+      },
+      {
+        "role": "DevOps Engineer",
+        "match_score": "78%",
+        "why": "Combines your programming skills with an interest in system engineering for automation and infrastructure management."
+      },
+      {
+        "role": "System Architect",
+        "match_score": "75%",
+        "why": "Your strategic planning and decision-making skills, combined with Java/Python, are valuable for designing complex systems."
+      }
+    ],
+    "roadmap": [
+      {
+        "day": "1",
+        "focus": "Linux Fundamentals",
+        "task": "Learn basic Linux commands, file system hierarchy, and user management."
+      },
+      {
+        "day": "2",
+        "focus": "Docker Basics",
+        "task": "Understand containerization concepts and practice building/running Docker images."
+      },
+      {
+        "day": "3",
+        "focus": "Kubernetes Introduction",
+        "task": "Explore Kubernetes architecture, pods, deployments, and services."
+      },
+      {
+        "day": "4",
+        "focus": "Cloud Platform Basics (AWS/Azure/GCP)",
+        "task": "Set up a free tier account and deploy a basic virtual machine."
+      },
+      {
+        "day": "5",
+        "focus": "CI/CD Concepts",
+        "task": "Learn about continuous integration/delivery principles and common tools like Jenkins or GitLab CI."
+      },
+      {
+        "day": "6",
+        "focus": "Networking Fundamentals",
+        "task": "Study TCP/IP, DNS, HTTP/HTTPS, and basic network troubleshooting."
+      },
+      {
+        "day": "7",
+        "focus": "System Design Principles",
+        "task": "Understand scalability, reliability, availability, and common architectural patterns."
+      },
+      {
+        "day": "8",
+        "focus": "Scripting for Automation",
+        "task": "Practice writing Bash and Python scripts for system administration tasks."
+      },
+      {
+        "day": "9",
+        "focus": "Monitoring & Logging Tools",
+        "task": "Explore tools like Prometheus, Grafana, ELK stack for system health and performance."
+      },
+      {
+        "day": "10",
+        "focus": "Mini Project: Containerized Web App",
+        "task": "Deploy a simple Python Flask/Java Spring Boot app using Docker and expose it via a cloud VM."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Set Up Local Docker Environment",
+        "difficulty": "Easy",
+        "description": "Successfully install Docker Desktop and run a 'hello-world' container.",
+        "requirements": [
+          "Docker Desktop installation",
+          "Command line proficiency"
+        ]
+      },
+      {
+        "title": "Deploy a Simple Web Application with Docker Compose",
+        "difficulty": "Medium",
+        "description": "Create a multi-service application (e.g., Python app + database) using Docker Compose.",
+        "requirements": [
+          "Python/Java application code",
+          "Docker Compose YAML file"
+        ]
+      },
+      {
+        "title": "Provision a Cloud VM",
+        "difficulty": "Medium",
+        "description": "Launch a virtual machine on AWS EC2, Azure VM, or Google Compute Engine and connect to it.",
+        "requirements": [
+          "Cloud provider account (free tier)",
+          "SSH client"
+        ]
+      }
+    ],
+    "questions": [],
+    "next_question": null,
+    "job_role": "System Engineer"
   }
 }

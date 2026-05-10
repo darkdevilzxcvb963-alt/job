@@ -2,6 +2,7 @@
 Application Configuration
 """
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from typing import List, Optional
 from pathlib import Path
 from dotenv import load_dotenv
@@ -76,6 +77,13 @@ class Settings(BaseSettings):
     MAIL_FROM_NAME: str = "Resume Matching Platform"
     MAIL_TLS: bool = True
     MAIL_SSL: bool = False
+
+    @field_validator("MAIL_FROM", "MAIL_USERNAME", mode="before")
+    @classmethod
+    def clean_email_fields(cls, v: str) -> str:
+        if isinstance(v, str) and "," in v:
+            return v.split(",")[0].strip()
+        return v
 
     # SMS Configuration (Twilio)
     TWILIO_ACCOUNT_SID: str = ""

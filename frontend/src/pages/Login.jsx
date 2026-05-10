@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, ShieldCheck } from 'lucide-react'
 import { GoogleLogin } from '@react-oauth/google'
@@ -16,6 +16,15 @@ function Login() {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
+  const [appTheme, setAppTheme] = useState(() => document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'dark')
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setAppTheme(document.documentElement.getAttribute('data-theme') || 'dark')
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
   
   const { login, login: authLogin, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -215,7 +224,7 @@ function Login() {
                 }}
                 onError={() => setError('Google sign-in failed. Please try again.')}
                 useOneTap={false}
-                theme="filled_black"
+                theme={appTheme === 'light' ? 'outline' : 'filled_black'}
                 shape="rectangular"
                 size="large"
                 width="100%"

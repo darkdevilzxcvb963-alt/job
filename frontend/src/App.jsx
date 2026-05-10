@@ -57,7 +57,7 @@ function App() {
                 <Route
                   path="/candidate"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><CandidateDashboard /></>
                     </ProtectedRoute>
                   }
@@ -65,7 +65,7 @@ function App() {
                 <Route
                   path="/jobs"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><JobPosting /></>
                     </ProtectedRoute>
                   }
@@ -81,7 +81,7 @@ function App() {
                 <Route
                   path="/analytics"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><AnalyticsDashboard /></>
                     </ProtectedRoute>
                   }
@@ -89,7 +89,7 @@ function App() {
                 <Route
                   path="/admin"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['admin']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><AdminDashboard /></>
                     </ProtectedRoute>
                   }
@@ -97,7 +97,7 @@ function App() {
                 <Route
                   path="/all-talent"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><AllTalent /></>
                     </ProtectedRoute>
                   }
@@ -105,7 +105,7 @@ function App() {
                 <Route
                   path="/active-roles"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['recruiter', 'admin']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><ActiveRoles /></>
                     </ProtectedRoute>
                   }
@@ -113,7 +113,7 @@ function App() {
                 <Route
                   path="/profile"
                   element={
-                    <ProtectedRoute>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><Profile /></>
                     </ProtectedRoute>
                   }
@@ -137,7 +137,7 @@ function App() {
                 <Route
                   path="/career-dashboard"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><CareerDashboard /></>
                     </ProtectedRoute>
                   }
@@ -145,7 +145,7 @@ function App() {
                 <Route
                   path="/training/:matchId"
                   element={
-                    <ProtectedRoute requireVerified={false} allowedRoles={['job_seeker', 'recruiter', 'admin']}>
+                    <ProtectedRoute requireVerified={false}>
                       <><Navbar /><TrainingDashboard /></>
                     </ProtectedRoute>
                   }

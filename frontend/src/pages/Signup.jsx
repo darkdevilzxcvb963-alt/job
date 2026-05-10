@@ -23,6 +23,7 @@ function Signup() {
   const [showMfa, setShowMfa] = useState(false)
   const [mfaCode, setMfaCode] = useState('')
   const [mfaToken, setMfaToken] = useState('')
+  const [tempAuthData, setTempAuthData] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
@@ -182,20 +183,11 @@ function Signup() {
         setShowMfa(true)
         setSuccessMessage('Account created! Please verify your identity with the OTP sent to your email.')
       } else if (respData.access_token) {
-        // TEMPORARY OTP BYPASS: Directly log the user in
-        localStorage.setItem('access_token', respData.access_token)
-        localStorage.setItem('refresh_token', respData.refresh_token)
-        localStorage.setItem('user', JSON.stringify(respData.user))
-        
-        setSuccess(true)
-        setSuccessMessage(`Welcome! Your account has been created successfully. Redirecting to your dashboard...`)
-        
-        setTimeout(() => {
-          if (respData.user.role === 'admin') navigate('/admin')
-          else if (respData.user.role === 'recruiter') navigate('/jobs')
-          else navigate('/candidate')
-          window.location.reload()
-        }, 2000)
+        // DUMMY OTP FLOW: Show MFA screen but save tokens to bypass real verification
+        setTempAuthData(respData)
+        setMfaToken('dummy_token')
+        setShowMfa(true)
+        setSuccessMessage('Account created! Please verify your identity with the OTP sent to your email.')
       } else {
         setSuccess(true)
         setSuccessMessage(`Welcome! Your account has been created successfully. Redirecting to login...`)
@@ -211,6 +203,29 @@ function Signup() {
     e.preventDefault()
     setErrors({})
     setLoading(true)
+    
+    // Check for Dummy OTP Flow
+    if (tempAuthData) {
+      setTimeout(() => {
+        const { access_token, refresh_token, user } = tempAuthData
+        
+        localStorage.setItem('access_token', access_token)
+        localStorage.setItem('refresh_token', refresh_token)
+        localStorage.setItem('user', JSON.stringify(user))
+        
+        setSuccess(true)
+        setSuccessMessage(`Verification successful! Welcome, ${user.full_name}.`)
+        
+        setTimeout(() => {
+          if (user.role === 'admin') navigate('/admin')
+          else if (user.role === 'recruiter') navigate('/jobs')
+          else navigate('/candidate')
+          window.location.reload()
+        }, 2000)
+      }, 800) // Fake delay
+      return
+    }
+
     try {
       const response = await verifyMFA({ mfa_token: mfaToken, code: mfaCode })
       const { access_token, refresh_token, user } = response.data
